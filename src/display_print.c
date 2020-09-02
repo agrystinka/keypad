@@ -13,6 +13,10 @@ void lcd_print_int(struct sk_lcd *lcd, int32_t num, char format)
 	}
 	//any other - decimal
 	else{
+		if(num == 0){
+			sk_lcd_putchar(lcd, '0');
+			return;
+		}
 		if (num < 0){
 			sk_lcd_putchar(lcd, '-');
 			num = 0 - num;
@@ -91,4 +95,32 @@ void lcd_print_symbol(struct sk_lcd *lcd, uint8_t c)
 		address =  0xFF;	 //black square for unknown symbols
 	}
 	sk_lcd_write_byte(lcd, address);
+}
+
+void lcd_print_time(struct sk_lcd *lcd, uint32_t time_s)
+{
+	sk_lcd_cmd_setaddr(lcd, 0x40, false);
+	lcd_print(lcd, "\t\t\t");
+
+	if(time_s / 60 == 0){
+		sk_lcd_putchar(lcd, '0');
+		//sk_lcd_putchar(lcd, '0');
+	} else if(time_s / 60 < 10) {
+		sk_lcd_putchar(lcd, '0');
+		lcd_print_int(lcd, time_s / 60, 0);
+	} else {
+		lcd_print_int(lcd, time_s / 60, 0);
+	}
+
+	sk_lcd_putchar(lcd, ':');
+
+	if(time_s % 60 == 0){
+		sk_lcd_putchar(lcd, '0');
+	//	sk_lcd_putchar(lcd, '0');
+	} else if(time_s % 60 < 10) {
+		sk_lcd_putchar(lcd, '0');
+		lcd_print_int(lcd, time_s % 60, 0);
+	} else {
+		lcd_print_int(lcd, time_s % 60, 0);
+	}
 }

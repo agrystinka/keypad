@@ -1,4 +1,6 @@
 #include "setup.h"
+#include "screen.h"
+
 #include "mygpiolib.h"
 #include "timers.h"
 #include "display.h"
@@ -18,9 +20,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define KP_LOCKED_STATE   0
+#define KP_UNLOCKED_STATE 1
+#define KP_BLOCKED_STATE  2
+#define KP_SETTINGS_STATE 3
+
 //#define N_BTN 5
 //const mgl_pin *buttons[5] = {&mgl_btn_swt1, &mgl_btn_swt2, &mgl_btn_swt3, &mgl_btn_swt4, &mgl_btn_swt5};
 uint8_t PASS_LENGTH = 4;
+uint8_t STATE = KP_LOCKED_STATE;
 
 struct sk_lcd lcd = {
 	.pin_group_data = &sk_io_lcd_data,
@@ -58,42 +66,20 @@ bool sk_btn_debounce(mgl_pin btn)
         return false;
 }
 
-void exti15_10_isr(void)
-{
-	//check EXTI line
-	if(exti_get_flag_status(EXTI15))
-		if(sk_btn_debounce(mgl_btn_swt2)) //debouncing
-			mgl_toggle(mgl_led_green);
-
-	if(exti_get_flag_status(EXTI11))
-		if(sk_btn_debounce(mgl_btn_swt1)) //debouncing
-		mgl_toggle(mgl_led_green);
-		// {	mgl_toggle(mgl_led_green);
-		// 	sk_lcd_putchar(&lcd, 'a');
-		// 	mgl_toggle(mgl_led_blue);
-		// }
-}
-
 void exti9_5_isr(void)
 {
 	//check EXTI line
 	if(exti_get_flag_status(EXTI6))
 		if(sk_btn_debounce(mgl_btn_swt4)) //debouncing
 			mgl_toggle(mgl_led_blue);
-		//	lcd_print_symbol(&lcd, UP);
 
 	else if(exti_get_flag_status(EXTI8))
 		if(sk_btn_debounce(mgl_btn_swt5)) //debouncing
-			//lcd_print_symbol(&lcd, DOWN);
 			mgl_toggle(mgl_led_blue);
 
 	else if(exti_get_flag_status(EXTI9))
 		if(sk_btn_debounce(mgl_btn_swt3)) //debouncing
 			mgl_toggle(mgl_led_blue);
-			//	sk_lcd_putchar(&lcd, 'b');
-			//	mgl_toggle(mgl_led_blue);
-			//}
-			//lcd_print_symbol(&lcd, LEFT);
 }
 
 int main(void)
@@ -112,7 +98,7 @@ int main(void)
 	kp_btn_setup();
 	//mgl_clear(mgl_led_blue);
 
- 	kp_interrupts_btn_setup(); 	// Configure interrupts
+ //	kp_interrupts_btn_setup(); 	// Configure interrupts
 	//mgl_clear(mgl_led_red);
 
 	kp_lcd_init_setup(&lcd); // Configure lcd
@@ -132,26 +118,20 @@ int main(void)
 //------------------------------------------------
 	//lcd_print(&lcd, "Password\n");
 
-	lcd_print_symbol(&lcd, LOCKED);
-	sk_lcd_cmd_setaddr(&lcd, 0x40, false);
-	for(int i = 0; i < PASS_LENGTH; i++)
-		sk_lcd_putchar(&lcd, '_');
+//	lcd_print_symbol(&lcd, LOCKED);
+//	sk_lcd_cmd_setaddr(&lcd, 0x40, false);
+//	for(int i = 0; i < PASS_LENGTH; i++)
+//		sk_lcd_putchar(&lcd, '_');
 	//	lcd_print(&lcd, "_");
-	sk_lcd_cmd_setaddr(&lcd, 0x40, false);
-	//
-	// lcd_print_symbol(&lcd, UP);
-	// lcd_print_symbol(&lcd, DOWN);
-	// lcd_print_symbol(&lcd, RIGHT);
-	// lcd_print_symbol(&lcd, LEFT);
-	//
-	// sk_lcd_cmd_setaddr(&lcd, 0x40, false);
-	//
-	// lcd_print_symbol(&lcd, POINT);
-	// lcd_print_symbol(&lcd, LOCKED);
-	// lcd_print_symbol(&lcd, UNLOCKED);
-	// lcd_print_symbol(&lcd, CLOSE);
+
+	kp_screen_timer(&lcd, 10);
+
+	kp_screen_empty(&lcd);
+	delay_ms_systick(1000);
+
+	kp_screen_welcome(&lcd);
 
     while(1) {
-		__WFI();
+		__asm__ volatile ("wfi");
     }
 }

@@ -23,11 +23,16 @@ void lcd_print_int(struct sk_lcd *lcd, int32_t num, char format);
 void lcd_print(struct sk_lcd *lcd, const char *format, ...);
 void lcd_print_n(struct sk_lcd *lcd);
 
+
 void lcd_print_symbol(struct sk_lcd *lcd, uint8_t c);
+
+void lcd_print_time(struct sk_lcd *lcd, uint32_t time_s);
 
 /*Display PWM*/
 void timer1_set_pwm_backlight(uint8_t val);
 void init_bkl_pwm(void);
 void exti0_isr(void);
+
+void exti15_10_isr(void);
 
 #endif

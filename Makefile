@@ -3,7 +3,7 @@ TARGET = keypad
 # All source files go here:
 SRCS = $(TARGET).c
 # other sources added like that
-SRCS += setup.c mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c #setup.c
+SRCS += setup.c mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c screen.c#setup.c
 # User defines
 DEFINES = GLSK_BOARD=1
 # The libs which are linked to the resulting target
