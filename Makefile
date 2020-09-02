@@ -3,12 +3,15 @@ TARGET = keypad
 # All source files go here:
 SRCS = $(TARGET).c
 # other sources added like that
-SRCS += setup.c mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c screen.c#setup.c
+SRCS += mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c
+SRCS += setup.c screen.c exti_on_btn.c
+#SRCS += bl_fifo.c bl_errors.c
 # User defines
 DEFINES = GLSK_BOARD=1
 # The libs which are linked to the resulting target
 LIBS = -Wl,--start-group -lc -lgcc -Wl,--end-group
 LIBS += -lopencm3
+#LIBS += -lbuff
 # Possible values: debug, release
 PROFILE = debug
 # Use semihosting or not. Possible values: 0, 1

@@ -11,11 +11,12 @@ void kp_screen_empty(struct sk_lcd *lcd)
 
 void kp_screen_timer(struct sk_lcd *lcd, uint32_t delay_s)
 {
+    //deny interrupts
     kp_screen_empty(lcd);
 
     sk_lcd_cmd_setaddr(lcd, 0x00, false);
     lcd_print_symbol(lcd, LOCKED);
-    lcd_print(lcd, " Access denied"); 
+    lcd_print(lcd, " Access denied");
 
     for(int i = delay_s; i >= 0; i--){
         lcd_print_time(lcd, i);
@@ -30,5 +31,20 @@ void kp_screen_welcome(struct sk_lcd *lcd)
     sk_lcd_cmd_setaddr(lcd, 0x00, false);
     lcd_print_symbol(lcd, UNLOCKED);
     lcd_print(lcd, " Welcome");
+}
 
+void kp_screen_input(struct sk_lcd *lcd)
+{
+    kp_screen_empty(lcd);
+
+    sk_lcd_cmd_setaddr(lcd, 0x00, false);
+    lcd_print_symbol(&lcd, LOCKED);
+    lcd_print(&lcd, " Password:\n");
+
+	sk_lcd_cmd_setaddr(&lcd, 0x40, false);
+
+	for(int i = 0; i < PASS_LENGTH; i++)
+		sk_lcd_putchar(&lcd, '_');
+
+    sk_lcd_cmd_setaddr(&lcd, 0x40, false);
 }

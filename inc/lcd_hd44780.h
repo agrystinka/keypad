@@ -175,7 +175,7 @@ uint8_t sk_lcd_charmap_none(const char c);
   */
 uint8_t sk_lcd_charmap_rus_cp1251(const char c);
 void lcd_data_set_byte(struct sk_lcd *lcd, uint8_t byte);
-
+void sk_lcd_write_byte(struct sk_lcd *lcd, uint8_t byte);
 void lcd_custom_char_load(struct sk_lcd *lcd);
 void lcd_custom_symb_load(struct sk_lcd *lcd);
 #endif
