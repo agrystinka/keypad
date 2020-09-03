@@ -11,7 +11,7 @@ uint8_t INPUT_PASS_LENGTH = 0;
 bl_bfifo_t kp_fifo_buff;
 uint8_t kp_buff[MAX_PASS_LENGTH]; //for kp_fifo_buff initialization
 
-uint8_t KP_CMD;
+uint8_t KP_CMD = KP_NONE;
 
 //display
 struct sk_lcd lcd = {
@@ -70,10 +70,10 @@ int main(void)
 
 	//Initialization of input buffer
 	bl_bfifo_init(&kp_fifo_buff, &kp_buff[0], MAX_PASS_LENGTH);
-	PASS[0] = UP;
-	PASS[1] = UP;
-	PASS[2] = UP;
-	PASS[3] = DOWN;
+	PASS[0] = KP_UP;
+	PASS[1] = KP_UP;
+	PASS[2] = KP_UP;
+	PASS[3] = KP_DOWN;
 	PASS_LENGTH = MIN_PASS_LENGTH;
 
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
@@ -86,49 +86,42 @@ int main(void)
 		//TO DO : wrapp it
 		__asm__ volatile ("wfi");
 
-		if(!bl_bfifo_is_empty(&kp_fifo_buff)){
-			//barier
-			__asm__ volatile ("isb");
-			__asm__ volatile ("dsb");
+		if(KP_CMD != KP_NONE){
+			if(KP_CMD == KP_MENU){
+				INPUT_PASS_LENGTH = 0;//discard input password
+				kp_screen_menu(&lcd);
+			}
+			else {
+				//disable exti btn interrupts
+				INPUT_PASS[INPUT_PASS_LENGTH] = KP_CMD;
+				INPUT_PASS_LENGTH++;
+				kp_print_insecure(&lcd, KP_CMD);
 
-			if (bl_bfifo_get(&kp_fifo_buff, &KP_CMD, 1) != BL_EOK)
-				kp_catch_error();
-			//barier
-			__asm__ volatile ("isb");
-			__asm__ volatile ("dsb");
-			//ISB;
-			lcd_print_symbol(&lcd, KP_CMD);
-			
-			// if(KP_CMD == KP_MENU){
-			// 	INPUT_PASS_LENGTH = 0;//discard input password
-			// 	kp_screen_menu(&lcd);
-			// }
-			// else {
-			// 	INPUT_PASS[INPUT_PASS_LENGTH] = KP_CMD;
-			// 	INPUT_PASS_LENGTH++;
-			// 	//TO DO : wrapp it
-			// 	lcd_print_symbol(&lcd, POINT); //print PASSWORD in secure form
-			// 	//if PASSWORD was written
-			// 	if(INPUT_PASS_LENGTH == PASS_LENGTH) {
-			// 		//block buttons
-			// 		//check if password is correct
-			// 		if (kp_check_plain(&PASS[0], &INPUT_PASS[0], PASS_LENGTH)){ //open door
-			// 			//disable interrupts
-			// 			kp_screen_welcome(&lcd);
-			// 		}
-			// 		else{
-			// 			//disable interrupts
-			// 			kp_screen_timer(&lcd, 10);    //delay for n s
-			// 		}
-			// 		INPUT_PASS_LENGTH = 0; //discard input password
-			// 		//enable interrupts
-			// 		kp_screen_input(&lcd);
-			// 	}
-			// 	else if(INPUT_PASS_LENGTH > PASS_LENGTH){
-			// 		//an error occured, restart pasword input
-			// 		INPUT_PASS_LENGTH = 0; //discard input password
-			// 		kp_screen_input(&lcd);
-			// 	}
+				//if PASSWORD was written
+				if(INPUT_PASS_LENGTH == PASS_LENGTH) {
+					//block buttons
+					//check if password is correct
+					if (kp_check_plain(&PASS[0], &INPUT_PASS[0], PASS_LENGTH)){ //open door
+						//disable interrupts
+						kp_screen_welcome(&lcd);
+					}
+					else{
+						//disable interrupts
+						kp_screen_timer(&lcd, 10);    //delay for n s
+					}
+					INPUT_PASS_LENGTH = 0; //discard input password
+					//enable interrupts
+					kp_screen_input(&lcd);
+				}
+				else if(INPUT_PASS_LENGTH > PASS_LENGTH){
+					//an error occured, restart pasword input
+					INPUT_PASS_LENGTH = 0; //discard input password
+					kp_screen_input(&lcd);
+				}
+				//enable exti btn interrupts
+			}
+
+			KP_CMD = KP_NONE;
 		}
 	}
 }

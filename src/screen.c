@@ -62,6 +62,25 @@ void kp_screen_menu(struct sk_lcd *lcd)
     lcd_print(lcd, " Menu");
 }
 
+
+void kp_print_insecure(struct sk_lcd *lcd, uint8_t cmd)
+{
+    uint8_t symbol = 0xFF; //black squre
+    switch(cmd){
+        case KP_UP    : symbol = UP; break;
+        case KP_DOWN  : symbol = DOWN; break;
+        case KP_RIGHT : symbol = RIGHT; break;
+        case KP_LEFT  : symbol = LEFT; break;
+        case KP_MENU  : symbol = POINT; break;
+    }
+    lcd_print_symbol(lcd, symbol);
+}
+
+void kp_print_secure(struct sk_lcd *lcd)
+{
+    lcd_print_symbol(lcd, POINT);
+}
+
 // #include "screen.h"
 //
 // // void kp_screen_empty(struct sk_lcd *lcd)

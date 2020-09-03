@@ -24,8 +24,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define KP_MENU 0xff
-
 #define MAX_PASS_LENGTH 8
 #define MIN_PASS_LENGTH 4
 
@@ -33,6 +31,8 @@
 #define KP_UNLOCKED_STATE  1
 #define KP_BLOCKED_STATE   2
 #define KP_SETTINGS_STATE  3
+
+extern uint8_t KP_CMD;
 
 extern uint8_t PASS[MAX_PASS_LENGTH];
 extern uint8_t PASS_LENGTH;
@@ -42,7 +42,14 @@ extern uint8_t INPUT_PASS_LENGTH;
 
 extern bl_bfifo_t kp_fifo_buff;
 
-
+// enum kp_buttons{
+//     KP_NONE     = 0,
+//     KP_UP       = 1,
+//     KP_DOWN     = 2,
+//     KP_RIGHT    = 3,
+//     KP_LEFT     = 4,
+//     KP_MENU     = 5
+// };
 
 //bool kp_check_plain(uint8_t *pass)
 

@@ -29,14 +29,16 @@ void exti15_10_isr(void)
 	if(exti_get_flag_status(EXTI11)){
 		if(sk_btn_debounce(mgl_btn_swt1)) //debouncing
 		{
-			bl_bfifo_put_single(&kp_fifo_buff, RIGHT);
+			KP_CMD = KP_RIGHT;
+			//bl_bfifo_put_single(&kp_fifo_buff, RIGHT);
 		}
 		exti_reset_request(EXTI11);
 	}
 
 	else if(exti_get_flag_status(EXTI15)){
 		if(sk_btn_debounce(mgl_btn_swt2)){ //debouncing
-			bl_bfifo_put_single(&kp_fifo_buff, KP_MENU);
+			KP_CMD = KP_MENU;
+			//bl_bfifo_put_single(&kp_fifo_buff, KP_MENU);
 		}
 		exti_reset_request(EXTI15);
 	}
@@ -47,19 +49,22 @@ void exti9_5_isr(void)
 	//check EXTI line
 	if(exti_get_flag_status(EXTI6)){
 		if(sk_btn_debounce(mgl_btn_swt4)) { //debouncing
-			bl_bfifo_put_single(&kp_fifo_buff, UP);
+			KP_CMD = KP_UP;
+			//bl_bfifo_put_single(&kp_fifo_buff, UP);
 		}
 		exti_reset_request(EXTI6);
 	}
 	else if(exti_get_flag_status(EXTI8)){
 		if(sk_btn_debounce(mgl_btn_swt5)){ //debouncing
-			bl_bfifo_put_single(&kp_fifo_buff, DOWN);
+			KP_CMD = KP_DOWN;
+			//bl_bfifo_put_single(&kp_fifo_buff, DOWN);
 		}
 		exti_reset_request(EXTI8);
 	}
 	else if(exti_get_flag_status(EXTI9)){
 		if(sk_btn_debounce(mgl_btn_swt3)){//debouncing
-			bl_bfifo_put_single(&kp_fifo_buff, LEFT);;
+			KP_CMD = KP_LEFT;
+			//bl_bfifo_put_single(&kp_fifo_buff, LEFT);;
 		}
 		exti_reset_request(EXTI9);
 	}
