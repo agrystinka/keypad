@@ -17,5 +17,6 @@ void kp_screen_empty(struct sk_lcd *lcd);
 void kp_screen_input(struct sk_lcd *lcd);
 void kp_screen_timer(struct sk_lcd *lcd, uint32_t delay_s);
 void kp_screen_welcome(struct sk_lcd *lcd);
+void kp_screen_menu(struct sk_lcd *lcd);
 
 #endif

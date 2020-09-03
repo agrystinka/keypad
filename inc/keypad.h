@@ -3,7 +3,7 @@
 
 #include "setup.h"
 #include "screen.h"
-//#include "bl_bufflib.h"
+#include "bl_bufflib.h"
 
 #include "mygpiolib.h"
 #include "timers.h"
@@ -24,14 +24,26 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define KP_MENU 255
+#define KP_MENU 0xff
+
+#define MAX_PASS_LENGTH 8
+#define MIN_PASS_LENGTH 4
 
 #define KP_LOCKED_STATE    0
 #define KP_UNLOCKED_STATE  1
 #define KP_BLOCKED_STATE   2
 #define KP_SETTINGS_STATE  3
 
-extern uint8_t kp_buff[8];
-extern uint8_t kp_num;
+extern uint8_t PASS[MAX_PASS_LENGTH];
+extern uint8_t PASS_LENGTH;
+
+extern uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+extern uint8_t INPUT_PASS_LENGTH;
+
+extern bl_bfifo_t kp_fifo_buff;
+
+
+
+//bool kp_check_plain(uint8_t *pass)
 
 #endif

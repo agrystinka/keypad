@@ -8,8 +8,7 @@
  #ifndef BL_ERRORS_H
  #define BL_ERRORS_H
 
-//If LOG == 1 put logging in stderr, else - no loging
- #define LOG 1
+ #define LOG 0
 
  enum bl_err {
  	/** No error, everything fine */
@@ -24,25 +23,23 @@
  	BL_EWRONGARG = -4,
  	/** BL_ENENARG */
  	BL_ENENARG = -5,
-  /** To much args */
-  BL_ERANGE = -6,
-  /** There is too few place in buffer to alocate your data
+    /** To much args */
+    BL_ERANGE = -6,
+    /** There is too few place in buffer to alocate your data
     * or buffer is already full */
-  BL_EFULL = -7,
-  /** FIFO buffer is empty */
-  BL_EEMPTY = -8
+    BL_EFULL = -7,
+    /** FIFO buffer is empty */
+    BL_EEMPTY = -8
  };
 
 // alias type for more concise definitions
 typedef enum bl_err bl_err;
 
 //If LOG == 1 put logging in stderr, else - no loging
-#if LOG == 1
-  #define _log(msg) do{ fprintf(stderr, msg); } while(0);
-#else
-  #define _log(msg) do{} while(0);
-#endif
 
-void bl_catch_err(bl_err err);
+#define _log(msg) do{} while(0);
+
+
+//void bl_catch_err(bl_err err);
 
 #endif

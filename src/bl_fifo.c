@@ -1,13 +1,13 @@
 #include "bl_bufflib.h"
 
-static inline bool _bl_bfifo_is_full(bl_bfifo_t *fifo)
+bool bl_bfifo_is_full(bl_bfifo_t *fifo)
 {
 	return (1 == fifo->isfull);
 }
 
-static inline bool _bl_bfifo_is_empty(bl_bfifo_t *fifo)
+bool bl_bfifo_is_empty(bl_bfifo_t *fifo)
 {
-	return (!_bl_bfifo_is_full(fifo)) && (fifo->rdidx == fifo->wridx);
+	return (!bl_bfifo_is_full(fifo)) && (fifo->rdidx == fifo->wridx);
 }
 
 bl_err bl_bfifo_init(bl_bfifo_t *fifo, uint8_t *buf, uint32_t buflen)
@@ -37,7 +37,7 @@ uint32_t bl_bfifo_cur_length(bl_bfifo_t *fifo)
     return fifo->buflen - (fifo->rdidx - fifo->wridx);
   else if(fifo->wridx > fifo->rdidx)
     return  fifo->wridx - fifo->rdidx;
-  else if(_bl_bfifo_is_full(fifo))
+  else if(bl_bfifo_is_full(fifo))
     return  fifo->buflen;
   else
     return 0;
@@ -68,13 +68,33 @@ bl_err bl_bfifo_put(bl_bfifo_t *fifo, uint8_t *barr, uint32_t len)
   if((bl_err) curlenght < 0)
     return curlenght;
 
-  if (_bl_bfifo_is_full(fifo) || len + curlenght > fifo->buflen)
+  if (bl_bfifo_is_full(fifo) || len + curlenght > fifo->buflen)
 		return BL_EFULL;
 
   if(BL_EOK != _bl_bfifo_write(fifo, barr, len))
     return BL_EUNKNOWN;
 
   return BL_EOK;
+}
+
+bl_err bl_bfifo_put_single(bl_bfifo_t *fifo, uint8_t num)
+{
+	if (NULL == fifo)
+		  return BL_EWRONGARG;
+
+	uint32_t curlenght = bl_bfifo_cur_length(fifo);
+
+	if (bl_bfifo_is_full(fifo) || 1 + curlenght > fifo->buflen)
+		  return BL_EFULL;
+
+	fifo->buf[(fifo->wridx + 1) % fifo->buflen] = num;
+
+	fifo->wridx = (fifo->wridx + 1) % fifo->buflen;
+
+	if(fifo->wridx == fifo->rdidx)
+		 fifo->isfull = true;
+
+	return BL_EOK;
 }
 
 static bl_err _bl_bfifo_read(bl_bfifo_t *fifo, uint8_t *barr, uint32_t len)
@@ -98,9 +118,6 @@ bl_err bl_bfifo_get(bl_bfifo_t *fifo, uint8_t *barr, uint32_t len)
 
   uint32_t curlenght = bl_bfifo_cur_length(fifo);
 
-  if((bl_err)curlenght < 0)
-    return curlenght;
-
   if(curlenght == 0)
     return BL_EEMPTY;
 
@@ -113,14 +130,14 @@ bl_err bl_bfifo_get(bl_bfifo_t *fifo, uint8_t *barr, uint32_t len)
   return BL_EOK;
 }
 
-void _printfifo(bl_bfifo_t *fifo)
-{
-	if (NULL != fifo) {
-		fprintf(stderr, "\t> (addr %p) BUF=%p LEN=%llu RWIDX=%llu WRIDX=%llu ISFULL=%c\n",
-						fifo, fifo->buf, (unsigned long long)fifo->buflen,
-						(unsigned long long)fifo->rdidx, (unsigned long long)fifo->wridx,
-						(fifo->isfull ? 'T' : 'F'));
-	} else {
-		fprintf(stderr, "\t!! NULL\n");
-	}
-}
+// void _printfifo(bl_bfifo_t *fifo)
+// {
+// 	if (NULL != fifo) {
+// 		fprintf(stderr, "\t> (addr %p) BUF=%p LEN=%llu RWIDX=%llu WRIDX=%llu ISFULL=%c\n",
+// 						fifo, fifo->buf, (unsigned long long)fifo->buflen,
+// 						(unsigned long long)fifo->rdidx, (unsigned long long)fifo->wridx,
+// 						(fifo->isfull ? 'T' : 'F'));
+// 	} else {
+// 		fprintf(stderr, "\t!! NULL\n");
+// 	}
+// }

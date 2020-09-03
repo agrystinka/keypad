@@ -62,6 +62,19 @@ uint32_t bl_bfifo_cur_length(bl_bfifo_t *fifo);
 bl_err bl_bfifo_put(bl_bfifo_t *fifo, uint8_t *barr, uint32_t len);
 
 /**
+ * bl_bfifo_put() - put (write) elements to FIFO buffer.
+ * @bl_bfifo_t *fifo: struct of FIFO buffer.
+ * @uint8_t *barr: elements which have to be put.
+ * @uint32_t len: amount of elements which have to be put.
+ *
+ * Return: bl_err.
+ *
+ * Function returns BL_EOK if it has been executed successfully.
+ * For more details read errors.h.
+ */
+bl_err bl_bfifo_put_single(bl_bfifo_t *fifo, uint8_t num);
+
+/**
  * bl_bfifo_get() - get (read) elements from FIFO buffer.
  * @bl_bfifo_t *fifo: struct of FIFO buffer.
  * @uint8_t *barr: buffer for elements which you want to get.
@@ -80,6 +93,9 @@ bl_err bl_bfifo_get(bl_bfifo_t *fifo, uint8_t *barr, uint32_t len);
  *
  * Return:  void.
  */
-void _printfifo(bl_bfifo_t *fifo);
+//void _printfifo(bl_bfifo_t *fifo);
+
+bool bl_bfifo_is_full(bl_bfifo_t *fifo);
+bool bl_bfifo_is_empty(bl_bfifo_t *fifo);
 
 #endif
