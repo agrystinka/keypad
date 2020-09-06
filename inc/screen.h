@@ -20,7 +20,8 @@ enum kp_buttons{
     KP_MENU     = 5
 };
 
-extern uint8_t PASS_LENGTH;
+extern uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+extern uint8_t INPUT_PASS_LENGTH;
 
 void kp_screen_empty(struct sk_lcd *lcd);
 void kp_screen_input(struct sk_lcd *lcd);
@@ -30,5 +31,7 @@ void kp_screen_menu(struct sk_lcd *lcd);
 
 void kp_print_insecure(struct sk_lcd *lcd, uint8_t cmd);
 void kp_print_secure(struct sk_lcd *lcd);
+
+void kp_input_password(struct sk_lcd *lcd)
 
 #endif

@@ -1,15 +1,29 @@
 #include "keypad.h"
 
-//Password
-uint8_t PASS[MAX_PASS_LENGTH];
-uint8_t PASS_LENGTH;
+//Passwords
+uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
+uint8_t USR_PASS[MAX_PASS_LENGTH];
 
-uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+uint8_t ADM_PASS_LENGTH = MIN_PASS_LENGTH;
+uint8_t ADM_PASS[MAX_PASS_LENGTH];
+
+uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
+uint8_t MENU_CODE[MAX_PASS_LENGTH];
+
 uint8_t INPUT_PASS_LENGTH = 0;
-
-//Input buffer
-bl_bfifo_t kp_fifo_buff;
-uint8_t kp_buff[MAX_PASS_LENGTH]; //for kp_fifo_buff initialization
+uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+// //Passwords
+// uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
+// uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 2, 3, 4};
+//
+// uint8_t ADM_PASS_LENGTH = MIN_PASS_LENGTH;
+// uint8_t ADM_PASS[MAX_PASS_LENGTH] = {5, 6, 7, 8};
+//
+// uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
+// uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0};
+//
+// uint8_t INPUT_PASS_LENGTH = 0;
+// uint8_t INPUT_PASS[MAX_PASS_LENGTH];
 
 uint8_t KP_CMD = KP_NONE;
 
@@ -27,17 +41,17 @@ struct sk_lcd lcd = {
 	.charmap_func = &sk_lcd_charmap_none
 };
 
-void kp_btn_enable(void)
-{
-	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
-	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
-}
-
-void kp_btn_disable(void)
-{
-	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
-	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
-}
+// void kp_btn_enable(void)
+// {
+// 	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
+// 	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
+// }
+//
+// void kp_btn_disable(void)
+// {
+// 	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
+// 	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
+// }
 
 bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
 {
@@ -47,21 +61,11 @@ bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
     return true;
 }
 
-void kp_catch_error(void)
-{
-	//an error occured, restart pasword input
-	INPUT_PASS_LENGTH = 0; //discard input password
-	kp_screen_input(&lcd);
-}
-
 int main(void)
 {
 	//enable leds
 	rcc_periph_clock_enable(RCC_GPIOD);  //leds
 	mgl_mode_setup_default(mgl_led_orange);
-	// mgl_mode_setup_default(mgl_led_green);
-	// mgl_mode_setup_default(mgl_led_blue);
-	// mgl_mode_setup_default(mgl_led_red);
 
 	mgl_set(mgl_led_orange); //switch on indicator of settings
 
@@ -80,63 +84,22 @@ int main(void)
 	sk_lcd_set_backlight(&lcd, 200);
 	lcd_custom_symb_load(&lcd);
 
-	//Initialization of input buffer
-	bl_bfifo_init(&kp_fifo_buff, &kp_buff[0], MAX_PASS_LENGTH);
-	PASS[0] = KP_UP;
-	PASS[1] = KP_UP;
-	PASS[2] = KP_UP;
-	PASS[3] = KP_DOWN;
-	PASS_LENGTH = MIN_PASS_LENGTH;
-
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
 
-	//Show input screen, keypad in in LOCKED mode
-	kp_screen_input(&lcd);
-
     while(1) {
-		//sleep untill interrupt occurs
-		//TO DO : wrapp it
-		__asm__ volatile ("wfi");
+		kp_input_password(&lcd);
+		//check if meny code
+		if(kp_check_plain(MENU_CODE, INPUT_PASS, MENU_CODE_LENGTH)){
+			//menu
 
-		if(KP_CMD != KP_NONE){
-			if(KP_CMD == KP_MENU){
-				KP_CMD = KP_NONE;
-				KP_MENU_ACTIVE = 1;
-				INPUT_PASS_LENGTH = 0;//discard input password
-				kp_screen_menu(&lcd);
-				KP_MENU_ACTIVE = 0;
-			}
-			else {
-				//disable exti btn interrupts
-				INPUT_PASS[INPUT_PASS_LENGTH] = KP_CMD;
-				INPUT_PASS_LENGTH++;
-				kp_print_insecure(&lcd, KP_CMD);
+		}
+		//check if user password
+		else if(kp_check_plain(USR_PASS, INPUT_PASS, USR_PASS_LENGTH)){
 
-				//if PASSWORD was written
-				if(INPUT_PASS_LENGTH == PASS_LENGTH) {
-					//block buttons
-					kp_btn_disable();
-					//check if password is correct
-					if (kp_check_plain(&PASS[0], &INPUT_PASS[0], PASS_LENGTH)){ //open door
-						kp_screen_welcome(&lcd);
-					}
-					else{
-						kp_screen_timer(&lcd, 10);    //delay for n s
-					}
-					INPUT_PASS_LENGTH = 0; //discard input password
-					//enable interrupts
-					kp_btn_enable();
-					kp_screen_input(&lcd);
-				}
-				else if(INPUT_PASS_LENGTH > PASS_LENGTH){
-					//an error occured, restart pasword input
-					INPUT_PASS_LENGTH = 0; //discard input password
-					kp_screen_input(&lcd);
-				}
-				//enable exti btn interrupts
-			}
-
-			KP_CMD = KP_NONE;
+			//action
+		}
+		else{
+			//access denied
 		}
 	}
 }
