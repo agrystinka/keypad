@@ -3,6 +3,7 @@
 
 #include "setup.h"
 #include "screen.h"
+#include "menu.h"
 #include "bl_bufflib.h"
 
 #include "mygpiolib.h"
@@ -41,7 +42,7 @@ extern uint8_t INPUT_PASS[MAX_PASS_LENGTH];
 extern uint8_t INPUT_PASS_LENGTH;
 
 extern bl_bfifo_t kp_fifo_buff;
-
+bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len);
 // enum kp_buttons{
 //     KP_NONE     = 0,
 //     KP_UP       = 1,

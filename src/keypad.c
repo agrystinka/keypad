@@ -27,6 +27,18 @@ struct sk_lcd lcd = {
 	.charmap_func = &sk_lcd_charmap_none
 };
 
+void kp_btn_enable(void)
+{
+	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
+	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
+}
+
+void kp_btn_disable(void)
+{
+	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
+	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
+}
+
 bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
 {
     for(uint8_t i = 0; i < len; i++)
@@ -88,8 +100,11 @@ int main(void)
 
 		if(KP_CMD != KP_NONE){
 			if(KP_CMD == KP_MENU){
+				KP_CMD = KP_NONE;
+				KP_MENU_ACTIVE = 1;
 				INPUT_PASS_LENGTH = 0;//discard input password
 				kp_screen_menu(&lcd);
+				KP_MENU_ACTIVE = 0;
 			}
 			else {
 				//disable exti btn interrupts
@@ -100,17 +115,17 @@ int main(void)
 				//if PASSWORD was written
 				if(INPUT_PASS_LENGTH == PASS_LENGTH) {
 					//block buttons
+					kp_btn_disable();
 					//check if password is correct
 					if (kp_check_plain(&PASS[0], &INPUT_PASS[0], PASS_LENGTH)){ //open door
-						//disable interrupts
 						kp_screen_welcome(&lcd);
 					}
 					else{
-						//disable interrupts
 						kp_screen_timer(&lcd, 10);    //delay for n s
 					}
 					INPUT_PASS_LENGTH = 0; //discard input password
 					//enable interrupts
+					kp_btn_enable();
 					kp_screen_input(&lcd);
 				}
 				else if(INPUT_PASS_LENGTH > PASS_LENGTH){

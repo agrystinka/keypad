@@ -45,6 +45,9 @@ void lcd_print_n(struct sk_lcd *lcd)
 		sk_lcd_cmd_setaddr(&lcd, 0x40, false);
 	}
 	else{
+		//copy second line to first
+		
+		//clear second line
 		//make delay for 1 s and clear display
 		delay_ms_systick(1000);
 		sk_lcd_cmd_clear(&lcd);
