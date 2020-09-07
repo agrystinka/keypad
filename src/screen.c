@@ -1,36 +1,37 @@
 #include "screen.h"
 #include "keypad.h"
 
-#define PASS_SHIFT 2
+// #define PASS_SHIFT 2
 
 void kp_screen_empty(struct sk_lcd *lcd)
 {
     sk_lcd_cmd_clear(lcd);
 }
 
-void kp_screen_input(struct sk_lcd *lcd)
+void kp_screen_input(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
 {
     sk_lcd_cmd_clear(lcd);
 
     sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    lcd_print_symbol(lcd, LOCKED);
-    lcd_print(lcd, " Password:");
+    lcd_print_symbol(lcd, STATE_SYMBOL);
+    lcd_print(lcd, instruction);
 
     sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT, false);
 
-    for(uint8_t i = 0;i < PASS_LENGTH; i++)
-        //lcd_print(lcd, "0");
+    for(uint8_t i = 0;i < passlength; i++)
         lcd_print(lcd, "_");
 }
 
-void kp_input_password(struct sk_lcd *lcd)
+void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
 {
     //fill password with zero, it is entry state
     for(int i = 0; i < passlength; i++)
-        pass[i] = 0;
+        INPUT_PASS[i] = 0;
+
     //index of input number
     uint8_t curnum = 0;
-    kp_screen_input(&lcd);
+	//show input password screen
+    kp_screen_input(lcd, passlength, instruction);
 
     while(1){
         __asm__ volatile ("wfi");
@@ -41,9 +42,9 @@ void kp_input_password(struct sk_lcd *lcd)
             }
             else{
                 if(KP_CMD == KP_UP)
-                    pass[curnum] = (pass[curnum] + 1) % 10;
+                    INPUT_PASS[curnum] = (INPUT_PASS[curnum] + 1) % 10;
                 else if(KP_CMD == KP_DOWN)
-                    pass[curnum] = (pass[curnum] - 1 + 10) % 10;
+                    INPUT_PASS[curnum] = (INPUT_PASS[curnum] - 1 + 10) % 10;
                 else{
                     //Hide previous symbol
                     sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT + curnum, false);
@@ -61,7 +62,7 @@ void kp_input_password(struct sk_lcd *lcd)
                         curnum = passlength - 1;
                 }
                 sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT + curnum, false);
-                lcd_print_int(lcd, pass[curnum], 0);
+                lcd_print_int(lcd, INPUT_PASS[curnum], 0);
                 KP_CMD = KP_NONE;
             }
         }
@@ -69,23 +70,43 @@ void kp_input_password(struct sk_lcd *lcd)
 }
 
 
-
-void kp_screen_timer(struct sk_lcd *lcd, uint32_t delay_s)
+void kp_screen_timer(struct sk_lcd *lcd, uint32_t delay_s, uint8_t line)
 {
-    //deny interrupts
+    //chose line
+    uint8_t addr = 0x00;
+    if(line != 0)
+        addr = 0x40;
+    //print timer
+    for(int i = delay_s; i >= 0; i--){
+        sk_lcd_cmd_setaddr(lcd, addr, false);
+        //to print in centr
+        lcd_print(lcd, "\t\t\t");
+        lcd_print_time(lcd, i);
+        delay_ms_systick(1000);
+    }
+}
+
+void kp_fail(struct sk_lcd *lcd)
+{
+    //double FAIL_DELAY
+    FAILS++;
+    //FAIL_DELAY = 130;
+    //if(CRYTICAL_FAILS == FAILS){}
+    //ask for ADM_PASS, red led on as signal tht smb tried to hack the keypad
+
     sk_lcd_cmd_clear(lcd);
 
     sk_lcd_cmd_setaddr(lcd, 0x00, false);
     lcd_print_symbol(lcd, LOCKED);
     lcd_print(lcd, " Access denied");
 
-    for(int i = delay_s; i >= 0; i--){
-        lcd_print_time(lcd, i);
-        delay_ms_systick(1000);
-    }
+    kp_screen_timer(lcd, FAIL_DELAY, 1);
+
+    FAIL_DELAY *= DELAY_COEFF;
 }
 
-void kp_screen_welcome(struct sk_lcd *lcd)
+
+void kp_screen_welcome(struct sk_lcd *lcd, uint32_t delay_s)
 {
     sk_lcd_cmd_clear(lcd);
 
@@ -93,29 +114,45 @@ void kp_screen_welcome(struct sk_lcd *lcd)
     lcd_print_symbol(lcd, UNLOCKED);
     lcd_print(lcd, " Welcome");
 
-    uint32_t delay_s = 10;
-    for(int i = delay_s; i >= 0; i--){
-        lcd_print_time(lcd, i);
-        delay_ms_systick(1000);
-    }
+    kp_screen_timer(lcd, delay_s, 1);
 }
 
-
-
-void kp_print_insecure(struct sk_lcd *lcd, uint8_t cmd)
+void kp_welcome(struct sk_lcd *lcd, bool mode)
 {
-    uint8_t symbol = 0xFF; //black squre
-    switch(cmd){
-        case KP_UP    : symbol = UP; break;
-        case KP_DOWN  : symbol = DOWN; break;
-        case KP_RIGHT : symbol = RIGHT; break;
-        case KP_LEFT  : symbol = LEFT; break;
-        case KP_MENU  : symbol = POINT; break;
+    //discard FAIL_DELAY
+    FAILS = 0;
+    FAIL_DELAY = MIN_DELAY_S;
+
+    //single action
+    if(mode){
+        mgl_set(mgl_led_green);
+        kp_screen_welcome(lcd, WELCOME_DELAY);
+        mgl_clear(mgl_led_green);
     }
-    lcd_print_symbol(lcd, symbol);
+    //switch state
+    else{
+        if(STATE_SYMBOL == LOCKED)
+            STATE_SYMBOL = UNLOCKED;
+        else
+            STATE_SYMBOL = LOCKED;
+        mgl_toggle(mgl_led_green);
+    }
 }
+//-----------------------------------------------------------------------------------------------------------
 
-void kp_print_secure(struct sk_lcd *lcd)
+
+
+void kp_menu(struct sk_lcd *lcd)
 {
-    lcd_print_symbol(lcd, POINT);
+    kp_input_password(lcd, MASTER_CODE_LENGTH, " Master code");
+    //check if correct MASTER_CODE
+    if(kp_check_plain(INPUT_PASS, MASTER_CODE, MASTER_CODE_LENGTH)){
+        //access to settings
+    }
+    else{
+        //access denied
+        //wait 2 min untill next MASTER_CODE input will be allowed
+        //go back to user pass input
+
+    }
 }

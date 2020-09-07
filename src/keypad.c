@@ -1,31 +1,32 @@
 #include "keypad.h"
 
 //Passwords
+//To open/close to keypad
 uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
-uint8_t USR_PASS[MAX_PASS_LENGTH];
-
-uint8_t ADM_PASS_LENGTH = MIN_PASS_LENGTH;
-uint8_t ADM_PASS[MAX_PASS_LENGTH];
-
+uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 2, 3, 4};
+//To change settings
+uint8_t MASTER_CODE_LENGTH = MIN_PASS_LENGTH;
+uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {5, 6, 7, 8};
+//To open menu(settings)
 uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
-uint8_t MENU_CODE[MAX_PASS_LENGTH];
-
+uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0};
+//To store input pass
 uint8_t INPUT_PASS_LENGTH = 0;
 uint8_t INPUT_PASS[MAX_PASS_LENGTH];
-// //Passwords
-// uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
-// uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 2, 3, 4};
-//
-// uint8_t ADM_PASS_LENGTH = MIN_PASS_LENGTH;
-// uint8_t ADM_PASS[MAX_PASS_LENGTH] = {5, 6, 7, 8};
-//
-// uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
-// uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0};
-//
-// uint8_t INPUT_PASS_LENGTH = 0;
-// uint8_t INPUT_PASS[MAX_PASS_LENGTH];
 
+//For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
+
+//Deleys and secure settings
+uint32_t WELCOME_DELAY = MIN_DELAY_S;
+uint32_t FAIL_DELAY = MIN_DELAY_S;
+uint8_t FAILS = 0;
+uint8_t CRYTICAL_FAILS = 10;
+uint8_t DELAY_COEFF = 2;
+
+//KEYPAD state
+uint8_t STATE_SYMBOL = LOCKED;
+bool KP_MODE = true;
 
 //display
 struct sk_lcd lcd = {
@@ -41,17 +42,17 @@ struct sk_lcd lcd = {
 	.charmap_func = &sk_lcd_charmap_none
 };
 
-// void kp_btn_enable(void)
-// {
-// 	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
-// 	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
-// }
-//
-// void kp_btn_disable(void)
-// {
-// 	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
-// 	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
-// }
+void kp_btn_enable(void)
+{
+	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
+	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
+}
+
+void kp_btn_disable(void)
+{
+	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
+	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
+}
 
 bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
 {
@@ -63,9 +64,12 @@ bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
 
 int main(void)
 {
-	//enable leds
+	///enable leds
 	rcc_periph_clock_enable(RCC_GPIOD);  //leds
 	mgl_mode_setup_default(mgl_led_orange);
+	//mgl_mode_setup_default(mgl_led_green);
+	// mgl_mode_setup_default(mgl_led_blue);
+	// mgl_mode_setup_default(mgl_led_red);
 
 	mgl_set(mgl_led_orange); //switch on indicator of settings
 
@@ -84,22 +88,29 @@ int main(void)
 	sk_lcd_set_backlight(&lcd, 200);
 	lcd_custom_symb_load(&lcd);
 
+	//Keypad simulation setup
+	mgl_mode_setup_default(mgl_led_green);
+	mgl_clear(mgl_led_green);
+
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
 
+	//Keypad initial settiings, that might be changet in MENU
+
+
     while(1) {
-		kp_input_password(&lcd);
-		//check if meny code
-		if(kp_check_plain(MENU_CODE, INPUT_PASS, MENU_CODE_LENGTH)){
-			//menu
-
-		}
+		__asm__ volatile ("wfi");
+		//always put pass to global array INPUT_PASS[MAX_PASS_LENGTH]
+		kp_input_password(&lcd, USR_PASS_LENGTH, " Password");
 		//check if user password
-		else if(kp_check_plain(USR_PASS, INPUT_PASS, USR_PASS_LENGTH)){
-
-			//action
+		if(kp_check_plain(USR_PASS, INPUT_PASS, USR_PASS_LENGTH)){
+			kp_welcome(&lcd, KP_MODE);
+		}
+		//check if menu code
+		else if(kp_check_plain(MENU_CODE, INPUT_PASS, MENU_CODE_LENGTH)){
+			//menu
 		}
 		else{
-			//access denied
+			kp_fail(&lcd);
 		}
 	}
 }

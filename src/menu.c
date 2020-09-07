@@ -1,12 +1,10 @@
-#include "menu.h"
-#include "keypad.h"
+// #include "menu.h"
+// #include "keypad.h"
 
 uint8_t KP_MENU_ACTIVE = 0;
 uint8_t activeline = 0;
 uint8_t topline = 0;
 uint8_t CHANGES = 0;
-
-
 
 // const char menu_line1[] = "Go back";
 // const char menu_line2[] = "Change deny delay";
@@ -42,54 +40,6 @@ static void kp_menu_lines(struct sk_lcd *lcd, char* line0, char* line1)
     sk_lcd_cmd_setaddr(lcd, 0x40, false);
     lcd_print(lcd, line1);
 }
-// 
-// kp_state kp_pass_input(struct sk_lcd *lcd, char* line0, char* line1)
-// {
-//     while(INPUT_PASS_LENGTH < PASS_LENGTH) {
-//         if(KP_CMD != KP_NONE){
-//             if(KP_CMD == KP_MENU){
-//                 if(!KP_MENU_ACTIVE)
-//                     kp_screen_menu(&lcd);
-//                 else
-//                 KP_CMD = KP_NONE;
-//                 KP_MENU_ACTIVE = 1;
-//                 INPUT_PASS_LENGTH = 0;//discard input password
-//                 kp_screen_menu(&lcd);
-//                 KP_MENU_ACTIVE = 0;
-//             }
-//             else {
-//                 //disable exti btn interrupts
-//                 INPUT_PASS[INPUT_PASS_LENGTH] = KP_CMD;
-//                 INPUT_PASS_LENGTH++;
-//                 kp_print_insecure(&lcd, KP_CMD);
-//
-//                 //if PASSWORD was written
-//                 if(INPUT_PASS_LENGTH == PASS_LENGTH) {
-//                     //block buttons
-//                     kp_btn_disable();
-//                     //check if password is correct
-//                     if (kp_check_plain(&PASS[0], &INPUT_PASS[0], PASS_LENGTH)){ //open door
-//                         return KP_ALLOW;
-//                     }
-//                     else{
-//                         return KP_DENY;
-//                     }
-//                     INPUT_PASS_LENGTH = 0; //discard input password
-//                     //enable interrupts
-//                     kp_btn_enable();
-//                     kp_screen_input(&lcd);
-//                 }
-//                 else if(INPUT_PASS_LENGTH > PASS_LENGTH){
-//                     //an error occured, restart pasword input
-//                     INPUT_PASS_LENGTH = 0; //discard input password
-//                     kp_screen_input(&lcd);
-//                 }
-//             }
-//
-//             KP_CMD = KP_NONE;
-//         }
-//     }
-// }
 
 void kp_screen_menu(struct sk_lcd *lcd)
 {
