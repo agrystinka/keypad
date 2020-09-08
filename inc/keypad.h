@@ -4,20 +4,7 @@
 #include "setup.h"
 #include "screen.h"
 #include "menu.h"
-
-// #include "mygpiolib.h"
-// #include "timers.h"
-// #include "display.h"
-// #include "errors.h"
-// #include "lcd_hd44780.h"
-//#include "intrinsics.h"
-
-// #include <libopencm3/cm3/cortex.h>
-// #include <libopencm3/cm3/nvic.h>
-// #include <libopencm3/cm3/scb.h>
-// #include <libopencm3/stm32/exti.h>
-// #include <libopencm3/stm32/gpio.h>
-// #include <libopencm3/stm32/rcc.h>
+//#include "password.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -39,8 +26,8 @@ enum kp_buttons{
     KP_MENU     = 5
 };
 
-// extern uint8_t USR_PASS_LENGTH;
-// extern uint8_t USR_PASS[MAX_PASS_LENGTH];
+extern uint8_t USR_PASS_LENGTH;
+extern uint8_t USR_PASS[MAX_PASS_LENGTH];
 //To change settings
 extern uint8_t MASTER_CODE_LENGTH;
 extern uint8_t MASTER_CODE[MAX_PASS_LENGTH];
@@ -50,6 +37,9 @@ extern uint8_t MASTER_CODE[MAX_PASS_LENGTH];
 //To store input pass
 extern uint8_t INPUT_PASS_LENGTH;
 extern uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+
+/* 0 - switch state; 1 - single action */
+extern bool KP_MODE ;
 
 
 //Deleys and secure settings

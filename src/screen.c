@@ -21,7 +21,7 @@ void kp_screen_input(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
     for(uint8_t i = 0;i < passlength; i++)
         lcd_print(lcd, "_");
 }
-
+//
 void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
 {
     //fill password with zero, it is entry state

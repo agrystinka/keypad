@@ -27,6 +27,7 @@ void lcd_print_n(struct sk_lcd *lcd);
 void lcd_print_symbol(struct sk_lcd *lcd, uint8_t c);
 
 void lcd_print_time(struct sk_lcd *lcd, uint32_t time_s);
+void lcd_print_empty(struct sk_lcd *lcd, uint8_t line);
 
 /*Display PWM*/
 void timer1_set_pwm_backlight(uint8_t val);

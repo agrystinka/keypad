@@ -127,3 +127,21 @@ void lcd_print_time(struct sk_lcd *lcd, uint32_t time_s)
 		lcd_print_int(lcd, time_s % 60, 0);
 	}
 }
+
+
+void lcd_print_empty(struct sk_lcd *lcd, uint8_t line)
+{
+	if(line == 0){
+		sk_lcd_cmd_clear(lcd);
+	}else if(line == 1){
+		sk_lcd_cmd_setaddr(lcd, 0x00, false);
+		for(int i = 0; i < 16; i++)
+			sk_lcd_putchar(lcd, ' ');
+		sk_lcd_cmd_setaddr(lcd, 0x00, false);
+	}else if(line == 2){
+		sk_lcd_cmd_setaddr(lcd, 0x40, false);
+		for(int i = 0; i < 16; i++)
+			sk_lcd_putchar(lcd, ' ');
+		sk_lcd_cmd_setaddr(lcd, 0x40, false);
+	}
+}

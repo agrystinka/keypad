@@ -54,6 +54,7 @@ void kp_btn_disable(void)
 	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
 }
 
+
 bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
 {
     for(uint8_t i = 0; i < len; i++)
