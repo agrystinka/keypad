@@ -139,20 +139,23 @@ void kp_welcome(struct sk_lcd *lcd, bool mode)
     }
 }
 //-----------------------------------------------------------------------------------------------------------
-
-
-
-void kp_menu(struct sk_lcd *lcd)
-{
-    kp_input_password(lcd, MASTER_CODE_LENGTH, " Master code");
-    //check if correct MASTER_CODE
-    if(kp_check_plain(INPUT_PASS, MASTER_CODE, MASTER_CODE_LENGTH)){
-        //access to settings
-    }
-    else{
-        //access denied
-        //wait 2 min untill next MASTER_CODE input will be allowed
-        //go back to user pass input
-
-    }
-}
+// void kp_main_settings(struct sk_lcd *lcd)
+// {
+//
+// }
+//
+//
+// void kp_menu(struct sk_lcd *lcd)
+// {
+//     kp_input_password(lcd, MASTER_CODE_LENGTH, " Master code");
+//     //check if correct MASTER_CODE
+//     if(kp_check_plain(INPUT_PASS, MASTER_CODE, MASTER_CODE_LENGTH)){
+//         //access to settings
+//     }
+//     else{
+//         //access denied
+//         //wait 2 min untill next MASTER_CODE input will be allowed
+//         //go back to user pass input
+//
+//     }
+// }

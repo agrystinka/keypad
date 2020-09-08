@@ -6,7 +6,7 @@ uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
 uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 2, 3, 4};
 //To change settings
 uint8_t MASTER_CODE_LENGTH = MIN_PASS_LENGTH;
-uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {5, 6, 7, 8};
+uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0}; //{5, 6, 7, 8};
 //To open menu(settings)
 uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
 uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0};
@@ -107,7 +107,7 @@ int main(void)
 		}
 		//check if menu code
 		else if(kp_check_plain(MENU_CODE, INPUT_PASS, MENU_CODE_LENGTH)){
-			//menu
+			kp_menu(&lcd);
 		}
 		else{
 			kp_fail(&lcd);

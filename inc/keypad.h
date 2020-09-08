@@ -3,25 +3,26 @@
 
 #include "setup.h"
 #include "screen.h"
+#include "menu.h"
 
-#include "mygpiolib.h"
-#include "timers.h"
-#include "display.h"
-#include "errors.h"
-#include "lcd_hd44780.h"
+// #include "mygpiolib.h"
+// #include "timers.h"
+// #include "display.h"
+// #include "errors.h"
+// #include "lcd_hd44780.h"
 //#include "intrinsics.h"
 
-#include <libopencm3/cm3/cortex.h>
-#include <libopencm3/cm3/nvic.h>
-#include <libopencm3/cm3/scb.h>
-#include <libopencm3/stm32/exti.h>
-#include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/rcc.h>
+// #include <libopencm3/cm3/cortex.h>
+// #include <libopencm3/cm3/nvic.h>
+// #include <libopencm3/cm3/scb.h>
+// #include <libopencm3/stm32/exti.h>
+// #include <libopencm3/stm32/gpio.h>
+// #include <libopencm3/stm32/rcc.h>
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <stddef.h>
+//#include <stddef.h>
 
 #define MAX_PASS_LENGTH   8
 #define MIDLE_PASS_LENGTH 6
