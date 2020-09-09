@@ -21,8 +21,8 @@ void kp_screen_input(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
     for(uint8_t i = 0;i < passlength; i++)
         lcd_print(lcd, "_");
 }
-//
-void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
+
+void kp_input_password(struct sk_lcd *lcd, uint8_t *pass, uint8_t passlength, char *instruction)
 {
     //fill password with zero, it is entry state
     for(int i = 0; i < passlength; i++)
@@ -68,6 +68,55 @@ void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction
         }
     }
 }
+
+
+//
+// void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
+// {
+//     //fill password with zero, it is entry state
+//     for(int i = 0; i < passlength; i++)
+//         INPUT_PASS[i] = 0;
+//
+//     //index of input number
+//     uint8_t curnum = 0;
+// 	//show input password screen
+//     kp_screen_input(lcd, passlength, instruction);
+//
+//     while(1){
+//         __asm__ volatile ("wfi");
+//         if(KP_CMD != KP_NONE){
+//             if(KP_CMD == KP_MENU){
+//                 KP_CMD = KP_NONE;
+//                 return;
+//             }
+//             else{
+//                 if(KP_CMD == KP_UP)
+//                     INPUT_PASS[curnum] = (INPUT_PASS[curnum] + 1) % 10;
+//                 else if(KP_CMD == KP_DOWN)
+//                     INPUT_PASS[curnum] = (INPUT_PASS[curnum] - 1 + 10) % 10;
+//                 else{
+//                     //Hide previous symbol
+//                     sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT + curnum, false);
+//                     lcd_print_symbol(lcd, POINT);
+//
+//                     //Change position
+//                     if(KP_CMD == KP_RIGHT)
+//                         curnum++;
+//                     else if(KP_CMD == KP_LEFT)
+//                         curnum--;
+//                     //Barriers
+//                     if(curnum < 0)
+//                         curnum = 0;
+//                     else if(curnum >= passlength)
+//                         curnum = passlength - 1;
+//                 }
+//                 sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT + curnum, false);
+//                 lcd_print_int(lcd, INPUT_PASS[curnum], 0);
+//                 KP_CMD = KP_NONE;
+//             }
+//         }
+//     }
+// }
 
 
 void kp_screen_timer(struct sk_lcd *lcd, uint32_t delay_s, uint8_t line)
@@ -138,24 +187,17 @@ void kp_welcome(struct sk_lcd *lcd, bool mode)
         mgl_toggle(mgl_led_green);
     }
 }
-//-----------------------------------------------------------------------------------------------------------
-// void kp_main_settings(struct sk_lcd *lcd)
-// {
-//
-// }
-//
-//
-// void kp_menu(struct sk_lcd *lcd)
-// {
-//     kp_input_password(lcd, MASTER_CODE_LENGTH, " Master code");
-//     //check if correct MASTER_CODE
-//     if(kp_check_plain(INPUT_PASS, MASTER_CODE, MASTER_CODE_LENGTH)){
-//         //access to settings
-//     }
-//     else{
-//         //access denied
-//         //wait 2 min untill next MASTER_CODE input will be allowed
-//         //go back to user pass input
-//
-//     }
-// }
+
+void kp_screen_message(struct sk_lcd *lcd, char *part1, char *part2)
+{
+    sk_lcd_cmd_clear(lcd);
+
+    if(part1 != NULL){
+        sk_lcd_cmd_setaddr(lcd, 0x00, false);
+        lcd_print(lcd, part1);
+    }
+    if(part2 != NULL){
+        sk_lcd_cmd_setaddr(lcd, 0x40, false);
+        lcd_print(lcd, part2);
+    }
+}
