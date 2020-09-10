@@ -1,27 +1,28 @@
 #include "menu.h"
+#include "menu_template.h"
+#include "password.h"
 #include <stdint.h>
 #include <stdio.h>
 
 uint8_t CHANGES = 0;
 
+//Failures settings (Security settings)-----------------------------------------
 static void kp_set_min_fail_delay(struct sk_lcd *lcd)
 {
     kp_screen_message(lcd, "Min fail delay", NULL);
-    set_1_60(lcd, &FAIL_DELAY);
+    set_1_60(lcd, &FAIL_DELAY_S);
+    FAIL_DELAY_CUR_S = FAIL_DELAY_S;
 }
 
 static void kp_set_fail_coef(struct sk_lcd *lcd)
 {
     uint8_t coef[5] = {1, 2, 4, 8, 10};
     kp_screen_message(lcd, "Coefficient", NULL);
-    scroll_num(lcd, &DELAY_COEFF, &coef[0], 5);
+    kp_scroll_num(lcd, &DELAY_COEFF, &coef[0], 5);
 }
 
 static void kp_set_fail_crit(struct sk_lcd *lcd)
 {
-    // sk_lcd_cmd_clear(lcd);
-    // sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    // lcd_print(lcd, "Fail coefficient");
     kp_screen_message(lcd, "Critical", NULL);
     while(1){
         if(KP_CMD == KP_MENU){
@@ -34,7 +35,7 @@ static void kp_set_fail_crit(struct sk_lcd *lcd)
 
 static void kp_fail_settings(struct sk_lcd *lcd)
 {
-    //init Menu Data
+    //init Fail Menu Data
     char menu_line0[] = " Go back";
     char menu_line1[] = " Minimal delay";
     char menu_line2[] = " Coefficient";
@@ -53,21 +54,20 @@ static void kp_fail_settings(struct sk_lcd *lcd)
     kp_menu_template(lcd, &fail_menu);
 }
 
+//Keypad work mode settings-----------------------------------------------------
 //single action
 static void kp_mode1_settings(struct sk_lcd *lcd)
 {
-    sk_lcd_cmd_clear(lcd);
-    sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    lcd_print(lcd, "Set delay:");
-    set_1_60(lcd, &WELCOME_DELAY);
-    //close door
+    kp_screen_message(lcd, "Welcome delay", NULL);
+    set_1_60(lcd, &WELCOME_DELAY_S);
+    //lock keypad - just in case
     KP_MODE = true;
 }
 
 //change state
 static void kp_mode2_settings(struct sk_lcd *lcd)
 {
-    //close door
+    //lock keypad - just in case
     KP_MODE = false;
 }
 
@@ -90,35 +90,52 @@ static void kp_mode_settings(struct sk_lcd *lcd)
 
     kp_menu_template(lcd, &mode_menu);
 }
-
-static void kp_main_change_pass(struct sk_lcd *lcd)
+//Password and Master code settings---------------------------------------------
+static void kp_set_length(struct sk_lcd *lcd, uint8_t *length, char *instruction)
 {
-    // //ask for USER PASS
-    // kp_input_password(lcd, USR_PASS_LENGTH, " Password");
-    // if(!kp_check_plain(INPUT_PASS, USR_PASS, USR_PASS_LENGTH))
-    //     return;
-    //
-    // //ask for MASTER_CODE
-    // kp_input_password(lcd, MASTER_CODE_LENGTH, " Master code");
-    // if(!kp_check_plain(INPUT_PASS, MASTER_CODE, MASTER_CODE_LENGTH))
-    //     return;
+    uint8_t coef[3] = {4, 6, 8};
+    kp_screen_message(lcd, instruction, NULL);
+    kp_scroll_num(lcd, length, &coef[0], 3);
+}
 
-    //set pass length (4...8)
-    //input NEW
-    uint8_t pass[MAX_PASS_LENGTH];
-    uint8_t copy[MAX_PASS_LENGTH];
-    kp_input_password(lcd, &pass[0], USR_PASS_LENGTH, " New password",  false);
+static void kp_main_change_pass(struct sk_lcd *lcd, uint8_t *pass, uint8_t *passlength)
+{
+    //for bufferization input new password
+    uint8_t length = 0;
+    uint8_t buf1[MAX_PASS_LENGTH];
+    uint8_t buf2[MAX_PASS_LENGTH];
 
-    //input NEW once more
-    kp_input_password(lcd, &copy[0], USR_PASS_LENGTH, " Repeat", false);
+    //in order to make system more secure
+    //it was decided to ask USER PASSWORD and MASTER CODE one more time
 
-    if(kp_check_plain(&copy[0], &pass[0], copy)){
-        for(int i = 0; i < USR_PASS_LENGTH; i++)
-            USR_PASS[i] = pass[i];
-        kp_screen_message(lcd, "  Password was", "    changed");
+    //ask for USER PASS
+    kp_input_password(lcd, &buf1[0], USR_PASS_LENGTH, " User pass", true);
+    if(!kp_check_plain(&buf1[0], USR_PASS, USR_PASS_LENGTH))
+        return;
+
+    //ask for MASTER_CODE
+    kp_input_password(lcd, &buf1[0], MASTER_CODE_LENGTH, " Master pass", true);
+    if(!kp_check_plain(&buf1[0], MASTER_CODE, MASTER_CODE_LENGTH))
+        return;
+
+    kp_set_length(lcd, &length, "Set length");
+    //input NEW password
+    kp_input_password(lcd, &buf1[0], length, "New pass:",  false);
+    //input NEW password once more
+    kp_input_password(lcd, &buf2[0], length, " Repeat", false);
+    //check if input passwords are equal
+    if(kp_check_plain(&buf1[0], &buf2[0], length)){
+        //change global variables
+        *passlength = length;
+        for(int i = 0; i < length; i++)
+            *(pass + i) = buf1[i];
+        //Message to user
+        kp_screen_message(lcd, "Success. Pass", "was changed");
     }else{
-        kp_screen_message(lcd, "  Error", NULL);
+        //Message to user
+        kp_screen_message(lcd, "Error. Pass", "was not changed");
     }
+    //Wait untill user press MENU button
     while (1){
         __asm__ volatile ("wfi");
         if(KP_CMD == KP_MENU)
@@ -126,8 +143,29 @@ static void kp_main_change_pass(struct sk_lcd *lcd)
     }
 }
 
+static void kp_main_change_usr_pass(struct sk_lcd *lcd)
+{
+    // char instruction0[] = "New password";
+    // char instruction1[] = "Password";
+    // char instruction2[] = "Error.Password";
+    // char *instructions[] = {instruction0, instruction1, instruction2};
+
+    kp_main_change_pass(lcd, &USR_PASS[0], &USR_PASS_LENGTH);
+}
+
+static void kp_main_change_master_code(struct sk_lcd *lcd)
+{
+    // char instruction0[] = "New mastercode";
+    // char instruction1[] = "Mastercode";
+    // char instruction2[] = "Error.Mastercode";
+    // char *instructions[] = {instruction0, instruction1, instruction2};
+
+    kp_main_change_pass(lcd, &MASTER_CODE[0], &MASTER_CODE_LENGTH);
+}
+
+//Main settings-----------------------------------------------------------------
 /**
- * kp_menu_template() - keypad main settings.
+ * kp_main_settings() - keypad main settings.
  *
  * Main setting contains such options:
  * Go back - exit from settings
@@ -147,7 +185,7 @@ static void kp_main_settings(struct sk_lcd *lcd)
     char menu_line3[] = " Work mode";
     char menu_line4[] = " Fail";
     char *menu_lines[] = {&menu_line0[0], &menu_line1[0], &menu_line2[0], &menu_line3[0], &menu_line4[0]};
-    void (*options[])(struct sk_lcd) = {NULL, kp_main_change_pass, NULL, NULL, kp_fail_settings};
+    void (*options[])(struct sk_lcd) = {NULL, kp_main_change_usr_pass, kp_main_change_master_code, kp_mode_settings, kp_fail_settings};
     uint8_t num_lines = 5;
 
     struct menu main_menu = {

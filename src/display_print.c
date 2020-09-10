@@ -128,7 +128,6 @@ void lcd_print_time(struct sk_lcd *lcd, uint32_t time_s)
 	}
 }
 
-
 void lcd_print_empty(struct sk_lcd *lcd, uint8_t line)
 {
 	if(line == 0){

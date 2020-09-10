@@ -1,5 +1,6 @@
 #include "menu_template.h"
 #include "keypad.h"
+//#include "intrinsics.h"
 
 /**
  * kp_show_active_line() - show point befor active line.
@@ -52,11 +53,12 @@ void kp_menu_template(struct sk_lcd *lcd, struct menu *menu)
             if(KP_CMD == KP_MENU){
                 //discard command
                 KP_CMD = KP_NONE;
-                //if GO_BACK or undefiened functions
-                if(menu->options[activeline] == NULL)
+                //GO BACK function is reservd as activeline == 0
+                 if(activeline == GO_BACK)
                     return;
-                (*(menu->options[activeline]))(lcd);
-                    break;
+                if(menu->options[activeline] != NULL)
+                    (*(menu->options[activeline]))(lcd);
+                break;
             }
             else{
                 if(KP_CMD == KP_UP)
@@ -110,6 +112,8 @@ void set_1_60(struct sk_lcd *lcd, uint8_t *num)
         lcd_print_int(lcd, number[i], 0);
 
     while(1){
+        //sleep until user press on button
+		__WFI;
         __asm__ volatile ("wfi");
         if(KP_CMD != KP_NONE){
             if(KP_CMD == KP_MENU){
@@ -138,12 +142,15 @@ void set_1_60(struct sk_lcd *lcd, uint8_t *num)
     }
 }
 
-void scroll_num(struct sk_lcd *lcd, uint8_t *num, uint8_t *options, uint8_t size)
+void kp_scroll_num(struct sk_lcd *lcd, uint8_t *num, uint8_t *options, uint8_t size)
 {
     uint8_t position = 0;
+    *num = options[position];
+    lcd_print_empty(lcd, 2);
+    lcd_print_int(lcd, options[position], 0);
     while(1){
-        lcd_print_empty(lcd, 2);
-        lcd_print_int(lcd, options[position], 0);
+        // lcd_print_empty(lcd, 2);
+        // lcd_print_int(lcd, options[position], 0);
         __asm__ volatile ("wfi");
         if(KP_CMD != KP_NONE){
             if(KP_CMD == KP_MENU){
@@ -155,6 +162,8 @@ void scroll_num(struct sk_lcd *lcd, uint8_t *num, uint8_t *options, uint8_t size
             }else if(KP_CMD == KP_DOWN){
                 position = (position - 1 + size) % size;
             }
+            lcd_print_empty(lcd, 2);
+            lcd_print_int(lcd, options[position], 0);
             KP_CMD = KP_NONE;
         }
     }

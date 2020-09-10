@@ -1,4 +1,5 @@
 #include "password.h"
+#include "intrinsics.h"
 
 bool kp_check_plain(uint8_t *pass1, uint8_t *pass2, uint8_t length)
 {
@@ -16,13 +17,13 @@ void kp_input_password(struct sk_lcd *lcd, uint8_t *pass, uint8_t passlength, ch
         pass[i] = 0;
 
     //index of input number
-    uint8_t curnum = 0;
+    int8_t curnum = 0;
 	//show input password screen
     kp_screen_input(lcd, passlength, instruction);
 
     while(1){
         //sleep untill interrupt occurs
-        __asm__ volatile ("wfi");
+		__WFI;
         //if interrupt occured
         if(KP_CMD != KP_NONE){
             if(KP_CMD == KP_MENU){

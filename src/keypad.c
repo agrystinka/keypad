@@ -1,32 +1,35 @@
 #include "keypad.h"
 //#include "cmd.h"
 
+//default keypad settings
+//some of them might be changed by user in keypad menu
 //Passwords
-//To open/close to keypad
+//To open/close the keypad
 uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
 uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 2, 3, 4};
-//To change settings
+//To change keypad settings
 uint8_t MASTER_CODE_LENGTH = MIN_PASS_LENGTH;
 uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0}; //{5, 6, 7, 8};
-//To open menu(settings)
+//To open menu(keypad settings)
 uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
-uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0};
-// //To store input pass
-// uint8_t INPUT_PASS_LENGTH = 0;
-// uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0};
 
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
 
 //Deleys and secure settings
-uint32_t WELCOME_DELAY = MIN_DELAY_S;
-uint32_t FAIL_DELAY = MIN_DELAY_S;
+uint32_t WELCOME_DELAY_S = 10;
+uint32_t FAIL_DELAY_S = 30;
+uint32_t FAIL_DELAY_CUR_S = 30;
 uint8_t FAILS = 0;
-uint8_t CRYTICAL_FAILS = 10;
+uint8_t CRYTICAL_FAILS_LOW = 3;
+uint8_t CRYTICAL_FAILS_HIGHT = 10;
 uint8_t DELAY_COEFF = 2;
 
 //KEYPAD state
-uint8_t STATE_SYMBOL = LOCKED;
+uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
+//if true - unlock keypad for WELCOME_DELAY seconds
+//if false -switch the STATE of keypad
 bool KP_MODE = true;
 
 //display
@@ -60,9 +63,6 @@ int main(void)
 	///enable leds
 	rcc_periph_clock_enable(RCC_GPIOD);  //leds
 	mgl_mode_setup_default(mgl_led_orange);
-	//mgl_mode_setup_default(mgl_led_green);
-	// mgl_mode_setup_default(mgl_led_blue);
-	// mgl_mode_setup_default(mgl_led_red);
 
 	mgl_set(mgl_led_orange); //switch on indicator of settings
 
@@ -79,19 +79,20 @@ int main(void)
 	sk_lcd_init(&lcd);
 	sk_lcd_cmd_onoffctl(&lcd, true, false, false); // display on, cursor off, blinking off
 	sk_lcd_set_backlight(&lcd, 200);
-	lcd_custom_symb_load(&lcd);
+	lcd_custom_symb_load(&lcd); //load spesial custom symbols to show the keypad state
 
 	//Keypad simulation setup
+	//For real keypad it must be changed with setup of solenoid, etc.
 	mgl_mode_setup_default(mgl_led_green);
 	mgl_clear(mgl_led_green);
 
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
 
-	//Keypad initial settiings, that might be changet in MENU
-
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
     while(1) {
-		__asm__ volatile ("wfi");
+		//sleep until user press on button
+		__WFI;
+		//__asm__ volatile ("wfi");
 		//always put pass to global array INPUT_PASS[MAX_PASS_LENGTH]
 		kp_input_password(&lcd, &pass[0], USR_PASS_LENGTH, " Password", true);
 		//check if user password
@@ -99,7 +100,7 @@ int main(void)
 			kp_welcome(&lcd, KP_MODE);
 		}
 		//check if menu code
-		else if(kp_check_plain(MENU_CODE, &pass[0], MENU_CODE_LENGTH)){
+		else if(kp_check_plain(MENU_CODE, &pass[0], USR_PASS_LENGTH)){
 			kp_menu(&lcd);
 		}
 		else{

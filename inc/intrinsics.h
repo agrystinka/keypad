@@ -5,18 +5,15 @@
  * compatible names
  */
 
-//#include "macro.h"
+/** WFI - Wait For Interrupt */
+inline __attribute__((always_inline)) void __WFI(void)
+{
+	__asm__ volatile ("wfi");
+}
 
-// 
-// /** WFI - Wait For Interrupt */
-// inline __attribute__((always_inline)) void __WFI(void)
-// {
-// 	__asm__ volatile ("wfi");
-// }
-//
-//
-// /** WFE - Wait For Event */
-// inline __attribute__((always_inline)) void __WFE(void)
-// {
-// 	__asm__ volatile ("wfe");
-// }
+
+/** WFE - Wait For Event */
+inline __attribute__((always_inline)) void __WFE(void)
+{
+	__asm__ volatile ("wfe");
+}
