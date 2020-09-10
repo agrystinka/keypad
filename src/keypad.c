@@ -1,4 +1,5 @@
 #include "keypad.h"
+//#include "cmd.h"
 
 //Passwords
 //To open/close to keypad
@@ -10,9 +11,9 @@ uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0}; //{5, 6, 7, 8};
 //To open menu(settings)
 uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
 uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0};
-//To store input pass
-uint8_t INPUT_PASS_LENGTH = 0;
-uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+// //To store input pass
+// uint8_t INPUT_PASS_LENGTH = 0;
+// uint8_t INPUT_PASS[MAX_PASS_LENGTH];
 
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
@@ -54,15 +55,6 @@ void kp_btn_disable(void)
 	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
 }
 
-
-bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
-{
-    for(uint8_t i = 0; i < len; i++)
-       if(password[i] != input[i])
-           return false;
-    return true;
-}
-
 int main(void)
 {
 	///enable leds
@@ -97,17 +89,17 @@ int main(void)
 
 	//Keypad initial settiings, that might be changet in MENU
 
-
+	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
     while(1) {
 		__asm__ volatile ("wfi");
 		//always put pass to global array INPUT_PASS[MAX_PASS_LENGTH]
-		kp_input_password(&lcd, USR_PASS_LENGTH, " Password");
+		kp_input_password(&lcd, &pass[0], USR_PASS_LENGTH, " Password", true);
 		//check if user password
-		if(kp_check_plain(USR_PASS, INPUT_PASS, USR_PASS_LENGTH)){
+		if(kp_check_plain(USR_PASS, &pass[0], USR_PASS_LENGTH)){
 			kp_welcome(&lcd, KP_MODE);
 		}
 		//check if menu code
-		else if(kp_check_plain(MENU_CODE, INPUT_PASS, MENU_CODE_LENGTH)){
+		else if(kp_check_plain(MENU_CODE, &pass[0], MENU_CODE_LENGTH)){
 			kp_menu(&lcd);
 		}
 		else{

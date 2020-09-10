@@ -1,207 +1,28 @@
 #include "menu.h"
-#include "keypad.h"
+#include <stdint.h>
+#include <stdio.h>
 
 uint8_t CHANGES = 0;
 
-static void kp_show_active_line(struct sk_lcd *lcd, bool line1, bool line2)
-{
-    sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    if(line1)
-        lcd_print_symbol(lcd, POINT);
-    else
-        lcd_print(lcd, " ");
-
-    sk_lcd_cmd_setaddr(lcd, 0x40, false);
-    if(line2)
-        lcd_print_symbol(lcd, POINT);
-    else
-        lcd_print(lcd, " ");
-}
-
-static void kp_menu_lines(struct sk_lcd *lcd, char* line0, char* line1)
-{
-    sk_lcd_cmd_clear(lcd);
-    sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    lcd_print(lcd, line0);
-    sk_lcd_cmd_setaddr(lcd, 0x40, false);
-    lcd_print(lcd, line1);
-}
-
-static void kp_menu_template(struct sk_lcd *lcd, struct menu *menu)
-{
-    uint8_t activeline = 0;
-    uint8_t topline = 0;
-
-    kp_menu_lines(lcd, menu->lines[topline], menu->lines[topline + 1]);
-    kp_show_active_line(lcd, true, false);
-
-    while(1){
-        __asm__ volatile ("wfi");
-        if(KP_CMD != KP_NONE){
-            if(KP_CMD == KP_MENU){
-                //discard command
-                KP_CMD = KP_NONE;
-                //if GO_BACK or undefiened functions
-                if(menu->options[activeline] == NULL)
-                    return;
-                (*(menu->options[activeline]))(lcd);
-                    break;
-            }
-            else{
-                if(KP_CMD == KP_UP)
-                    activeline--;
-                else  if(KP_CMD == KP_DOWN)
-                    activeline++;
-
-                //Barriers
-                if(activeline < 0)
-                    activeline = 0;
-                else if(activeline > menu->num - 1)
-                    activeline = menu->num - 1;
-
-                //Refresh MENU screen if it is necessary
-                if(activeline == topline){
-                    kp_show_active_line(lcd, true, false);
-                }
-                else if(activeline - topline == 1){
-                    kp_show_active_line(lcd, false, true);
-                }
-                else if(activeline - topline == 2){
-                    topline++;
-                    kp_menu_lines(lcd, menu->lines[topline], menu->lines[topline + 1]);
-                    kp_show_active_line(lcd, false, true);
-                }
-                else if(topline - activeline == 1){
-                    topline--;
-                    kp_menu_lines(lcd, menu->lines[topline], menu->lines[topline + 1]);
-                    kp_show_active_line(lcd, true, false);
-                }
-                //discard done command
-                KP_CMD = KP_NONE;
-            }
-        }
-    }
-}
-
-static void set_1_60(struct sk_lcd *lcd, uint8_t *num)
-{
-    uint8_t position = 10;
-    uint8_t digit = 0;
-    uint8_t mod = 6;
-
-    if(*num > 60)
-        *num = 60;
-    else if(*num < 1)
-        *num = 1;
-
-    lcd_print_empty(lcd, 2);
-    lcd_print(lcd, "\t\t\t");
-    lcd_print_int(lcd, num, 0);
-
-    while(1){
-        __asm__ volatile ("wfi");
-        if(KP_CMD != KP_NONE){
-            if(KP_CMD == KP_MENU){
-                KP_CMD = KP_NONE;
-                return;
-            }else if(KP_CMD == KP_UP){
-
-                // digit = (digit + 1) % mod;
-                // *num = *num / (position * 10) * (position * 10) + *num % position + digit * position + 1;
-            }else if(KP_CMD == KP_DOWN){
-                digit = (digit - 1 + mod) % mod;
-                *num = *num / (position * 10) * (position * 10) + *num % position + digit * position + 1;
-            }else if(KP_CMD == KP_LEFT && position == 1){
-                position = 10;
-                digit = *num / 10;
-                mod = 6;
-            }else if(KP_CMD == KP_RIGHT && position == 10){
-                digit = *num % 10;
-                position = 1;
-                mod = 10;
-            }
-            lcd_print_empty(lcd, 2);
-            lcd_print(lcd, "\t\t\t");
-            lcd_print_int(lcd, *num, 0);
-            KP_CMD = KP_NONE;
-        }
-    }
-}
-
-// static void set_1_60(struct sk_lcd *lcd, uint8_t *num)
-// {
-//     uint8_t number[2] = {0};
-//     uint8_t size = 2;
-//     uint8_t min = 1;
-//     uint8_t max = 60;
-//     uint8_t mod = 6;
-//
-//     if(*num < min)
-//         *num = min;
-//     else if(*num > max)
-//         *num = max;
-//
-//     //put num to array
-//     uint8_t position = size - 1;
-//     uint8_t copy = *num;
-//     while(position >= 0 || copy > 0){
-//         number[position] = copy % 10;
-//         copy /= 10;
-//         position--;
-//     }
-//     position = 0;
-//     sk_lcd_cmd_setaddr(lcd, 0x40 + 5, false);
-//     for(int i = 0; i < size; i++)
-//         lcd_print_int(lcd, number[i], 0);
-//     while(1){
-//         __asm__ volatile ("wfi");
-//         if(KP_CMD != KP_NONE){
-//             if(KP_CMD == KP_MENU){
-//                 //array to number
-//                 position = size - 1;
-//                 *num = 0;
-//                 while(position >= 0){
-//                     *num = *num * 10 + number[position] + 1;
-//                     position--;
-//                 }
-//                 KP_CMD = KP_NONE;
-//                 return;
-//             }else if(KP_CMD == KP_UP){
-//                 number[position] = (number[position] + 1) % mod;
-//                 // *num = *num / (position * 10) * (position * 10) + *num % position + digit * position + 1;
-//             }else if(KP_CMD == KP_DOWN){
-//                 number[position] = (number[position] - 1 + 10) % mod;
-//                 //*num = *num / (position * 10) * (position * 10) + *num % position + digit * position + 1;
-//             }else if(KP_CMD == KP_LEFT && position == 1){
-//                 position = 0;
-//                 mod = 6;
-//             }else if(KP_CMD == KP_RIGHT && position == 0){
-//                 position = 1;
-//                 mod = 10;
-//             }
-//
-//             sk_lcd_cmd_setaddr(lcd, 0x40 + 5 + position, false);
-//             lcd_print_int(lcd, number[position], 0);
-//             KP_CMD = KP_NONE;
-//         }
-//     }
-// }
-
 static void kp_set_min_fail_delay(struct sk_lcd *lcd)
 {
-    sk_lcd_cmd_clear(lcd);
-    sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    lcd_print(lcd, "Min fail delay");
-
+    kp_screen_message(lcd, "Min fail delay", NULL);
     set_1_60(lcd, &FAIL_DELAY);
 }
 
 static void kp_set_fail_coef(struct sk_lcd *lcd)
 {
-    sk_lcd_cmd_clear(lcd);
-    sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    lcd_print(lcd, "Fail coefficient");
+    uint8_t coef[5] = {1, 2, 4, 8, 10};
+    kp_screen_message(lcd, "Coefficient", NULL);
+    scroll_num(lcd, &DELAY_COEFF, &coef[0], 5);
+}
 
+static void kp_set_fail_crit(struct sk_lcd *lcd)
+{
+    // sk_lcd_cmd_clear(lcd);
+    // sk_lcd_cmd_setaddr(lcd, 0x00, false);
+    // lcd_print(lcd, "Fail coefficient");
+    kp_screen_message(lcd, "Critical", NULL);
     while(1){
         if(KP_CMD == KP_MENU){
             KP_CMD = KP_NONE;
@@ -209,13 +30,6 @@ static void kp_set_fail_coef(struct sk_lcd *lcd)
         }
         KP_CMD = KP_NONE;
     }
-}
-
-static void kp_set_fail_crit(struct sk_lcd *lcd)
-{
-    sk_lcd_cmd_clear(lcd);
-    sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    lcd_print(lcd, "Fail coefficient");
 }
 
 static void kp_fail_settings(struct sk_lcd *lcd)
@@ -291,19 +105,16 @@ static void kp_main_change_pass(struct sk_lcd *lcd)
 
     //set pass length (4...8)
     //input NEW
-    kp_input_password(lcd, USR_PASS_LENGTH, " New password");
-
-    //copy to temp array
+    uint8_t pass[MAX_PASS_LENGTH];
     uint8_t copy[MAX_PASS_LENGTH];
-    for(int i = 0; i < USR_PASS_LENGTH; i++)
-        copy[i] = INPUT_PASS[i];
+    kp_input_password(lcd, &pass[0], USR_PASS_LENGTH, " New password",  false);
 
     //input NEW once more
-    kp_input_password(lcd, USR_PASS_LENGTH, " Repeat");
+    kp_input_password(lcd, &copy[0], USR_PASS_LENGTH, " Repeat", false);
 
-    if(kp_check_plain(copy, INPUT_PASS, copy)){
+    if(kp_check_plain(&copy[0], &pass[0], copy)){
         for(int i = 0; i < USR_PASS_LENGTH; i++)
-            USR_PASS[i] = INPUT_PASS[i];
+            USR_PASS[i] = pass[i];
         kp_screen_message(lcd, "  Password was", "    changed");
     }else{
         kp_screen_message(lcd, "  Error", NULL);
@@ -315,6 +126,18 @@ static void kp_main_change_pass(struct sk_lcd *lcd)
     }
 }
 
+/**
+ * kp_menu_template() - keypad main settings.
+ *
+ * Main setting contains such options:
+ * Go back - exit from settings
+ * Password - change user password
+ * Master code - change umaster code
+ * Work mode - change keypad work mode
+ * Fail - change security settings
+ *
+ * Return: void.
+ */
 static void kp_main_settings(struct sk_lcd *lcd)
 {
     //init Menu Data
@@ -338,9 +161,10 @@ static void kp_main_settings(struct sk_lcd *lcd)
 
 void kp_menu(struct sk_lcd *lcd)
 {
+    uint8_t pass[MAX_PASS_LENGTH];
     //check if user have permissions to use Settings
-    kp_input_password(lcd, MASTER_CODE_LENGTH, " Master code");
+    kp_input_password(lcd, &pass[0], MASTER_CODE_LENGTH, " Master code", true);
     //check if correct MASTER_CODE
-    if(kp_check_plain(INPUT_PASS, MASTER_CODE, MASTER_CODE_LENGTH))
+    if(kp_check_plain(&pass[0], MASTER_CODE, MASTER_CODE_LENGTH))
         kp_main_settings(lcd);
 }

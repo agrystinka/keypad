@@ -1,10 +1,11 @@
 #ifndef KP_KEYPAD_H
 #define KP_KEYPAD_H
 
+#include "cmd.h"
 #include "setup.h"
 #include "screen.h"
 #include "menu.h"
-//#include "password.h"
+#include "password.h"
 
 #include <stdint.h>
 #include <stdio.h>
@@ -17,15 +18,6 @@
 
 #define MIN_DELAY_S       10
 
-enum kp_buttons{
-    KP_NONE     = 0,
-    KP_UP       = 1,
-    KP_DOWN     = 2,
-    KP_RIGHT    = 3,
-    KP_LEFT     = 4,
-    KP_MENU     = 5
-};
-
 extern uint8_t USR_PASS_LENGTH;
 extern uint8_t USR_PASS[MAX_PASS_LENGTH];
 //To change settings
@@ -35,8 +27,8 @@ extern uint8_t MASTER_CODE[MAX_PASS_LENGTH];
 // extern uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
 // extern uint8_t MENU_CODE[MAX_PASS_LENGTH];
 //To store input pass
-extern uint8_t INPUT_PASS_LENGTH;
-extern uint8_t INPUT_PASS[MAX_PASS_LENGTH];
+// extern uint8_t INPUT_PASS_LENGTH;
+// extern uint8_t INPUT_PASS[MAX_PASS_LENGTH];
 
 /* 0 - switch state; 1 - single action */
 extern bool KP_MODE ;

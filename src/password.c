@@ -1,19 +1,19 @@
 #include "password.h"
 
-bool kp_check_plain(uint8_t *password, uint8_t *input, uint8_t len)
+bool kp_check_plain(uint8_t *pass1, uint8_t *pass2, uint8_t length)
 {
-    for(uint8_t i = 0; i < len; i++)
-       if(password[i] != input[i])
+    for(uint8_t i = 0; i < length; i++)
+       if(pass1[i] != pass2[i])
            return false;
     return true;
 }
 
 
-void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction)
+void kp_input_password(struct sk_lcd *lcd, uint8_t *pass, uint8_t passlength, char *instruction, bool secure)
 {
     //fill password with zero, it is entry state
     for(int i = 0; i < passlength; i++)
-        INPUT_PASS[i] = 0;
+        pass[i] = 0;
 
     //index of input number
     uint8_t curnum = 0;
@@ -21,7 +21,9 @@ void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction
     kp_screen_input(lcd, passlength, instruction);
 
     while(1){
+        //sleep untill interrupt occurs
         __asm__ volatile ("wfi");
+        //if interrupt occured
         if(KP_CMD != KP_NONE){
             if(KP_CMD == KP_MENU){
                 KP_CMD = KP_NONE;
@@ -29,14 +31,15 @@ void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction
             }
             else{
                 if(KP_CMD == KP_UP)
-                    INPUT_PASS[curnum] = (INPUT_PASS[curnum] + 1) % 10;
+                    pass[curnum] = (pass[curnum] + 1) % 10;
                 else if(KP_CMD == KP_DOWN)
-                    INPUT_PASS[curnum] = (INPUT_PASS[curnum] - 1 + 10) % 10;
+                    pass[curnum] = (pass[curnum] - 1 + 10) % 10;
                 else{
                     //Hide previous symbol
-                    sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT + curnum, false);
-                    lcd_print_symbol(lcd, POINT);
-
+                    if(secure){
+                        sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT + curnum, false);
+                        lcd_print_symbol(lcd, POINT);
+                    }
                     //Change position
                     if(KP_CMD == KP_RIGHT)
                         curnum++;
@@ -48,8 +51,9 @@ void kp_input_password(struct sk_lcd *lcd, uint8_t passlength, char *instruction
                     else if(curnum >= passlength)
                         curnum = passlength - 1;
                 }
+                //Refresh output on display
                 sk_lcd_cmd_setaddr(lcd, 0x40 + PASS_SHIFT + curnum, false);
-                lcd_print_int(lcd, INPUT_PASS[curnum], 0);
+                lcd_print_int(lcd, pass[curnum], 0);
                 KP_CMD = KP_NONE;
             }
         }
