@@ -4,57 +4,35 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/** Used as flag to make system known if it is necessary
-* to rewrite non-volitile memory with new SETTING DATA*/
 bool CHANGES = false;
 
 //Failures settings (Security settings)-----------------------------------------
 static void kp_set_min_fail_delay(struct sk_lcd *lcd)
 {
-    uint32_t copy = FAIL_DELAY_S;
-
     kp_screen_message(lcd, "Min fail delay", NULL);
     set_1_60(lcd, &FAIL_DELAY_S);
     FAIL_DELAY_CUR_S = FAIL_DELAY_S;
-
-    if(copy != FAIL_DELAY_S)
-        CHANGES = true;
 }
 
 static void kp_set_fail_coef(struct sk_lcd *lcd)
 {
-    uint8_t copy = DELAY_COEFF;
-
     uint8_t coef[5] = {1, 2, 4, 8, 10};
     kp_screen_message(lcd, "Coefficient", NULL);
     kp_scroll_num(lcd, &DELAY_COEFF, &coef[0], 5);
-
-    if(copy != DELAY_COEFF)
-        CHANGES = true;
 }
 
 static void kp_set_fail_crit_high(struct sk_lcd *lcd)
 {
-    uint8_t copy = CRYTICAL_FAILS_HIGHT;
-
     uint8_t coef[3] = {3, 5, 10};
     kp_screen_message(lcd, "Critical high", NULL);
     kp_scroll_num(lcd, &CRYTICAL_FAILS_HIGHT, &coef[0], 3);
-
-    if(copy != CRYTICAL_FAILS_HIGHT)
-        CHANGES = true;
 }
 
 static void kp_set_fail_crit_low(struct sk_lcd *lcd)
 {
-    uint8_t copy = CRYTICAL_FAILS_LOW;
-
     uint8_t coef[3] = {1, 3, 5};
     kp_screen_message(lcd, "Critical low", NULL);
     kp_scroll_num(lcd, &CRYTICAL_FAILS_LOW, &coef[0], 3);
-
-    if(copy != CRYTICAL_FAILS_LOW)
-        CHANGES = true;
 }
 
 static void kp_fail_settings(struct sk_lcd *lcd)
@@ -83,14 +61,10 @@ static void kp_fail_settings(struct sk_lcd *lcd)
 //single action
 static void kp_mode1_settings(struct sk_lcd *lcd)
 {
-    uint32_t copy = WELCOME_DELAY_S;
     kp_screen_message(lcd, "Welcome delay", NULL);
     set_1_60(lcd, &WELCOME_DELAY_S);
     //lock keypad - just in case
     KP_MODE = true;
-
-    if(copy != WELCOME_DELAY_S)
-        CHANGES = true;
 }
 
 //change state
@@ -117,10 +91,7 @@ static void kp_mode_settings(struct sk_lcd *lcd)
         .options = &options[0]
     };
 
-    bool copy = KP_MODE;
     kp_menu_template(lcd, &mode_menu);
-    if(copy != KP_MODE)
-        CHANGES = true;
 }
 //Password and Master code settings---------------------------------------------
 static void kp_set_length(struct sk_lcd *lcd, uint8_t *length, char *instruction)
@@ -163,7 +134,6 @@ static void kp_main_change_pass(struct sk_lcd *lcd, uint8_t *pass, uint8_t *pass
             *(pass + i) = buf1[i];
         //Message to user
         kp_screen_message(lcd, "Success. Pass", "was changed");
-        CHANGES = true;
     }else{
         //Message to user
         kp_screen_message(lcd, "Error. Pass", "was not changed");
@@ -228,16 +198,7 @@ void kp_menu(struct sk_lcd *lcd)
     //check if correct MASTER_CODE
     if(kp_check_plain(&pass[0], MASTER_CODE, MASTER_CODE_LENGTH)){
         kp_main_settings(lcd);
-        //show wait screen
-        //rewrite non-volitile embeded flash memory if it is necessary
-        if(CHANGES)
-            write_global_data_to_flash();
-        //read_global_data_from_flash();
-
+        //if(CHANGES)
             //rewrite flash
-
-        //refresh security data after settings
-        FAILS = CRYTICAL_FAILS_LOW;
-        FAIL_DELAY_CUR_S = FAIL_DELAY_S;
     }
 }

@@ -60,7 +60,7 @@ void kp_btn_disable(void)
 	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
 	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
 }
-//
+// 
 //
 // void pack_global_data(uint32_t *buffer)
 // {
@@ -177,7 +177,6 @@ int main(void)
 
 	//Write default Settings to FLASH
 	//Read setting from flash
-	//read_global_data_from_flash();
 
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
 
