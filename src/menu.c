@@ -230,9 +230,13 @@ void kp_menu(struct sk_lcd *lcd)
         kp_main_settings(lcd);
         //show wait screen
         //rewrite non-volitile embeded flash memory if it is necessary
-        if(CHANGES)
+        if(CHANGES){
+            kp_btn_disable();
             write_global_data_to_flash();
-        //read_global_data_from_flash();
+            kp_btn_enable();
+        }
+        //     write_global_data_to_flash();
+        // //read_global_data_from_flash();
 
             //rewrite flash
 

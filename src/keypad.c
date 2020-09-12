@@ -6,7 +6,7 @@
 //Passwords
 //To open/close the keypad
 uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
-uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 0, 3, 4};
+uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 0, 3, 5};
 //To change keypad settings
 uint8_t MASTER_CODE_LENGTH = MIN_PASS_LENGTH;
 uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0}; //{5, 6, 7, 8};
@@ -35,6 +35,22 @@ bool KP_MODE = true;
 bool DEFAULT_SETTINGS = true;
 //uint32_t GLOBAL_DATA[20];
 
+struct kp keypad = {
+    .usrpass = {1, 0, 3, 5},
+    .mstrpass = {0, 0, 0, 0},
+    .menucode = {0, 0, 0, 0},
+    .delay_open_s = 10,
+    .delay_wait_s = 30,
+    .delay_wait_cur_s = 30,
+    .fails = 0,
+    .fails_low = 3,
+    .fails_high = 10,
+    .usrpass_length = 4,
+    .usrpass_length = 4,
+    .mode = true,
+    .state = false
+};
+
 //display
 struct sk_lcd lcd = {
 	.pin_group_data = &sk_io_lcd_data,
@@ -49,17 +65,17 @@ struct sk_lcd lcd = {
 	.charmap_func = &sk_lcd_charmap_none
 };
 
-void kp_btn_enable(void)
-{
-	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
-	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
-}
-
-void kp_btn_disable(void)
-{
-	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
-	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
-}
+// void kp_btn_enable(void)
+// {
+// 	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
+// 	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
+// }
+//
+// void kp_btn_disable(void)
+// {
+// 	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
+// 	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
+// }
 
 int main(void)
 {
@@ -90,6 +106,10 @@ int main(void)
 	//setup as LOCKED
 	mgl_clear(mgl_led_green);
 
+	//Write default Settings to FLASH
+	write_global_data_to_flash();
+
+	WELCOME_DELAY_S = 10;
 	//Read setting from flash
 	read_global_data_from_flash();
 
@@ -99,8 +119,7 @@ int main(void)
 
     while(1) {
 		//sleep until user press on button
-		__WFI;
-		//__asm__ volatile ("wfi");
+		__WFI();
 		//always put pass to global array INPUT_PASS[MAX_PASS_LENGTH]
 		kp_input_password(&lcd, &pass[0], USR_PASS_LENGTH, " Password", true);
 		//check if user password

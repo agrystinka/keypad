@@ -108,10 +108,10 @@ void read_global_data_from_flash(void)
         addr += sizeof(data[i]);
 		delay_ms_systick(1);
     }
-	WELCOME_DELAY_S = 10;
-	for(uint32_t i = 0; i < GLOBAL_DATA_SIZE; i++){
-        if(data[i] != 0xffffffff)
-			WELCOME_DELAY_S = 5;
-    }
+	//WELCOME_DELAY_S = 10;
+	// for(uint32_t i = 0; i < GLOBAL_DATA_SIZE; i++){
+    //     if(data[i] == 0xffffffff)
+	// 		WELCOME_DELAY_S = 5;
+    // }
     //unpack_global_data(&data[0]);
 }
