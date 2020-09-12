@@ -1,10 +1,10 @@
 # The main (project top) file without .c
-TARGET = keypad
+TARGET = first_flash
 # All source files go here:
 SRCS = $(TARGET).c
 # other sources added like that
 SRCS += mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c embflash.c
-SRCS += menu_template.c setup.c screen.c exti_on_btn.c menu.c password.c  #menu.c
+SRCS +=  setup.c screen.c #menu.c
 
 # User defines
 DEFINES = GLSK_BOARD=1

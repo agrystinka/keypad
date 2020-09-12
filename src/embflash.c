@@ -1,11 +1,10 @@
-//#include "embflash.h"
 #include "keypad.h"
 
 #define GLOBAL_DATA_SIZE 9
 #define ADRESS_FLASH 0x080E0000
 //#define SECTOR_FLASH 2
 
-static void pack_global_data(uint32_t *buffer)
+void pack_global_data(uint32_t *buffer)
 {
 	//uint32_t *pointer32 = buffer;
 	//uint8_t *pointer8 = (uint8_t *) buffer;
@@ -38,7 +37,7 @@ static void pack_global_data(uint32_t *buffer)
 }
 
 
-static void unpack_global_data(uint32_t *buffer)
+void unpack_global_data(uint32_t *buffer)
 {
 	//uint32_t *pointer32 = buffer;
 	//uint8_t *pointer8 = (uint8_t *) buffer;
@@ -69,21 +68,7 @@ static void unpack_global_data(uint32_t *buffer)
 		KP_MODE = false;
 	//total: 12 + 16 + 2 + 5 = 35 byte = 9 words
 }
-// void rewrite_flash(uint32_t *buffer, uint32_t size, uint8_t)
-// {
-// 	//erase sector befor writing to it
-// 	flash_erase_sector(15, 0);//sector - 0, program size - 8bit (0)
-// 	//Check that no main Flash memory operation is ongoing
-// 	//flash_wait_for_last_operation();
-//
-//
-// 	//set PG to FLASH_CR,
-// 	//perform the data write operation (32 bits)
-// 	//wait for the BSY bit to be cleared.
-//     for(uint32_t i = 0; i < size; i++);
-//         //flash_program_word(uint32_t address, uint32_t data);
-//
-// }
+
 
 void write_global_data_to_flash(void)
 {
@@ -107,20 +92,26 @@ void write_global_data_to_flash(void)
         //adrr += 4;
         addr += sizeof(data[i]);
     }
-
+	flash_lock();
 }
 
 
 void read_global_data_from_flash(void)
 {
 	uint32_t data[GLOBAL_DATA_SIZE];
-    // //read data from flash
+	//pack_global_data(&data[0]);
+    // read data from flash
     uint32_t *addr;
     addr = ADRESS_FLASH;
     for(uint32_t i = 0; i < GLOBAL_DATA_SIZE; i++){
         data[i] = *addr;
         addr += sizeof(data[i]);
+		delay_ms_systick(1);
     }
-    //
-    unpack_global_data(&data[0]);
+	WELCOME_DELAY_S = 10;
+	for(uint32_t i = 0; i < GLOBAL_DATA_SIZE; i++){
+        if(data[i] != 0xffffffff)
+			WELCOME_DELAY_S = 5;
+    }
+    //unpack_global_data(&data[0]);
 }
