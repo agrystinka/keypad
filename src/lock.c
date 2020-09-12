@@ -27,9 +27,7 @@ void kp_fail(struct sk_lcd *lcd)
 
     sk_lcd_cmd_clear(lcd);
 
-    sk_lcd_cmd_setaddr(lcd, 0x00, false);
-    lcd_print_symbol(lcd, STATE_SYMBOL);
-    lcd_print(lcd, " Access denied");
+    kp_screen_fail(lcd);
 
     if(FAILS >= CRYTICAL_FAILS_LOW)
         kp_screen_timer(lcd, FAIL_DELAY_CUR_S, 1);
@@ -37,17 +35,6 @@ void kp_fail(struct sk_lcd *lcd)
     FAIL_DELAY_CUR_S *= DELAY_COEFF;
 	kp_btn_enable();
 }
-
-// void kp_screen_welcome(struct sk_lcd *lcd, uint32_t delay_s)
-// {
-//     sk_lcd_cmd_clear(lcd);
-//
-//     sk_lcd_cmd_setaddr(lcd, 0x00, false);
-//     lcd_print_symbol(lcd, UNLOCKED);
-//     lcd_print(lcd, " Welcome");
-//
-//     kp_screen_timer(lcd, delay_s, 1);
-// }
 
 void kp_unlock_keypad(struct sk_lcd *lcd)
 {

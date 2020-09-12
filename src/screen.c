@@ -1,5 +1,5 @@
 #include "screen.h"
-#include "keypad.h"
+#include "keypad.h" //for STATE_SYMBOL
 
 void kp_screen_empty(struct sk_lcd *lcd)
 {
@@ -55,4 +55,12 @@ void kp_screen_welcome(struct sk_lcd *lcd)
     sk_lcd_cmd_setaddr(lcd, 0x00, false);
     lcd_print_symbol(lcd, UNLOCKED);
     lcd_print(lcd, " Welcome");
+}
+
+void kp_screen_fail(struct sk_lcd *lcd)
+{
+    sk_lcd_cmd_clear(lcd);
+    sk_lcd_cmd_setaddr(lcd, 0x00, false);
+    lcd_print_symbol(lcd, STATE_SYMBOL);
+    lcd_print(lcd, " Access denied");
 }

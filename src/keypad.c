@@ -1,4 +1,7 @@
 #include "keypad.h"
+
+#define SEMIHOSTING_USE 0
+
 #define GLOBAL_DATA_SIZE 9
 #define ADRESS_FLASH 0x080E0000
 //default keypad settings
@@ -18,7 +21,7 @@ uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0};
 uint8_t KP_CMD = KP_NONE;
 
 //Deleys and secure settings
-uint32_t WELCOME_DELAY_S = 20;
+uint32_t WELCOME_DELAY_S = 10;
 uint32_t FAIL_DELAY_S = 30;
 uint32_t FAIL_DELAY_CUR_S = 30;
 uint8_t FAILS = 0;
@@ -35,21 +38,21 @@ bool KP_MODE = true;
 bool DEFAULT_SETTINGS = true;
 //uint32_t GLOBAL_DATA[20];
 
-struct kp keypad = {
-    .usrpass = {1, 0, 3, 5},
-    .mstrpass = {0, 0, 0, 0},
-    .menucode = {0, 0, 0, 0},
-    .delay_open_s = 10,
-    .delay_wait_s = 30,
-    .delay_wait_cur_s = 30,
-    .fails = 0,
-    .fails_low = 3,
-    .fails_high = 10,
-    .usrpass_length = 4,
-    .usrpass_length = 4,
-    .mode = true,
-    .state = false
-};
+// struct kp_lock keypad = {
+//     .usrpass = {1, 0, 3, 5},
+//     .mstrpass = {0, 0, 0, 0},
+//     .menucode = {0, 0, 0, 0},
+//     .delay_open_s = 10,
+//     .delay_wait_s = 30,
+//     .delay_wait_cur_s = 30,
+//     .fails = 0,
+//     .fails_low = 3,
+//     .fails_high = 10,
+//     .usrpass_length = 4,
+//     .usrpass_length = 4,
+//     .mode = true,
+//     .state = false
+// };
 
 //display
 struct sk_lcd lcd = {
@@ -64,21 +67,42 @@ struct sk_lcd lcd = {
 	.is4bitinterface = true,
 	.charmap_func = &sk_lcd_charmap_none
 };
+#if SEMIHOSTING_USE
+void print_data(void)
+{
+	printf("USER PASS LENGHT %x\n", USR_PASS_LENGTH);
+	for(int i =0 ; i < USR_PASS_LENGTH; i++)
+		printf("%x   ", USR_PASS[i]);
+	printf("\n");
+	printf("MASTER PASS LENGHT %x\n", MASTER_CODE_LENGTH);
+	for(int i =0 ; i < MASTER_CODE_LENGTH; i++)
+		printf("%x   ", MASTER_CODE[i]);
+	printf("\n");
+	printf("WELCOME_DELAY_S %x\n",  WELCOME_DELAY_S);
+	printf("FAIL_DELAY_S %x\n", FAIL_DELAY_S);
+	printf("FAIL_DELAY_CUR_S %x\n", FAIL_DELAY_CUR_S);
 
-// void kp_btn_enable(void)
-// {
-// 	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
-// 	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
-// }
-//
-// void kp_btn_disable(void)
-// {
-// 	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
-// 	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
-// }
+	printf("FAILS %x\n",  FAILS);
+	printf("CRYTICAL_FAILS_LOW %x\n",  CRYTICAL_FAILS_LOW);
+	printf("CRYTICAL_FAILS_HIGHT %x\n", CRYTICAL_FAILS_HIGHT);
+	printf("DELAY_COEFF %x\n",  DELAY_COEFF);
 
+	if(KP_MODE)
+		printf("KP_MODE true\n");
+	else
+		printf("KP_MODE false\n");
+
+	printf("\n");
+	printf("\n");
+
+}
+#endif
 int main(void)
 {
+#if SEMIHOSTING_USE
+    initialise_monitor_handles();
+    printf("Monitor initialized. WE GET IT THROUGH SEMIHOSTING\n");
+#endif
 	///enable leds
 	rcc_periph_clock_enable(RCC_GPIOD);  //leds
 	mgl_mode_setup_default(mgl_led_orange);
@@ -106,13 +130,23 @@ int main(void)
 	//setup as LOCKED
 	mgl_clear(mgl_led_green);
 
-	//Write default Settings to FLASH
-	write_global_data_to_flash();
+#if SEMIHOSTING_USE
+    printf("System initialized\n");
+#endif
 
-	WELCOME_DELAY_S = 10;
+	//Write default Settings to FLASH
+    //printf("-------------------Print DATA before");
+//    print_data();
+	//write_global_data_to_flash();
+
+	WELCOME_DELAY_S = 30;
 	//Read setting from flash
 	read_global_data_from_flash();
 
+#if SEMIHOSTING_USE
+    printf("\n-------------------Print DATA after\n");
+    //print_data();
+#endif
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
 
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
