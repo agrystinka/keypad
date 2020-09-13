@@ -1,4 +1,5 @@
 #include "keypad.h"
+#include "cmd.h"
 
 bool sk_btn_debounce(mgl_pin btn)
 {

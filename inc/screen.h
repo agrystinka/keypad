@@ -1,9 +1,6 @@
 #ifndef KP_SCREEN_H
 #define KP_SCREEN_H
 
-#include "menu.h"
-#include "mygpiolib.h"
-#include "timers.h"
 #include "display.h"
 #include "errors.h"
 #include "lcd_hd44780.h"

@@ -1,5 +1,7 @@
 #include "screen.h"
 #include "keypad.h" //for STATE_SYMBOL
+#include "mygpiolib.h"
+#include "timers.h"
 
 void kp_screen_empty(struct sk_lcd *lcd)
 {

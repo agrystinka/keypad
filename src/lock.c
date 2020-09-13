@@ -68,6 +68,16 @@ void kp_toggle_keypad_state(struct kp_lock *keypad)
 
 void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
+#if HIGHT_SECURITY
+	//TODO:
+	//ask for User Pass and Msater code both, after delay
+	//Set timer with control of overload
+	if(keypad->fails >= keypad->fails_hight){
+		kp_btn_enable();
+		return;
+	}
+#endif
+
     //discard FAIL_DELAY
     keypad->fails = 0;
     keypad->delay_wait_cur_s = keypad->delay_wait_s;

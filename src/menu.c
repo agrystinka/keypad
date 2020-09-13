@@ -2,6 +2,7 @@
 #include "keypad.h"
 #include "menu_template.h"
 #include "password.h"
+#include "cmd.h"
 #include <stdint.h>
 #include <stdio.h>
 

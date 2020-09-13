@@ -1,4 +1,8 @@
 #include "keypad.h"
+#include "menu.h"
+#include "password.h"
+#include "setup.h"
+#include "cmd.h"
 
 #define SEMIHOSTING_USE 0
 #define HIGHT_SECURITY 0
@@ -129,8 +133,6 @@ int main(void)
         keypad.delay_wait_cur_s /= keypad.wait_coef;
         kp_fail(&lcd, &keypad);
     }
-
-
 
     while(1) {
 		//sleep until user press on button

@@ -1,12 +1,12 @@
 #ifndef KP_KEYPAD_H
 #define KP_KEYPAD_H
 
-#include "cmd.h"
-#include "setup.h"
-#include "screen.h"
-#include "menu.h"
-#include "password.h"
 #include "intrinsics.h"
+#include "mygpiolib.h"
+#include "timers.h"
+#include "display.h"
+#include "errors.h"
+#include "lcd_hd44780.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>

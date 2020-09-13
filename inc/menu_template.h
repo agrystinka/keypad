@@ -2,7 +2,6 @@
 #define KP_MENU_TEMPLATE_H
 
 #include "keypad.h"  //for MAX_PASS_LENGTH definition
-#include "display.h"
 #include "lcd_hd44780.h"
 #include <stdint.h>
 #include <stdio.h>

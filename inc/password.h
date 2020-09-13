@@ -1,8 +1,7 @@
 #ifndef KP_KEYPAD_H
 #define KP_KEYPAD_H
 
-#include "cmd.h"
-#include "screen.h"
+#include "lcd_hd44780.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>

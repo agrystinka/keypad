@@ -1,6 +1,6 @@
 #include "menu_template.h"
-#include "keypad.h"
-//#include "intrinsics.h"
+#include "display.h"
+#include "cmd.h"
 
 /**
  * kp_show_active_line() - show point befor active line.

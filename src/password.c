@@ -1,5 +1,7 @@
 #include "password.h"
 #include "intrinsics.h"
+#include "cmd.h"
+#include "screen.h"
 
 bool kp_check_plain(uint8_t *pass1, uint8_t *pass2, uint8_t length)
 {
