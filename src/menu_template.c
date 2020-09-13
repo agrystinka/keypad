@@ -25,8 +25,15 @@ static void kp_show_active_line(struct sk_lcd *lcd, bool line1, bool line2)
         lcd_print(lcd, " ");
 }
 
-//TODO The same as print message
-static void kp_menu_lines(struct sk_lcd *lcd, char* line0, char* line1)
+/**
+ * kp_menu_lines() - print message on screen.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @char *line0: first part of mesage(first line) - up to 16 chars.
+ * @char *line1: second part of mesage(second line) - up to 16 chars.
+ *
+ * Return: void.
+ */
+static void kp_menu_lines(struct sk_lcd *lcd, char *line0, char *line1)
 {
     sk_lcd_cmd_clear(lcd);
 

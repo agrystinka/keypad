@@ -23,10 +23,17 @@ void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad)
 	kp_btn_disable();
     keypad->fails++;
 
-    //if(keypad->fails >= keypad->fails_hight){}
-    //ask for ADM_PASS, red led on as signal tht smb tried to hack the keypad
+#if HIGHT_SECURITY
+	//TODO:
+	//ask for User Pass and Msater code both, after delay
+	//Set timer with control of overload
+    if(keypad->fails >= keypad->fails_hight){
+		kp_btn_enable();
+		return;
+	}
+#endif
 
-    if(keypad->fails >= keypad->fails_low){
+    if(keypad->fails >= keypad->fails_low ){
 		sk_lcd_cmd_clear(lcd);
 		kp_screen_fail(lcd);
 		kp_screen_timer(lcd, keypad->delay_wait_cur_s, 1);
@@ -47,12 +54,15 @@ void kp_unlock_keypad(struct sk_lcd *lcd, struct kp_lock *keypad)
 
 void kp_toggle_keypad_state(struct kp_lock *keypad)
 {
-    if(STATE_SYMBOL == LOCKED)
-        STATE_SYMBOL = UNLOCKED;
-    else
-        STATE_SYMBOL = LOCKED;
-
-    //toggle door state
+	//if keypad is locked, unlock it and vise versa
+    if(keypad->state){
+		keypad->state = false;
+		STATE_SYMBOL = LOCKED;
+	}else{
+		keypad->state = true;
+		STATE_SYMBOL = UNLOCKED;
+	}
+    //toggle keypad lock state
     mgl_toggle(mgl_led_green);
 }
 

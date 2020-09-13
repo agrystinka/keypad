@@ -6,15 +6,23 @@
 #include <stdio.h>
 
 /** Used as flag to make system known if it is necessary
-* to rewrite non-volitile memory with new SETTING DATA*/
+* to rewrite non-volitile memory with new SETTING DATA */
 bool CHANGES = false;
 
-//Failures settings (Security settings)-----------------------------------------
+/**
+ * kp_set_min_fail_delay() - set min wait delay.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Set minimal (start) time while which keypad is blocked after input incorrect User Password.
+ *
+ * Return: void.
+ */
 static void kp_set_min_fail_delay(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     uint32_t copy = keypad->delay_wait_s;
 
-    kp_screen_message(lcd, "Min fail delay", NULL);
+    kp_screen_message(lcd, "Min wait delay", NULL);
     set_1_60(lcd, &(keypad->delay_wait_s));
     keypad->delay_wait_cur_s = keypad->delay_wait_s;
 
@@ -22,6 +30,16 @@ static void kp_set_min_fail_delay(struct sk_lcd *lcd, struct kp_lock *keypad)
         CHANGES = true;
 }
 
+/**
+ * kp_set_fail_coef() - set grows multiplier.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Set grows multiplier of time if input of incorrect User Password
+ * occurs more then 'Critical low' times.
+ *
+ * Return: void.
+ */
 static void kp_set_fail_coef(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     uint8_t copy = keypad->wait_coef;
@@ -34,6 +52,17 @@ static void kp_set_fail_coef(struct sk_lcd *lcd, struct kp_lock *keypad)
         CHANGES = true;
 }
 
+/**
+ * kp_set_fail_crit_high() - set critical amount of input incorrect User Password
+ *                                untill sucuruty pritection starts work.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Set limit of incorrect inputs of User Password after which
+ * you need to input both User Password and Master Password.
+ *
+ * Return: void.
+ */
 static void kp_set_fail_crit_high(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     uint8_t copy = keypad->fails_high;
@@ -46,6 +75,18 @@ static void kp_set_fail_crit_high(struct sk_lcd *lcd, struct kp_lock *keypad)
         CHANGES = true;
 }
 
+/**
+ * kp_set_fail_crit_low() - set critical amount of input incorrect User Password
+ *                               untill sucuruty pritection starts work.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Set limit of incorrect inputs of User Password after which you need to wait
+ * some time befor next input. This time depends on Minimal delay and every
+ * next time is increased in Coefficient times.
+ *
+ * Return: void.
+ */
 static void kp_set_fail_crit_low(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     uint8_t copy = keypad->fails_low;
@@ -58,6 +99,27 @@ static void kp_set_fail_crit_low(struct sk_lcd *lcd, struct kp_lock *keypad)
         CHANGES = true;
 }
 
+/**
+ * kp_fail_settings() - keypad security settings.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Refers to kp_menu_template()
+ * Mode setting contains such options:
+ * Go back - exit
+ * Minimal delay - set minimal time while which keypad is blocked
+ *                 after input incirrect User Password
+ * Coefficient - set grows multiplier of time if input of incorrect User Password
+ *               occurs more then 'Critical low' times
+ * Critical high - set limit of incorrect inputs of User Password after which
+ *                 you need to input both User Password and Master Password
+ * Critical low - set limit of incorrect inputs of User Password after which
+ *                 you need to wait some time befor next input
+ *                 This time depends on Minimal delay and every next time is
+ *                 increased in Coefficient times
+ *
+ * Return: void.
+ */
 static void kp_fail_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     //init Fail Menu Data
@@ -80,8 +142,17 @@ static void kp_fail_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
     kp_menu_template(lcd, keypad, &fail_menu);
 }
 
-//Keypad work mode settings-----------------------------------------------------
-//single action
+/**
+ * kp_mode1_settings() - swich on mode 1.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Switck keypad lock to Mode 1.
+ * After input of User Password keypad is unloked for 'Welcome delay' time.
+ * User have to set this 'Welcome delay' by ordering value from 1 to 60 seconds.
+ *
+ * Return: void.
+ */
 static void kp_mode1_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     uint32_t copy = keypad->delay_open_s;
@@ -94,13 +165,36 @@ static void kp_mode1_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
         CHANGES = true;
 }
 
-//change state
+/**
+ * kp_mode2_settings() - swich on mode 2.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Switck keypad lock to Mode 2.
+ * After input of User Password keypad switch the state from LOCKED to UNLOCKED
+ * and vise versa.
+ *
+ * Return: void.
+ */
 static void kp_mode2_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     //lock keypad - just in case
     keypad->mode = false;
 }
 
+/**
+ * kp_mode_settings() - keypad mode settings.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Refers to kp_menu_template()
+ * Mode setting contains such options:
+ * Go back - exit
+ * Mode 1 - swich on mode 1 (single action of oenning keypd)
+ * Mode 2 - swich on mode 1 (switch the keypad state)
+ *
+ * Return: void.
+ */
 static void kp_mode_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     //init Menu Data
@@ -123,7 +217,18 @@ static void kp_mode_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
     if(copy != keypad->mode)
         CHANGES = true;
 }
-//Password and Master code settings---------------------------------------------
+
+/**
+ * kp_set_length() - swich on mode 2.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Switck keypad lock to Mode 2.
+ * After input of User Password keypad switch the state from LOCKED to UNLOCKED
+ * and vise versa.
+ *
+ * Return: void.
+ */
 static void kp_set_length(struct sk_lcd *lcd, uint8_t *length, char *instruction)
 {
     uint8_t coef[3] = {4, 6, 8};
@@ -131,6 +236,19 @@ static void kp_set_length(struct sk_lcd *lcd, uint8_t *length, char *instruction
     kp_scroll_num(lcd, length, &coef[0], 3);
 }
 
+/**
+ * kp_main_change_pass() - change password.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ * uint8_t *pass: password which need to be changed.
+ * uint8_t *passlength: length of password which need to be changed.
+ *
+ * If keypad works in Hight Secure Mode, it ask to input both User
+ * Pass and Master code one more time.
+ * After setting password it shows the Success or Error messages.
+ *
+ * Return: void.
+ */
 static void kp_main_change_pass(struct sk_lcd *lcd, struct kp_lock *keypad, uint8_t *pass, uint8_t *passlength)
 {
     //for bufferization input new password
@@ -138,18 +256,18 @@ static void kp_main_change_pass(struct sk_lcd *lcd, struct kp_lock *keypad, uint
     uint8_t buf1[MAX_PASS_LENGTH];
     uint8_t buf2[MAX_PASS_LENGTH];
 
+#if HIGHT_SECURITY
     //in order to make system more secure
     //it was decided to ask USER PASSWORD and/or MASTER CODE one more time
-
     //ask for USER PASS
-    // kp_input_password(lcd, &buf1[0], keypad->usrpass_length, " User pass", true);
-    // if(!kp_check_plain(&buf1[0], keypad->usrpass, keypad->usrpass_length))
-    //     return;
-
+    kp_input_password(lcd, &buf1[0], keypad->usrpass_length, " User pass", true);
+    if(!kp_check_plain(&buf1[0], keypad->usrpass, keypad->usrpass_length))
+        return;
     //ask for MASTER_CODE
-    // kp_input_password(lcd, &buf1[0], keypad->mstrpass_length, " Master pass", true);
-    // if(!kp_check_plain(&buf1[0], keypad->mstrpass, keypad->mstrpass_length))
-    //     return;
+    kp_input_password(lcd, &buf1[0], keypad->mstrpass_length, " Master pass", true);
+    if(!kp_check_plain(&buf1[0], keypad->mstrpass, keypad->mstrpass_length))
+        return;
+#endif
 
     kp_set_length(lcd, &length, "Set length");
     //input NEW password
@@ -177,22 +295,38 @@ static void kp_main_change_pass(struct sk_lcd *lcd, struct kp_lock *keypad, uint
     // }
 }
 
+/**
+ * kp_main_change_usr_pass() - change User password.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Return: void.
+ */
 static void kp_main_change_usr_pass(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     kp_main_change_pass(lcd, keypad, &(keypad->usrpass), &(keypad->usrpass_length));
 }
 
+/**
+ * kp_main_change_master_pass() - change Master password.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Return: void.
+ */
 static void kp_main_change_master_code(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     kp_main_change_pass(lcd, keypad, &(keypad->mstrpass), &(keypad->mstrpass_length));
 }
 
-//Main settings-----------------------------------------------------------------
 /**
  * kp_main_settings() - keypad main settings.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
  *
+ * Refers to kp_menu_template()
  * Main setting contains such options:
- * Go back - exit from settings
+ * Go back - exit and save new settings
  * Password - change user password
  * Master code - change umaster code
  * Work mode - change keypad work mode
@@ -232,7 +366,7 @@ void kp_menu(struct sk_lcd *lcd, struct kp_lock *keypad)
         //rewrite non-volitile embeded flash memory if it is necessary
         if(CHANGES){
             kp_btn_disable();
-            write_global_data_to_flash(keypad);
+            write_keypad_data_to_flash(keypad);
             kp_btn_enable();
         }
         //refresh security data after settings

@@ -11,6 +11,7 @@
 /**
  * kp_menu() - keypad settings.
  * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
  *
  * Return: void.
  */

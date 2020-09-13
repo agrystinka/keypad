@@ -61,8 +61,8 @@ struct __attribute__((packed, aligned(1))) kp_lock {
 };
 
 
-void write_global_data_to_flash(struct kp_lock *keypad);
-void read_global_data_from_flash(struct kp_lock *keypad);
+void write_keypad_data_to_flash(struct kp_lock *keypad);
+void read_keypad_data_from_flash(struct kp_lock *keypad);
 
 void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad);
 void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad);

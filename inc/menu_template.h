@@ -22,6 +22,7 @@ struct __attribute__((packed, aligned(1))) menu{
 /**
  * kp_menu_template() - template of menu for keypad.
  * @struct sk_lcd *lcd: LCD for comunication with user.
+ * @struct kp_lock *keypad: keypad lock data.
  * @struct menu *menu: the information about menu, you want to create.
  *
  * Function hadle keypad menu using GLSK UP, DOWN, MENU buttons.

@@ -1,6 +1,7 @@
 #include "keypad.h"
 
 #define SEMIHOSTING_USE 0
+#define HIGHT_SECURITY 0
 
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
@@ -8,7 +9,7 @@ uint8_t KP_CMD = KP_NONE;
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
 
 struct kp_lock keypad = {
-    .usrpass = {1, 0, 3, 5}, //up to 8 bytes
+    .usrpass = {2, 2, 2, 2}, //up to 8 bytes
     .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
     .menucode = {0, 0, 0, 0}, //up to 8 bytes
     .delay_open_s = 10,
@@ -37,6 +38,7 @@ struct sk_lcd lcd = {
 	.is4bitinterface = true,
 	.charmap_func = &sk_lcd_charmap_none
 };
+
 #if SEMIHOSTING_USE
 void print_data(void)
 {
@@ -67,6 +69,7 @@ void print_data(void)
 
 }
 #endif
+
 int main(void)
 {
 #if SEMIHOSTING_USE
@@ -102,16 +105,13 @@ int main(void)
 
 #if SEMIHOSTING_USE
     printf("System initialized\n");
+    printf("Load data from flash\n");
 #endif
 
-	//Write default Settings to FLASH
-    //printf("-------------------Print DATA before");
-//    print_data();
-	//write_global_data_to_flash(&keypad);
+	write_keypad_data_to_flash(&keypad);
 
-	//	WELCOME_DELAY_S = 30;
 	//Read setting from flash
-	//read_global_data_from_flash(&keypad);
+	//read_keypad_data_from_flash(&keypad);
 
 #if SEMIHOSTING_USE
     printf("\n-------------------Print DATA after\n");
@@ -120,6 +120,17 @@ int main(void)
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
 
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
+
+    //if there were failed attempts to unlock keypad before reset
+    //wait for delay_wait_cur_s seconds
+    if(keypad.fails > 0){
+        //but do not calculate it like one more fail
+        keypad.fails--;
+        keypad.delay_wait_cur_s /= keypad.wait_coef;
+        kp_fail(&lcd, &keypad);
+    }
+
+
 
     while(1) {
 		//sleep until user press on button
