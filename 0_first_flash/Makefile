@@ -4,7 +4,7 @@ TARGET = first_flash
 SRCS = $(TARGET).c
 # other sources added like that
 SRCS += mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c embflash.c
-SRCS +=  setup.c screen.c #menu.c
+SRCS += setup.c screen.c
 
 # User defines
 DEFINES = GLSK_BOARD=1

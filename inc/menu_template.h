@@ -13,10 +13,10 @@
 struct __attribute__((packed, aligned(1))) menu{
     /**Amount of options*/
     uint8_t num;
-    /** Names of options (<=16 chars)*/
+    /** Names of options (up to 16 chars)*/
     char** lines;
     /** Pointers on fuinctions that realize every options. First option should be GO_BACK*/
-    void (**options)(struct sk_lcd *lcd);
+    void (**options)(struct sk_lcd *lcd, struct kp_lock *keypad);
 };
 
 /**
@@ -31,7 +31,7 @@ struct __attribute__((packed, aligned(1))) menu{
  *
  * Return: void.
  */
-void kp_menu_template(struct sk_lcd *lcd, struct menu *menu);
+void kp_menu_template(struct sk_lcd *lcd, struct kp_lock *keypad, struct menu *menu);
 
 /**
  * kp_menu_template() - template of menu for keypad.

@@ -48,7 +48,8 @@ void kp_menu_template(struct sk_lcd *lcd, struct menu *menu)
     kp_show_active_line(lcd, true, false);
 
     while(1){
-        __asm__ volatile ("wfi");
+        __WFI();
+        //__asm__ volatile ("wfi");
         if(KP_CMD != KP_NONE){
             if(KP_CMD == KP_MENU){
                 //discard command
@@ -115,8 +116,8 @@ void set_1_60(struct sk_lcd *lcd, uint8_t *num)
 
     while(1){
         //sleep until user press on button
-		__WFI;
-        __asm__ volatile ("wfi");
+		__WFI();
+        //__asm__ volatile ("wfi");
         if(KP_CMD != KP_NONE){
             if(KP_CMD == KP_MENU){
                 *num = 0;
@@ -153,7 +154,8 @@ void kp_scroll_num(struct sk_lcd *lcd, uint8_t *num, uint8_t *options, uint8_t s
     while(1){
         // lcd_print_empty(lcd, 2);
         // lcd_print_int(lcd, options[position], 0);
-        __asm__ volatile ("wfi");
+        __WFI();
+        //__asm__ volatile ("wfi");
         if(KP_CMD != KP_NONE){
             if(KP_CMD == KP_MENU){
                 *num = options[position];

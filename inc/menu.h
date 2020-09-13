@@ -14,6 +14,6 @@
  *
  * Return: void.
  */
-void kp_menu(struct sk_lcd *lcd);
+void kp_menu(struct sk_lcd *lcd, struct kp_lock *keypad);
 
 #endif

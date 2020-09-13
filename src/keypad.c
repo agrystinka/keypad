@@ -2,57 +2,27 @@
 
 #define SEMIHOSTING_USE 0
 
-#define GLOBAL_DATA_SIZE 9
-#define ADRESS_FLASH 0x080E0000
-//default keypad settings
-//some of them might be changed by user in keypad menu
-//Passwords
-//To open/close the keypad
-uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
-uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 0, 3, 5};
-//To change keypad settings
-uint8_t MASTER_CODE_LENGTH = MIN_PASS_LENGTH;
-uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0}; //{5, 6, 7, 8};
-//To open menu(keypad settings)
-uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
-uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0};
-
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
-
-//Deleys and secure settings
-uint32_t WELCOME_DELAY_S = 10;
-uint32_t FAIL_DELAY_S = 30;
-uint32_t FAIL_DELAY_CUR_S = 30;
-uint8_t FAILS = 0;
-uint8_t CRYTICAL_FAILS_LOW = 3;
-uint8_t CRYTICAL_FAILS_HIGHT = 10;
-uint8_t DELAY_COEFF = 2;
-
-//KEYPAD state
 //default setup as LOCKED
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
-//if true - unlock keypad for WELCOME_DELAY seconds
-//if false -switch the STATE of keypad
-bool KP_MODE = true;
-bool DEFAULT_SETTINGS = true;
-//uint32_t GLOBAL_DATA[20];
 
-// struct kp_lock keypad = {
-//     .usrpass = {1, 0, 3, 5},
-//     .mstrpass = {0, 0, 0, 0},
-//     .menucode = {0, 0, 0, 0},
-//     .delay_open_s = 10,
-//     .delay_wait_s = 30,
-//     .delay_wait_cur_s = 30,
-//     .fails = 0,
-//     .fails_low = 3,
-//     .fails_high = 10,
-//     .usrpass_length = 4,
-//     .usrpass_length = 4,
-//     .mode = true,
-//     .state = false
-// };
+struct kp_lock keypad = {
+    .usrpass = {1, 0, 3, 5}, //up to 8 bytes
+    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
+    .menucode = {0, 0, 0, 0}, //up to 8 bytes
+    .delay_open_s = 10,
+    .delay_wait_s = 30,
+    .delay_wait_cur_s = 30,
+	.wait_coef = 2,
+    .fails = 0,
+    .fails_low = 3,
+    .fails_high = 10,
+    .usrpass_length = 4,
+    .mstrpass_length = 4,
+    .mode = true,
+    .state = false
+};
 
 //display
 struct sk_lcd lcd = {
@@ -137,11 +107,11 @@ int main(void)
 	//Write default Settings to FLASH
     //printf("-------------------Print DATA before");
 //    print_data();
-	//write_global_data_to_flash();
+	//write_global_data_to_flash(&keypad);
 
-	WELCOME_DELAY_S = 30;
+	//	WELCOME_DELAY_S = 30;
 	//Read setting from flash
-	read_global_data_from_flash();
+	//read_global_data_from_flash(&keypad);
 
 #if SEMIHOSTING_USE
     printf("\n-------------------Print DATA after\n");
@@ -155,17 +125,17 @@ int main(void)
 		//sleep until user press on button
 		__WFI();
 		//always put pass to global array INPUT_PASS[MAX_PASS_LENGTH]
-		kp_input_password(&lcd, &pass[0], USR_PASS_LENGTH, " Password", true);
+		kp_input_password(&lcd, &pass[0], keypad.usrpass_length, " Password", true);
 		//check if user password
-		if(kp_check_plain(USR_PASS, &pass[0], USR_PASS_LENGTH)){
-			kp_welcome(&lcd, KP_MODE);
+		if(kp_check_plain(keypad.usrpass, &pass[0], keypad.usrpass_length)){
+			kp_welcome(&lcd, &keypad);
 		}
 		//check if menu code
-		else if(kp_check_plain(MENU_CODE, &pass[0], USR_PASS_LENGTH)){
-			kp_menu(&lcd);
+		else if(kp_check_plain(keypad.menucode, &pass[0], keypad.usrpass_length)){
+			kp_menu(&lcd, &keypad);
 		}
 		else{
-			kp_fail(&lcd);
+			kp_fail(&lcd, &keypad);
 		}
 	}
 }

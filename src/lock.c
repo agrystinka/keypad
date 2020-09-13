@@ -18,35 +18,34 @@ void kp_btn_disable(void)
 }
 
 
-void kp_fail(struct sk_lcd *lcd)
+void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
 	kp_btn_disable();
-    FAILS++;
-    //if(CRYTICAL_FAILS >= FAILS){}
+    keypad->fails++;
+
+    //if(keypad->fails >= keypad->fails_hight){}
     //ask for ADM_PASS, red led on as signal tht smb tried to hack the keypad
 
-    sk_lcd_cmd_clear(lcd);
-
-    kp_screen_fail(lcd);
-
-    if(FAILS >= CRYTICAL_FAILS_LOW)
-        kp_screen_timer(lcd, FAIL_DELAY_CUR_S, 1);
-
-    FAIL_DELAY_CUR_S *= DELAY_COEFF;
+    if(keypad->fails >= keypad->fails_low){
+		sk_lcd_cmd_clear(lcd);
+		kp_screen_fail(lcd);
+		kp_screen_timer(lcd, keypad->delay_wait_cur_s, 1);
+    	keypad->delay_wait_cur_s *= keypad->wait_coef;
+	}
 	kp_btn_enable();
 }
 
-void kp_unlock_keypad(struct sk_lcd *lcd)
+void kp_unlock_keypad(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
 	kp_btn_disable();
     mgl_set(mgl_led_green);
     kp_screen_welcome(lcd);
-	kp_screen_timer(lcd, WELCOME_DELAY_S, 1);
+	kp_screen_timer(lcd, keypad->delay_open_s, 1);
     mgl_clear(mgl_led_green);
 	kp_btn_enable();
 }
 
-void kp_toggle_keypad_state()
+void kp_toggle_keypad_state(struct kp_lock *keypad)
 {
     if(STATE_SYMBOL == LOCKED)
         STATE_SYMBOL = UNLOCKED;
@@ -57,14 +56,14 @@ void kp_toggle_keypad_state()
     mgl_toggle(mgl_led_green);
 }
 
-void kp_welcome(struct sk_lcd *lcd, bool mode)
+void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     //discard FAIL_DELAY
-    FAILS = 0;
-    FAIL_DELAY_CUR_S = FAIL_DELAY_S;
+    keypad->fails = 0;
+    keypad->delay_wait_cur_s = keypad->delay_wait_s;
 
-    if(mode)
-        kp_unlock_keypad(lcd);   //single action
+    if(keypad->mode)
+        kp_unlock_keypad(lcd, keypad);   //single action
     else
-        kp_toggle_keypad_state(); //switch state
+        kp_toggle_keypad_state(keypad); //switch state
 }

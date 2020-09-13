@@ -39,7 +39,7 @@ static void kp_menu_lines(struct sk_lcd *lcd, char* line0, char* line1)
         lcd_print(lcd, line1);
 }
 
-void kp_menu_template(struct sk_lcd *lcd, struct menu *menu)
+void kp_menu_template(struct sk_lcd *lcd, struct kp_lock *keypad, struct menu *menu)
 {
     uint8_t activeline = 0;
     uint8_t topline = 0;
@@ -58,10 +58,13 @@ void kp_menu_template(struct sk_lcd *lcd, struct menu *menu)
                 if(activeline == GO_BACK)
                      return;
                 if(menu->options[activeline] != NULL)
-                    (*(menu->options[activeline]))(lcd);
+                    (*(menu->options[activeline]))(lcd, keypad);
                 //Go back to previous screen (menu)
                 kp_menu_lines(lcd, menu->lines[topline], menu->lines[topline + 1]);
-                kp_show_active_line(lcd, true, false);
+                if(activeline == topline)
+                    kp_show_active_line(lcd, true, false);
+                else
+                    kp_show_active_line(lcd, false, true);
             }
             else{
                 if(KP_CMD == KP_UP)

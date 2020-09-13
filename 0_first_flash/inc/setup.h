@@ -18,7 +18,6 @@
 #include <stddef.h>
 
 sk_err kp_lcd_init_setup(struct sk_lcd *lcd);
-//sk_err kp_lcd_setup(struct sk_lcd *lcd);
 sk_err kp_btn_setup(void);
 sk_err kp_interrupts_btn_setup(void);
 // sk_err kp_flash_setup(void);

@@ -1,12 +1,13 @@
 #include "first_flash.h"
-//#include "cmd.h"
 
+// #define GLOBAL_DATA_SIZE 9
+// #define ADRESS_FLASH 0x080E0000
 //default keypad settings
 //some of them might be changed by user in keypad menu
 //Passwords
 //To open/close the keypad
 uint8_t USR_PASS_LENGTH = MIN_PASS_LENGTH;
-uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 2, 3, 4};
+uint8_t USR_PASS[MAX_PASS_LENGTH] = {1, 0, 3, 5};
 //To change keypad settings
 uint8_t MASTER_CODE_LENGTH = MIN_PASS_LENGTH;
 uint8_t MASTER_CODE[MAX_PASS_LENGTH] = {0, 0, 0, 0}; //{5, 6, 7, 8};
@@ -15,7 +16,7 @@ uint8_t MENU_CODE_LENGTH = MIN_PASS_LENGTH;
 uint8_t MENU_CODE[MAX_PASS_LENGTH] = {0};
 
 //For comunication in interrupts
-uint8_t KP_CMD = KP_NONE;
+uint8_t KP_CMD;
 
 //Deleys and secure settings
 uint32_t WELCOME_DELAY_S = 10;
@@ -35,6 +36,22 @@ bool KP_MODE = true;
 bool DEFAULT_SETTINGS = true;
 //uint32_t GLOBAL_DATA[20];
 
+// struct kp_lock keypad = {
+//     .usrpass = {1, 0, 3, 5},
+//     .mstrpass = {0, 0, 0, 0},
+//     .menucode = {0, 0, 0, 0},
+//     .delay_open_s = 10,
+//     .delay_wait_s = 30,
+//     .delay_wait_cur_s = 30,
+//     .fails = 0,
+//     .fails_low = 3,
+//     .fails_high = 10,
+//     .usrpass_length = 4,
+//     .usrpass_length = 4,
+//     .mode = true,
+//     .state = false
+// };
+
 //display
 struct sk_lcd lcd = {
 	.pin_group_data = &sk_io_lcd_data,
@@ -49,18 +66,6 @@ struct sk_lcd lcd = {
 	.charmap_func = &sk_lcd_charmap_none
 };
 
-void kp_btn_enable(void)
-{
-	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
-	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
-}
-
-void kp_btn_disable(void)
-{
-	nvic_disable_irq(NVIC_EXTI15_10_IRQ);
-	nvic_disable_irq(NVIC_EXTI9_5_IRQ);
-}
-
 
 int main(void)
 {
@@ -70,7 +75,6 @@ int main(void)
 	mgl_set(mgl_led_orange); //switch on indicator of settings
 
 	kp_lcd_init_setup(&lcd); // Configure lcd
-
 	systick_setup();
 	cm_enable_interrupts();
 
@@ -83,10 +87,11 @@ int main(void)
 
 	//Write default Settings to FLASH
 	write_global_data_to_flash();
-	//Show message to user
-	kp_screen_message(&lcd, "Default data", "was set");
 
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
+
+	//show screen
+	kp_screen_message(&lcd, "Default data", "was set");
 
     while(1);
 }
