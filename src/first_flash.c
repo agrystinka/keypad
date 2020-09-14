@@ -1,18 +1,15 @@
 #include "keypad.h"
-#include "lock.h"
 #include "embflash.h"
-#include "menu.h"
-#include "password.h"
+#include "screen.h"
 #include "setup.h"
 #include "cmd.h"
 
 //if it is firt flash (loading default settings) it is true, else - false
-bool FIRST_FLASH = false;
+bool FIRST_FLASH = true;
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
 //default setup as LOCKED
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
-
 
 struct kp_lock keypad = {
     .usrpass = {2, 2, 2, 2}, //up to 8 bytes
@@ -55,14 +52,9 @@ int main(void)
 	///enable leds
 	rcc_periph_clock_enable(RCC_GPIOD);  //leds
 	mgl_mode_setup_default(mgl_led_orange);
-
 	mgl_set(mgl_led_orange); //switch on indicator of settings
 
-	kp_btn_setup(); // Setup btns on GLSK board
- 	kp_interrupts_btn_setup(); 	// Configure exti on GLSK buttons
-
 	kp_lcd_init_setup(&lcd); // Configure lcd
-
 	systick_setup();
 	cm_enable_interrupts();
 
@@ -84,41 +76,11 @@ int main(void)
     printf("Load data from flash\n");
 #endif
 
-	//write_keypad_data_to_flash(&keypad);
+	//Write default setting from flash
+	write_keypad_data_to_flash(&keypad);
 
-	//Read setting from flash
-	//read_keypad_data_from_flash(&keypad);
-
-	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
-
+	kp_screen_message(&lcd, "Default data", "was set");
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
 
-    //if there were failed attempts to unlock keypad before reset
-    //wait for delay_wait_cur_s seconds
-    if(keypad.fails > 0){
-        //but do not calculate it like one more fail
-        keypad.fails--;
-        keypad.delay_wait_cur_s /= keypad.wait_coef;
-        kp_fail(&lcd, &keypad);
-    }
-
-    while(1) {
-		//sleep until user press on button
-		__WFI();
-		//always put pass to global array INPUT_PASS[MAX_PASS_LENGTH]
-		kp_input_password(&lcd, &pass[0], keypad.usrpass_length, " Password", true);
-		//check if user password
-		if(kp_check_plain(keypad.usrpass, &pass[0], keypad.usrpass_length)){
-			kp_welcome(&lcd, &keypad);
-		}
-		//check if menu code
-		else if(kp_check_plain(keypad.menucode, &pass[0], keypad.usrpass_length)){
-            //just in case lock keypad before open settings
-            kp_lock_keypad(&keypad);
-			kp_menu(&lcd, &keypad);
-		}
-		else{
-			kp_fail(&lcd, &keypad);
-		}
-	}
+    while(1);
 }

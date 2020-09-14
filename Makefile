@@ -4,8 +4,7 @@ TARGET = keypad
 SRCS = $(TARGET).c
 # other sources added like that
 SRCS += mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c embflash.c
-SRCS += menu_template.c setup.c screen.c exti_on_btn.c menu.c password.c lock.c  #menu.c
-
+SRCS += menu_template.c setup.c screen.c exti_on_btn.c menu.c password.c lock.c 
 # User defines
 DEFINES = GLSK_BOARD=1
 # The libs which are linked to the resulting target

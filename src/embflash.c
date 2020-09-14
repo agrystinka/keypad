@@ -95,8 +95,10 @@ static void unpack_keypad_data(uint8_t *buffer, struct kp_lock *keypad)
  */
 void write_keypad_data_to_flash(struct kp_lock *keypad)
 {
-	//block buttons just in case
-	kp_btn_disable();
+#if !FIRST_FLASH
+	kp_btn_disable(); //block buttons just in case
+#endif
+
 	//switch ON signal that settings are being written to flash memory
 	mgl_set(mgl_led_orange);
 
@@ -117,13 +119,15 @@ void write_keypad_data_to_flash(struct kp_lock *keypad)
 
 #if SEMIHOSTING_USE
 	printf("\n-------------------Write DATA PACKED\n");
-	for(uint8_t i = 0; i < 35; i++)
+	for(uint8_t i = 0; i < GLOBAL_DATA_SIZE; i++)
 		printf("%x", data[i]);
 #endif
 	//switch OFF signal that settings are being written to flash memory
 	mgl_clear(mgl_led_orange);
-	//unblock buttons
-	kp_btn_enable();
+
+#if !FIRST_FLASH
+	kp_btn_enable(); //unblock buttons
+#endif
 }
 
 /**
@@ -137,6 +141,10 @@ void write_keypad_data_to_flash(struct kp_lock *keypad)
  */
 void read_keypad_data_from_flash(struct kp_lock *keypad)
 {
+#if !FIRST_FLASH
+	kp_btn_disable(); //block buttons just in case
+#endif
+
 	uint8_t data[GLOBAL_DATA_SIZE];
     uint8_t *addr;
     addr = ADRESS_FLASH;
@@ -148,10 +156,15 @@ void read_keypad_data_from_flash(struct kp_lock *keypad)
 
 #if SEMIHOSTING_USE
 	printf("\n-------------------Read DATA PACKED\n");
-	for(uint8_t i = 0; i < 35; i++)
+	for(uint8_t i = 0; i < GLOBAL_DATA_SIZE; i++)
 		printf("%x", data[i]);
 #endif
+
 	//Memory Barrier
 	__DMB();
 	unpack_keypad_data(&data[0], keypad);
+
+#if !FIRST_FLASH
+	kp_btn_enable(); //unblock buttons
+#endif
 }

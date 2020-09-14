@@ -21,6 +21,7 @@
 
 extern uint8_t STATE_SYMBOL;
 extern uint8_t KP_CMD;
+extern bool FIRST_FLASH;
 
 /*Weight of kp_lock structure is:
  * 3 pass * 8 chars * 1 byte = 24 bytes
