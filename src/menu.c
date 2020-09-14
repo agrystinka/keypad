@@ -1,6 +1,7 @@
 #include "menu.h"
 #include "keypad.h"
 #include "menu_template.h"
+#include "embflash.h"
 #include "password.h"
 #include "cmd.h"
 #include <stdint.h>
@@ -164,6 +165,11 @@ static void kp_mode1_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
 
     if(copy != keypad->delay_open_s)
         CHANGES = true;
+
+    //Message to user
+    kp_screen_message(lcd, "Mode 1 was set", NULL);
+    //Wait untill user press MENU button
+    kp_wait_untill_ok();
 }
 
 /**
@@ -181,6 +187,11 @@ static void kp_mode2_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
     //lock keypad - just in case
     keypad->mode = false;
+
+    //Message to user
+    kp_screen_message(lcd, "Mode 2 was set", NULL);
+    //Wait untill user press MENU button
+    kp_wait_untill_ok();
 }
 
 /**
@@ -288,12 +299,9 @@ static void kp_main_change_pass(struct sk_lcd *lcd, struct kp_lock *keypad, uint
         //Message to user
         kp_screen_message(lcd, "Error. Pass", "was not changed");
     }
+
     //Wait untill user press MENU button
-    // while (1){
-    //     __asm__ volatile ("wfi");
-    //     if(KP_CMD == KP_MENU)
-    //         return;
-    // }
+    kp_wait_untill_ok();
 }
 
 /**

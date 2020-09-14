@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define SEMIHOSTING_USE 0
+#define HIGHT_SECURITY 0
+
 // Recomended variants of password length
 #define MAX_PASS_LENGTH   8
 #define MIDLE_PASS_LENGTH 6
@@ -23,7 +26,7 @@ extern uint8_t KP_CMD;
  * 3 pass * 8 chars * 1 byte = 24 bytes
  * 3 delays * 4 bytes = 12 bytes
  * 6 variables * 1 byte = 6 bytes
- * 2 bool variables * (in worse case) 4 bytes = 8bytes
+ * 2 bool variables * (in worse case) 4 bytes = 8 bytes
  * Total: 50 bytes */
 struct __attribute__((packed, aligned(1))) kp_lock {
     /** User Password to open/close keypad lock*/
@@ -60,12 +63,4 @@ struct __attribute__((packed, aligned(1))) kp_lock {
     bool state;
 };
 
-
-void write_keypad_data_to_flash(struct kp_lock *keypad);
-void read_keypad_data_from_flash(struct kp_lock *keypad);
-
-void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad);
-void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad);
-void kp_btn_disable(void);
-void kp_btn_enable(void);
 #endif

@@ -1,4 +1,6 @@
 #include "keypad.h"
+#include "lock.h"
+#include "embflash.h"
 #include "menu.h"
 #include "password.h"
 #include "setup.h"
@@ -112,7 +114,7 @@ int main(void)
     printf("Load data from flash\n");
 #endif
 
-	write_keypad_data_to_flash(&keypad);
+	//write_keypad_data_to_flash(&keypad);
 
 	//Read setting from flash
 	//read_keypad_data_from_flash(&keypad);
@@ -145,6 +147,8 @@ int main(void)
 		}
 		//check if menu code
 		else if(kp_check_plain(keypad.menucode, &pass[0], keypad.usrpass_length)){
+            //just in case lock keypad before open settings
+            kp_lock_keypad(&keypad);
 			kp_menu(&lcd, &keypad);
 		}
 		else{

@@ -160,6 +160,7 @@ void kp_scroll_num(struct sk_lcd *lcd, uint8_t *num, uint8_t *options, uint8_t s
     uint8_t position = 0;
     *num = options[position];
     lcd_print_empty(lcd, 2);
+    lcd_print(lcd, "\t\t\t");
     lcd_print_int(lcd, options[position], 0);
     while(1){
         // lcd_print_empty(lcd, 2);
@@ -177,8 +178,20 @@ void kp_scroll_num(struct sk_lcd *lcd, uint8_t *num, uint8_t *options, uint8_t s
                 position = (position - 1 + size) % size;
             }
             lcd_print_empty(lcd, 2);
+            lcd_print(lcd, "\t\t\t");
             lcd_print_int(lcd, options[position], 0);
             KP_CMD = KP_NONE;
+        }
+    }
+}
+
+void kp_wait_untill_ok(void)
+{
+    while (1){
+        __asm__ volatile ("wfi");
+        if(KP_CMD == KP_MENU){
+            KP_CMD = KP_NONE;
+            return;
         }
     }
 }

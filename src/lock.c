@@ -1,5 +1,4 @@
-#include "keypad.h"
-#include "screen.h"
+#include "lock.h"
 #include <libopencm3/cm3/cortex.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/scb.h>
@@ -25,7 +24,8 @@ void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad)
 
 #if HIGHT_SECURITY
 	//TODO:
-	//ask for User Pass and Msater code both, after delay
+	//ask for User Pass and Master code both, after delay
+	//Add Semi Master Code
 	//Set timer with control of overload
     if(keypad->fails >= keypad->fails_hight){
 		kp_btn_enable();
@@ -42,13 +42,27 @@ void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad)
 	kp_btn_enable();
 }
 
-void kp_unlock_keypad(struct sk_lcd *lcd, struct kp_lock *keypad)
+void kp_lock_keypad(struct kp_lock *keypad)
 {
-	kp_btn_disable();
+	//simuletion of solenoid
+    mgl_clear(mgl_led_green);
+	keypad->state = false;
+}
+
+void kp_unlock_keypad(struct kp_lock *keypad)
+{
+	//simuletion of solenoid
     mgl_set(mgl_led_green);
+	keypad->state = true;
+}
+
+void kp_single_opening(struct sk_lcd *lcd, struct kp_lock *keypad)
+{
+	kp_btn_disable(); //block buttons just in case
+	kp_unlock_keypad(keypad);
     kp_screen_welcome(lcd);
 	kp_screen_timer(lcd, keypad->delay_open_s, 1);
-    mgl_clear(mgl_led_green);
+	kp_lock_keypad(keypad);
 	kp_btn_enable();
 }
 
@@ -56,14 +70,12 @@ void kp_toggle_keypad_state(struct kp_lock *keypad)
 {
 	//if keypad is locked, unlock it and vise versa
     if(keypad->state){
-		keypad->state = false;
+		kp_lock_keypad(keypad);
 		STATE_SYMBOL = LOCKED;
 	}else{
-		keypad->state = true;
+		kp_unlock_keypad(keypad);
 		STATE_SYMBOL = UNLOCKED;
 	}
-    //toggle keypad lock state
-    mgl_toggle(mgl_led_green);
 }
 
 void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
@@ -83,7 +95,7 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
     keypad->delay_wait_cur_s = keypad->delay_wait_s;
 
     if(keypad->mode)
-        kp_unlock_keypad(lcd, keypad);   //single action
+        kp_single_opening(lcd, keypad);   //single action
     else
         kp_toggle_keypad_state(keypad); //switch state
 }

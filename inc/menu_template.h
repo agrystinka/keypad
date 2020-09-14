@@ -60,4 +60,11 @@ void set_1_60(struct sk_lcd *lcd, uint8_t *num);
  * Return: void.
  */
 void kp_scroll_num(struct sk_lcd *lcd, uint8_t *num, uint8_t *options, uint8_t size);
+
+/**
+ * kp_wait_untill_ok() - wait untill user press MENU (OK) button.
+ *
+ * Return: void.
+ */
+void kp_wait_untill_ok(void);
 #endif
