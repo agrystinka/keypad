@@ -1,2 +1,2 @@
-# keypad
-Keypad lock based on GL Starter Kit
+# GL-BaseCamp-Practice
+GL C Embedded BaseCamp - Practice part
