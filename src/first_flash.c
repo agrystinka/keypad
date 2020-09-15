@@ -12,20 +12,24 @@ uint8_t KP_CMD = KP_NONE;
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
 
 struct kp_lock keypad = {
-    .usrpass = {1, 1, 1, 1}, //up to 8 bytes
-    .mstrpass = {2, 2, 2, 2}, //up to 8 bytes
+    .usrpass = {2, 2, 2, 2}, //up to 8 bytes
+    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
     .menucode = {0, 0, 0, 0}, //up to 8 bytes
+    .usrpass_length = 4,
+    .mstrpass_length = 4,
     .delay_open_s = 10,
     .delay_wait_s = 30,
     .delay_wait_cur_s = 30,
-	.wait_coef = 2,
     .fails = 0,
     .fails_low = 3,
-    .fails_high = 10,
-    .usrpass_length = 4,
-    .mstrpass_length = 4,
+    .wait_coef = 2,
     .mode = true,
-    .state = false
+    .state = false,
+#if  HIGHT_SECURITY
+    .semimstrpass_length = 4,
+    .semimstrpass = {3, 3, 3, 3}, //up to 8 bytes
+    .fails_high = 10,
+#endif
 };
 
 //display

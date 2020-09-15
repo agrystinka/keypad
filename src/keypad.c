@@ -13,21 +13,27 @@ uint8_t KP_CMD = KP_NONE;
 //default setup as LOCKED
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
 
+const uint8_t arr[1] = {1};
+
 struct kp_lock keypad = {
     .usrpass = {2, 2, 2, 2}, //up to 8 bytes
     .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
     .menucode = {0, 0, 0, 0}, //up to 8 bytes
+    .usrpass_length = 4,
+    .mstrpass_length = 4,
     .delay_open_s = 10,
     .delay_wait_s = 30,
     .delay_wait_cur_s = 30,
-	.wait_coef = 2,
     .fails = 0,
     .fails_low = 3,
-    .fails_high = 10,
-    .usrpass_length = 4,
-    .mstrpass_length = 4,
+    .wait_coef = 2,
     .mode = true,
-    .state = false
+    .state = false,
+#if  HIGHT_SECURITY
+    .semimstrpass_length = 4,
+    .semimstrpass = {3, 3, 3, 3}, //up to 8 bytes
+    .fails_high = 10,
+#endif
 };
 
 struct sk_lcd lcd = {
@@ -127,16 +133,30 @@ int main(void)
 #if SEMIHOSTING_USE
 void print_data(struct kp_lock *keypad)
 {
+    printf("User pass length: %d\n", keypad->usrpass_length);
+    printf("Master pass length: %d\n", keypad->mstrpass_length);
+
     printf("Delay open: %lu\n", keypad->delay_open_s);
     printf("Delay close: %lu\n", keypad->delay_wait_s);
     printf("Delay close cur: %lu\n", keypad->delay_wait_cur_s);
 
     printf("Fails: %d\n", keypad->fails);
     printf("Fails low: %d\n", keypad->fails_low);
-    printf("Fails hight: %d\n", keypad->fails_high);
+    printf("Fails coefficient: %d\n", keypad->wait_coef);
 
-    printf("User pass length: %d\n", keypad->usrpass_length);
-    printf("Master pass length: %d\n", keypad->mstrpass_length);
-    printf("Fails hight: %d\n", keypad->fails_high);
+    if(keypad->mode)
+        printf("Mode TRUE\n");
+    else
+        printf("Mode FALSE\n");
+
+    if(keypad->mode)
+        printf("State TRUE\n");
+    else
+        printf("State FALSE\n");
+
+#if  HIGHT_SECURITY
+    printf("Semimaster pass length: %d\n", keypad->semimstrpass_length);
+    printf("Fails high: %d\n", keypad->fails_high);
+#endif
 }
 #endif

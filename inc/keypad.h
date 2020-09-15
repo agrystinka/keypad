@@ -12,7 +12,7 @@
 #include <stdbool.h>
 
 #define SEMIHOSTING_USE 0
-#define HIGHT_SECURITY 0
+#define HIGHT_SECURITY 1
 
 // Recomended variants of password length
 #define MAX_PASS_LENGTH   8
@@ -36,6 +36,10 @@ struct __attribute__((packed, aligned(1))) kp_lock {
     uint8_t mstrpass[MAX_PASS_LENGTH];
     /** Code to open settings*/
     uint8_t menucode[MAX_PASS_LENGTH];
+    /** Length of User Password and Menu code*/
+    uint8_t usrpass_length; //up to 8
+    /** Length of Master Password*/
+    uint8_t mstrpass_length; //up to 8
     /** Time during which keypad will be unlocked after input of correct User Pass
      * (if keypad words in Mode 1)*/
     uint32_t delay_open_s;
@@ -49,19 +53,22 @@ struct __attribute__((packed, aligned(1))) kp_lock {
     uint8_t fails;
     /** Number of inputs of incorrect User Pass after wich keypad lock blocks on delay_wait_cur_s*/
     uint8_t fails_low;  //up to 16
-    /** Number of inputs of incorrect User Pass after wich keypad lock asks Master Pass*/
-    uint8_t fails_high; //up to 16
     /** Growth multiplier of delay_wait_cur_s time after input of incorrect User Pass*/
     uint8_t wait_coef;
-    /** Length of User Password and Menu code*/
-    uint8_t usrpass_length; //up to 8
-    /** Length of Master Password*/
-    uint8_t mstrpass_length; //up to 8
     /** Keypad mode: if false - keypad change state after input corect User Pass,
      * if true - open (unlock) keypad for delay_open_s time*/
     bool mode;
     /** Keypad state: if false - closed (locked), if true - opened (unlocked)*/
     bool state;
+#if  HIGHT_SECURITY
+    /** Semimaster Password to unblock keypad lock after 'fails_high' failed attempts
+     * to unlock keypad lock*/
+    uint8_t semimstrpass[MAX_PASS_LENGTH];
+    /** Length of Semimaster Password*/
+    uint8_t semimstrpass_length; //up to 8
+    /** Number of inputs of incorrect User Pass after wich keypad lock asks Master Pass*/
+    uint8_t fails_high; //up to 16
+#endif
 };
 
 #endif

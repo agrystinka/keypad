@@ -54,6 +54,7 @@ static void kp_set_fail_coef(struct sk_lcd *lcd, struct kp_lock *keypad)
         CHANGES = true;
 }
 
+#if  HIGHT_SECURITY
 /**
  * kp_set_fail_crit_high() - set critical amount of input incorrect User Password
  *                                untill sucuruty pritection starts work.
@@ -76,6 +77,7 @@ static void kp_set_fail_crit_high(struct sk_lcd *lcd, struct kp_lock *keypad)
     if(copy != keypad->fails_high)
         CHANGES = true;
 }
+#endif
 
 /**
  * kp_set_fail_crit_low() - set critical amount of input incorrect User Password
@@ -128,12 +130,20 @@ static void kp_fail_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
     char menu_line0[] = " Go back (Save)";
     char menu_line1[] = " Minimal delay";
     char menu_line2[] = " Coefficient";
-    char menu_line3[] = " Critical high";
-    char menu_line4[] = " Critical low";
-    char *menu_lines[] = {&menu_line0[0], &menu_line1[0], &menu_line2[0], &menu_line3[0], &menu_line4[0]};
+    char menu_line3[] = " Critical low";
 
-    void (*options[])(struct sk_lcd*, struct kp_lock*) = {NULL, kp_set_min_fail_delay, kp_set_fail_coef, kp_set_fail_crit_high, kp_set_fail_crit_low};
-    uint8_t num_lines = 5;
+    char *menu_lines[5] = {&menu_line0[0], &menu_line1[0], &menu_line2[0], &menu_line3[0]};
+
+    void (*options[5])(struct sk_lcd*, struct kp_lock*) = {NULL, kp_set_min_fail_delay, kp_set_fail_coef, kp_set_fail_crit_low};
+
+    uint8_t num_lines = 4;
+
+#if  HIGHT_SECURITY
+    char menu_line4[] = " Critical hight";
+    menu_lines[4] = &menu_line4[0];
+    options[4] = kp_set_fail_crit_high;
+    num_lines = 5;
+#endif
 
     struct menu fail_menu = {
         .num = num_lines,
