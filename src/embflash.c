@@ -1,8 +1,11 @@
 #include "embflash.h"
+#include <stdio.h>
 
-#define GLOBAL_DATA_SIZE 60
+#define GLOBAL_DATA_SIZE 70
 #define ADRESS_FLASH 0x080E0000
 #define SECTOR_FLASH 11
+// #define ADRESS_FLASH 0x0800C000
+// #define SECTOR_FLASH 3
 
 /**
  * pack_keypad_data() - pack data about keypad.
@@ -64,7 +67,6 @@ static void unpack_keypad_data(uint8_t *buffer, struct kp_lock *keypad)
 	keypad->delay_wait_cur_s = *(pointer32 + 2);
 	//pack uint8_t variables
 	//pack passwords: 2 * 8  = 16 bytes(if MAX_PASS_LENGTH == 8)
-	uint8_t *pointer8 = (uint8_t *) &buffer[3];
 	for(int i = 0; i < MAX_PASS_LENGTH; i++)
 		keypad->usrpass[i] = buffer[shift + i];
 	shift += MAX_PASS_LENGTH;
@@ -75,9 +77,9 @@ static void unpack_keypad_data(uint8_t *buffer, struct kp_lock *keypad)
 	keypad->usrpass_length = buffer[shift + 0];
 	keypad->mstrpass_length = buffer[shift + 1];
 	//pack settings: 5 bytes
-	keypad->fails = buffer[shift + 3];
+	keypad->fails = buffer[shift + 2];
 	keypad->fails_low = buffer[shift + 3];
-	keypad->fails_high =buffer[shift + 4];
+	keypad->fails_high = buffer[shift + 4];
 	keypad->wait_coef = buffer[shift + 5];
 	if(buffer[shift + 6])
 		keypad->mode = true;
@@ -102,7 +104,7 @@ void write_keypad_data_to_flash(struct kp_lock *keypad)
 	//switch ON signal that settings are being written to flash memory
 	mgl_set(mgl_led_orange);
 
-	uint8_t data[GLOBAL_DATA_SIZE];
+	volatile uint8_t data[GLOBAL_DATA_SIZE];
     //unlock flash memory to be able write to it
 	flash_unlock();
 	//erase sector befor writing to it
@@ -117,11 +119,12 @@ void write_keypad_data_to_flash(struct kp_lock *keypad)
 	//lock flash memoty to prevent spurious writes
 	flash_lock();
 
-#if SEMIHOSTING_USE
-	printf("\n-------------------Write DATA PACKED\n");
-	for(uint8_t i = 0; i < GLOBAL_DATA_SIZE; i++)
-		printf("%x", data[i]);
-#endif
+// #if SEMIHOSTING_USE
+// 	printf("\n-------------------Write DATA PACKED\n");
+// 	for(uint8_t i = 0; i < GLOBAL_DATA_SIZE; i++)
+// 		printf("%x", data[i]);
+// #endif
+
 	//switch OFF signal that settings are being written to flash memory
 	mgl_clear(mgl_led_orange);
 
@@ -145,20 +148,20 @@ void read_keypad_data_from_flash(struct kp_lock *keypad)
 	kp_btn_disable(); //block buttons just in case
 #endif
 
-	uint8_t data[GLOBAL_DATA_SIZE];
+	volatile uint8_t data[GLOBAL_DATA_SIZE];
     uint8_t *addr;
     addr = ADRESS_FLASH;
     for(uint32_t i = 0; i < GLOBAL_DATA_SIZE; i++){
         data[i] = *addr;
         addr += sizeof(data[i]);
-		delay_ms_systick(1);
+	//	delay_ms_systick(1);
     }
 
-#if SEMIHOSTING_USE
-	printf("\n-------------------Read DATA PACKED\n");
-	for(uint8_t i = 0; i < GLOBAL_DATA_SIZE; i++)
-		printf("%x", data[i]);
-#endif
+// #if SEMIHOSTING_USE
+// 	printf("\n-------------------Read DATA PACKED\n");
+// 	for(uint8_t i = 0; i < GLOBAL_DATA_SIZE; i++)
+// 		printf("%x", data[i]);
+// #endif
 
 	//Memory Barrier
 	__DMB();

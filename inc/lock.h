@@ -70,6 +70,8 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad);
  * kp_fail() - handle incorrect User Password input.
  * @struct sk_lcd *lcd: LCD for comunication with user.
  * @struct kp_lock *keypad: keypad lock data.
+ * @bool count: if true - this fail have to be counted,
+ *              if false - jaste show waiting timer 
  *
  * Handle correct User Password input.
  * Block keypad for 'delay_wait_cur_s' seconds if there were more or equal to 'fails_low'
@@ -79,4 +81,4 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad);
  *
  * Return: void.
  */
-void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad);
+void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad, bool count);

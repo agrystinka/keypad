@@ -119,7 +119,7 @@ void lcd_print_time(struct sk_lcd *lcd, uint32_t time_s)
 
 	if(time_s % 60 == 0){
 		sk_lcd_putchar(lcd, '0');
-	//	sk_lcd_putchar(lcd, '0');
+		sk_lcd_putchar(lcd, '0');
 	} else if(time_s % 60 < 10) {
 		sk_lcd_putchar(lcd, '0');
 		lcd_print_int(lcd, time_s % 60, 0);

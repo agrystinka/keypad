@@ -13,7 +13,6 @@ uint8_t KP_CMD = KP_NONE;
 //default setup as LOCKED
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
 
-
 struct kp_lock keypad = {
     .usrpass = {2, 2, 2, 2}, //up to 8 bytes
     .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
@@ -31,7 +30,6 @@ struct kp_lock keypad = {
     .state = false
 };
 
-//display
 struct sk_lcd lcd = {
 	.pin_group_data = &sk_io_lcd_data,
 	.pin_rs = &sk_io_lcd_rs,
@@ -44,6 +42,10 @@ struct sk_lcd lcd = {
 	.is4bitinterface = true,
 	.charmap_func = &sk_lcd_charmap_none
 };
+
+#if SEMIHOSTING_USE
+void print_data(struct kp_lock *keypad);
+#endif
 
 
 int main(void)
@@ -76,49 +78,65 @@ int main(void)
 	//Keypad simulation setup
 	//For real keypad it must be changed with setup of solenoid, etc.
 	mgl_mode_setup_default(mgl_led_green);
-	//setup as LOCKED
-	mgl_clear(mgl_led_green);
+	mgl_clear(mgl_led_green); //setup as LOCKED
 
 #if SEMIHOSTING_USE
     printf("System initialized\n");
     printf("Load data from flash\n");
 #endif
 
-	//write_keypad_data_to_flash(&keypad);
-
 	//Read setting from flash
-	//read_keypad_data_from_flash(&keypad);
+	read_keypad_data_from_flash(&keypad);
+
+#if SEMIHOSTING_USE
+    print_data(&keypad);
+#endif
 
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
 
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
 
-    //if there were failed attempts to unlock keypad before reset
+    //TODO: catch this interrupt
+    //if there were failed attempts to unlock keypad before reset,
     //wait for delay_wait_cur_s seconds
-    if(keypad.fails > 0){
-        //but do not calculate it like one more fail
-        keypad.fails--;
-        keypad.delay_wait_cur_s /= keypad.wait_coef;
-        kp_fail(&lcd, &keypad);
-    }
+    if(keypad.fails >= keypad.fails_low)
+        kp_fail(&lcd, &keypad, false);
+
 
     while(1) {
 		//sleep until user press on button
 		__WFI();
-		//always put pass to global array INPUT_PASS[MAX_PASS_LENGTH]
+
 		kp_input_password(&lcd, &pass[0], keypad.usrpass_length, " Password", true);
-		//check if user password
+		//check if user password was input
 		if(kp_check_plain(keypad.usrpass, &pass[0], keypad.usrpass_length)){
 			kp_welcome(&lcd, &keypad);
 		}
-		//check if menu code
+		//check if menu code was input
 		else if(kp_check_plain(keypad.menucode, &pass[0], keypad.usrpass_length)){
-            //just in case lock keypad before open settings
+            //just in case lock keypad before open menu (settings)
             kp_lock_keypad(&keypad);
 			kp_menu(&lcd, &keypad);
 		}
 		else{
-			kp_fail(&lcd, &keypad);
+			kp_fail(&lcd, &keypad, true);
 		}
 	}
 }
+
+#if SEMIHOSTING_USE
+void print_data(struct kp_lock *keypad)
+{
+    printf("Delay open: %lu\n", keypad->delay_open_s);
+    printf("Delay close: %lu\n", keypad->delay_wait_s);
+    printf("Delay close cur: %lu\n", keypad->delay_wait_cur_s);
+
+    printf("Fails: %d\n", keypad->fails);
+    printf("Fails low: %d\n", keypad->fails_low);
+    printf("Fails hight: %d\n", keypad->fails_high);
+
+    printf("User pass length: %d\n", keypad->usrpass_length);
+    printf("Master pass length: %d\n", keypad->mstrpass_length);
+    printf("Fails hight: %d\n", keypad->fails_high);
+}
+#endif

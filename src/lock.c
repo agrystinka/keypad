@@ -1,4 +1,5 @@
 #include "lock.h"
+#include "embflash.h"
 #include <libopencm3/cm3/cortex.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/scb.h>
@@ -17,27 +18,35 @@ void kp_btn_disable(void)
 }
 
 
-void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad)
+void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad, bool count)
 {
 	kp_btn_disable();
-    keypad->fails++;
+	sk_lcd_cmd_clear(lcd);
+	kp_screen_fail(lcd);
+
+	if(count){
+		keypad->fails++;
+		write_keypad_data_to_flash(keypad); //write new data to flash
+	}
+
 
 #if HIGHT_SECURITY
 	//TODO:
 	//ask for User Pass and Master code both, after delay
 	//Add Semi Master Code
 	//Set timer with control of overload
-    if(keypad->fails >= keypad->fails_hight){
-		kp_btn_enable();
-		return;
-	}
+    // if(keypad->fails >= keypad->fails_hight){
+	// 	kp_btn_enable();
+	// 	return;
+	// }
 #endif
 
     if(keypad->fails >= keypad->fails_low ){
-		sk_lcd_cmd_clear(lcd);
-		kp_screen_fail(lcd);
+		// sk_lcd_cmd_clear(lcd);
+		// kp_screen_fail(lcd);
 		kp_screen_timer(lcd, keypad->delay_wait_cur_s, 1);
-    	keypad->delay_wait_cur_s *= keypad->wait_coef;
+		if(count)
+    		keypad->delay_wait_cur_s *= keypad->wait_coef;
 	}
 	kp_btn_enable();
 }
@@ -51,7 +60,7 @@ void kp_lock_keypad(struct kp_lock *keypad)
 
 void kp_unlock_keypad(struct kp_lock *keypad)
 {
-	//simuletion of solenoid
+	//simulation of solenoid
     mgl_set(mgl_led_green);
 	keypad->state = true;
 }
@@ -82,12 +91,11 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
 #if HIGHT_SECURITY
 	//TODO:
-	//ask for User Pass and Msater code both, after delay
-	//Set timer with control of overload
-	if(keypad->fails >= keypad->fails_hight){
-		kp_btn_enable();
-		return;
-	}
+	//ask for User Pass and Master code both, after delay
+	// if(keypad->fails >= keypad->fails_hight){
+	// 	kp_btn_enable();
+	// 	return;
+	// }
 #endif
 
     //discard FAIL_DELAY

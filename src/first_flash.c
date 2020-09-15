@@ -12,8 +12,8 @@ uint8_t KP_CMD = KP_NONE;
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
 
 struct kp_lock keypad = {
-    .usrpass = {2, 2, 2, 2}, //up to 8 bytes
-    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
+    .usrpass = {1, 1, 1, 1}, //up to 8 bytes
+    .mstrpass = {2, 2, 2, 2}, //up to 8 bytes
     .menucode = {0, 0, 0, 0}, //up to 8 bytes
     .delay_open_s = 10,
     .delay_wait_s = 30,
@@ -42,6 +42,9 @@ struct sk_lcd lcd = {
 	.charmap_func = &sk_lcd_charmap_none
 };
 
+#if SEMIHOSTING_USE
+void print_data(struct kp_lock *keypad);
+#endif
 
 int main(void)
 {
@@ -79,8 +82,33 @@ int main(void)
 	//Write default setting from flash
 	write_keypad_data_to_flash(&keypad);
 
+#if SEMIHOSTING_USE
+	printf("Written data to flash\n");
+	print_data(&keypad);
+	read_keypad_data_from_flash(&keypad);
+	printf("Read data from flash\n");
+	print_data(&keypad);
+#endif
+
 	kp_screen_message(&lcd, "Default data", "was set");
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
 
     while(1);
 }
+
+#if SEMIHOSTING_USE
+void print_data(struct kp_lock *keypad)
+{
+    printf("Delay open: %lu\n", keypad->delay_open_s);
+    printf("Delay close: %lu\n", keypad->delay_wait_s);
+    printf("Delay close cur: %lu\n", keypad->delay_wait_cur_s);
+
+    printf("Fails: %d\n", keypad->fails);
+    printf("Fails low: %d\n", keypad->fails_low);
+    printf("Fails hight: %d\n", keypad->fails_high);
+
+    printf("User pass length: %d\n", keypad->mstrpass_length);
+    printf("Master pass length: %d\n", keypad->mstrpass_length);
+    printf("Fails hight: %d\n", keypad->fails_high);
+}
+#endif
