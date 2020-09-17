@@ -39,7 +39,7 @@ sk_err sk_flash_read(uint8_t *buffer, uint32_t size, uint32_t address)
 		return SK_EWRONGARG;
 
     for(uint32_t i = 0; i < size; i++)
-        buffer[i] = (uint8_t *) (address + i);
+        buffer[i] = *((uint8_t *) (address + i));
 	return SK_EOK;
 }
 
@@ -47,32 +47,33 @@ sk_err sk_flash_read(uint8_t *buffer, uint32_t size, uint32_t address)
 bool sk_flash_empty(uint8_t *buffer, uint32_t size)
 {
 	for(uint32_t i = 0; i < size; i++)
-		if(buffer[i] & EMPTY_BYTE != EMPTY_BYTE)
+		if(buffer[i] != EMPTY_BYTE)
 			return false;
 	return true;
 }
 
 
-uint32_t sk_find_space(struct sk_sector *sector, uint32_t size)
+uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write)
 {
-    if(sector == NULL)
+	//check if correct input
+	if(sector == NULL || size > sector->size)
 		return NULL;
 
-    if(size > sector->size )
-        return NULL;
+	uint32_t shift = 0;
 
-	uint8_t test[size];
-	uint32_t count = 0; //in bytes
-	bool is_empty = false;
+	while(shift <= sector->size){
+		uint8_t empty = true;
+		for(uint32_t i = 0; i < size; i++)
+			if(*(uint8_t *)(sector->start + shift + i) != EMPTY_BYTE)
+				empty = false;
 
-	while(!is_empty && count + size <= sector->size){
-		is_empty = false;
-		sk_flash_read(test, size, sector->start + count);
+		if(empty == true)
+		 	if(write == true && shift + size <= sector->size)
+				return sector->start + shift;
+			else if(write == false && shift >= size)
+				return sector->start + shift - size;
 
-		if (sk_flash_empty(test, size))
-			return sector->start + count;
-
-		count += size;
+		shift += size;
 	}
-	return 0;
+	return NULL;
 }

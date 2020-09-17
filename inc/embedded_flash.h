@@ -72,4 +72,5 @@ bool sk_flash_empty(uint8_t *buffer, uint32_t size);
  * Return: data_t* .
  * Return pointer on start of this empty space of chosen size.
  */
-uint32_t sk_find_space(struct sk_sector *sector, uint32_t size);
+
+uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write);

@@ -36,3 +36,6 @@ sk_err kp_flash_init();
 
 void kp_write_settings_to_flash(struct kp_lock *keypad);
 void kp_read_settings_from_flash(struct kp_lock *keypad);
+void kp_write_logs_to_flash(struct kp_lock *keypad);
+void kp_read_logs_from_flash(struct kp_lock *keypad, bool *successed);
+void kp_discard_logs_in_flash(void);

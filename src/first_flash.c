@@ -82,15 +82,24 @@ int main(void)
     printf("System initialized\n");
 #endif
 
-    //kp_flash_init();
-	kp_write_settings_to_flash(&keypad); //Write default setting to flash
+    kp_flash_init();
+	//kp_write_settings_to_flash(&keypad); //Write default setting to flash
+    // 
+    // for(uint8_t i = 0; i < 4; i++)
+    //     keypad.usrpass[i] = 8;
 
+    //kp_write_settings_to_flash(&keypad); //Write default setting to flash
 #if SEMIHOSTING_USE
 	// printf("Written data to flash\n");
 	// print_data(&keypad);
-	kp_read_settings_from_flash(&keypad);
+	//kp_read_settings_from_flash(&keypad);
 	// printf("Read data from flash\n");
 	// print_data(&keypad);
+    kp_write_logs_to_flash(&keypad);
+    bool s;
+    kp_read_logs_from_flash(&keypad, &s);
+    kp_discard_logs_in_flash();
+    kp_read_logs_from_flash(&keypad, &s);
 #endif
 
 	kp_screen_message(&lcd, "Default data", "was set");

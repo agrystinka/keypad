@@ -16,7 +16,7 @@ void pack_fail_log(uint8_t *buffer, struct kp_lock *keypad)
 {
 	buffer[0] = keypad->fails;
 	uint32_t *pointer = (uint32_t *) &buffer[1];
-	*pointer = keypad->delay_wait_cur_s;
+	*pointer = keypad->delay_wait_cur_s; //buffer[1] - buffer[4]
 }
 
 /**
