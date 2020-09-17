@@ -92,7 +92,7 @@ int main(void)
 #endif
 
 	//Read setting from flash
-	read_keypad_data_from_flash(&keypad);
+	kp_read_settings_from_flash(&keypad);
 
 #if SEMIHOSTING_USE
     print_data(&keypad);

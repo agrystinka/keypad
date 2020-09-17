@@ -11,7 +11,7 @@
 #define FAIL_LOG_SIZE 5
 
 void pack_fail_log(uint8_t *buffer, struct kp_lock *keypad);
-void unpack_fail_log(uint8_t *buffer, struct kp_lock *keypad)
+void unpack_fail_log(uint8_t *buffer, struct kp_lock *keypad);
 
 void pack_settings(uint8_t *buffer, struct kp_lock *keypad);
 void unpack_settings(uint8_t *buffer, struct kp_lock *keypad);

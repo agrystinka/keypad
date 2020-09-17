@@ -21,12 +21,10 @@
 // 128 Kbyte = 128 * 1024 = 131072 byte = 0x20000 byte
 #define SECTOR_128_SIZE 0x20000
 
-
-#define EMPTY_DATA_T 0xffff
-typedef uint8_t data_t;
+#define EMPTY_BYTE 0xff
 
 struct sk_sector {
-    data_t *start; //pointer on strt of data
+    uint32_t start; //addres of begining of sector
     uint32_t size; //in bytes
     uint8_t num; //number of sector
     //bool isempty;
@@ -41,7 +39,7 @@ struct sk_sector {
  *
  * Return: sk_err.
  */
-sk_err sk_flash_write(data_t *buffer, uint32_t size, data_t *address);
+sk_err sk_flash_write(uint8_t *buffer, uint32_t size, uint32_t address);
 
 /**
  * sk_flash_read() - read data from flash memory to buffer.
@@ -52,7 +50,7 @@ sk_err sk_flash_write(data_t *buffer, uint32_t size, data_t *address);
  *
  * Return: sk_err.
  */
-sk_err sk_flash_read(data_t *buffer, uint32_t size, data_t *address);
+sk_err sk_flash_read(uint8_t *buffer, uint32_t size, uint32_t address);
 
 /**
  * sk_flash_empty() - check if flash memory is empty.
@@ -64,7 +62,7 @@ sk_err sk_flash_read(data_t *buffer, uint32_t size, data_t *address);
  * Return: bool.
  * Return true if memory is empty, false if not.
  */
-bool sk_flash_empty(data_t *buffer, uint32_t size);
+bool sk_flash_empty(uint8_t *buffer, uint32_t size);
 
 /**
  * sk_find_space() - find empty space with chosen size in flash memory.
@@ -74,4 +72,4 @@ bool sk_flash_empty(data_t *buffer, uint32_t size);
  * Return: data_t* .
  * Return pointer on start of this empty space of chosen size.
  */
-data_t* sk_find_space(struct sk_sector *sector, uint32_t size);
+uint32_t sk_find_space(struct sk_sector *sector, uint32_t size);

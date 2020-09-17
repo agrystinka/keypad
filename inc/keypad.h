@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define SEMIHOSTING_USE 0
+#define SEMIHOSTING_USE 1
 #define HIGHT_SECURITY 1
 
 // Recomended variants of password length

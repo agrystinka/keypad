@@ -26,7 +26,7 @@ void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad, bool count)
 
 	if(count){
 		keypad->fails++;
-		write_keypad_data_to_flash(keypad); //write new data to flash
+		//write_keypad_data_to_flash(keypad); //write new data to flash
 	}
 
 

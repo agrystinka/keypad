@@ -80,18 +80,17 @@ int main(void)
 
 #if SEMIHOSTING_USE
     printf("System initialized\n");
-    printf("Load data from flash\n");
 #endif
 
-	//Write default setting from flash
-	write_keypad_data_to_flash(&keypad);
+    //kp_flash_init();
+	kp_write_settings_to_flash(&keypad); //Write default setting to flash
 
 #if SEMIHOSTING_USE
-	printf("Written data to flash\n");
-	print_data(&keypad);
-	read_keypad_data_from_flash(&keypad);
-	printf("Read data from flash\n");
-	print_data(&keypad);
+	// printf("Written data to flash\n");
+	// print_data(&keypad);
+	kp_read_settings_from_flash(&keypad);
+	// printf("Read data from flash\n");
+	// print_data(&keypad);
 #endif
 
 	kp_screen_message(&lcd, "Default data", "was set");
@@ -103,16 +102,30 @@ int main(void)
 #if SEMIHOSTING_USE
 void print_data(struct kp_lock *keypad)
 {
+    printf("User pass length: %d\n", keypad->usrpass_length);
+    printf("Master pass length: %d\n", keypad->mstrpass_length);
+
     printf("Delay open: %lu\n", keypad->delay_open_s);
     printf("Delay close: %lu\n", keypad->delay_wait_s);
     printf("Delay close cur: %lu\n", keypad->delay_wait_cur_s);
 
     printf("Fails: %d\n", keypad->fails);
     printf("Fails low: %d\n", keypad->fails_low);
-    printf("Fails hight: %d\n", keypad->fails_high);
+    printf("Fails coefficient: %d\n", keypad->wait_coef);
 
-    printf("User pass length: %d\n", keypad->mstrpass_length);
-    printf("Master pass length: %d\n", keypad->mstrpass_length);
-    printf("Fails hight: %d\n", keypad->fails_high);
+    if(keypad->mode)
+        printf("Mode TRUE\n");
+    else
+        printf("Mode FALSE\n");
+
+    if(keypad->mode)
+        printf("State TRUE\n");
+    else
+        printf("State FALSE\n");
+
+#if  HIGHT_SECURITY
+    printf("Semimaster pass length: %d\n", keypad->semimstrpass_length);
+    printf("Fails high: %d\n", keypad->fails_high);
+#endif
 }
 #endif

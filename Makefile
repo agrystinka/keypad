@@ -3,8 +3,12 @@ TARGET = keypad
 # All source files go here:
 SRCS = $(TARGET).c
 # other sources added like that
-SRCS += mygpiolib.c timers.c lcd_hd44780.c display_pwm.c display_print.c embedded_flash.c
-SRCS += menu_template.c setup.c screen.c exti_on_btn.c menu.c password.c lock.c embflash.c #pack.c
+# GLSK libs
+SRCS += mygpiolib.c timers.c lcd_hd44780.c embedded_flash.c
+# abstract modules
+SRCS += display_pwm.c display_print.c menu_template.c password.c
+# keypad project modules
+SRCS += setup.c screen.c exti_on_btn.c menu.c  lock.c pack.c embflash.c
 # User defines
 DEFINES = GLSK_BOARD=1
 # The libs which are linked to the resulting target

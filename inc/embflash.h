@@ -1,6 +1,4 @@
 #include "keypad.h"
-// #include "pack.h"
-//#include "embedded_flash.h"
 
 /**
  * kp_fail() - handle incorrect User Password input.
@@ -16,7 +14,7 @@
  * Return: void.
  */
 
-void write_keypad_data_to_flash(struct kp_lock *keypad);
+//void write_keypad_data_to_flash(struct kp_lock *keypad);
 
 /**
  * kp_fail() - handle incorrect User Password input.
@@ -32,4 +30,9 @@ void write_keypad_data_to_flash(struct kp_lock *keypad);
  * Return: void.
  */
 
-void read_keypad_data_from_flash(struct kp_lock *keypad);
+//void read_keypad_data_from_flash(struct kp_lock *keypad);
+
+sk_err kp_flash_init();
+
+void kp_write_settings_to_flash(struct kp_lock *keypad);
+void kp_read_settings_from_flash(struct kp_lock *keypad);

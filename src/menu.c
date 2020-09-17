@@ -385,7 +385,8 @@ void kp_menu(struct sk_lcd *lcd, struct kp_lock *keypad)
         //rewrite non-volitile embeded flash memory if it is necessary
         if(CHANGES){
             kp_btn_disable();
-            write_keypad_data_to_flash(keypad);
+            //write_keypad_data_to_flash(keypad);
+            kp_write_settings_to_flash(keypad);
             kp_btn_enable();
         }
         //refresh security data after settings
