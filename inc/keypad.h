@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define SEMIHOSTING_USE 1
-#define HIGHT_SECURITY 1
+#define SEMIHOSTING_USE 0
+#define HIGHT_SECURITY 0
 
 // Recomended variants of password length
 #define MAX_PASS_LENGTH   8
@@ -71,4 +71,9 @@ struct __attribute__((packed, aligned(1))) kp_lock {
 #endif
 };
 
+enum kp_err {
+    KP_OK = 0,
+    KP_ERR = -1
+};
+typedef enum kp_err kp_err;
 #endif

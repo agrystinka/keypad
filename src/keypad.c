@@ -91,40 +91,42 @@ int main(void)
     printf("Load data from flash\n");
 #endif
 
-	//Read setting from flash
 	kp_read_settings_from_flash(&keypad);
+    mgl_clear(mgl_led_orange); //switch off indicator of settings
 
-#if SEMIHOSTING_USE
-    print_data(&keypad);
-#endif
+    //if there were failed attempts to unlock keypad before reset
+    if(kp_if_failed_logs()){
+        kp_read_logs_from_flash(&keypad);
+        keypad.fails++;
+        if(kp_if_failed_logs_np()){        
+            kp_fail(&lcd, &keypad, false);
+        }
+    }else{
+        kp_discard_fails(&keypad); //set that there is no fails
+    }
 
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
-
-	mgl_clear(mgl_led_orange); //switch off indicator of settings
-
-    //TODO: catch this interrupt
-    //if there were failed attempts to unlock keypad before reset,
-    //wait for delay_wait_cur_s seconds
-    if(keypad.fails >= keypad.fails_low)
-        kp_fail(&lcd, &keypad, false);
-
 
     while(1) {
 		//sleep until user press on button
 		__WFI();
 
 		kp_input_password(&lcd, &pass[0], keypad.usrpass_length, " Password", true);
+        //save attempt to unlock keypad to flash memory
+        kp_write_logs_to_flash(&keypad);
 		//check if user password was input
 		if(kp_check_plain(keypad.usrpass, &pass[0], keypad.usrpass_length)){
+            kp_logs_in_flash_successed(); //mark attempt as successful in flash memory
 			kp_welcome(&lcd, &keypad);
 		}
 		//check if menu code was input
 		else if(kp_check_plain(keypad.menucode, &pass[0], keypad.usrpass_length)){
-            //just in case lock keypad before open menu (settings)
-            kp_lock_keypad(&keypad);
+            kp_logs_in_flash_successed();
+            kp_lock_keypad(&keypad);//just in case lock keypad before open menu (settings)
 			kp_menu(&lcd, &keypad);
 		}
 		else{
+            kp_logs_in_flash_failed();
 			kp_fail(&lcd, &keypad, true);
 		}
 	}

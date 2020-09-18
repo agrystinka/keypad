@@ -82,24 +82,38 @@ int main(void)
     printf("System initialized\n");
 #endif
 
-    kp_flash_init();
-	//kp_write_settings_to_flash(&keypad); //Write default setting to flash
-    // 
-    // for(uint8_t i = 0; i < 4; i++)
-    //     keypad.usrpass[i] = 8;
-
+    //kp_flash_init();
     //kp_write_settings_to_flash(&keypad); //Write default setting to flash
+
 #if SEMIHOSTING_USE
 	// printf("Written data to flash\n");
 	// print_data(&keypad);
-	//kp_read_settings_from_flash(&keypad);
+	// kp_read_settings_from_flash(&keypad);
 	// printf("Read data from flash\n");
 	// print_data(&keypad);
-    kp_write_logs_to_flash(&keypad);
-    bool s;
-    kp_read_logs_from_flash(&keypad, &s);
-    kp_discard_logs_in_flash();
-    kp_read_logs_from_flash(&keypad, &s);
+    // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+    // kp_write_logs_to_flash(&keypad);
+    // kp_read_logs_from_flash(&keypad);
+    // kp_logs_in_flash_successed();
+    // printf("Successed\n");
+    // kp_read_logs_from_flash(&keypad);
+    // if(kp_if_failed_logs())  printf("TRUE\n");
+    // else  printf("FALSE\n");
+    // if(kp_if_failed_logs_np())  printf("TRUE\n");
+    // else  printf("FALSE\n");
+    // printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
+    // kp_write_logs_to_flash(&keypad);
+    // kp_read_logs_from_flash(&keypad);
+    // kp_logs_in_flash_failed();
+    // printf("Failed\n");
+    // kp_read_logs_from_flash(&keypad);
+    // kp_logs_in_flash_failed_p();
+    // printf("Failed & Punished\n");
+    // kp_read_logs_from_flash(&keypad);
+    // if(kp_if_failed_logs())  printf("TRUE\n");
+    // else  printf("FALSE\n");
+    // if(kp_if_failed_logs_np())  printf("TRUE\n");
+    // else  printf("FALSE\n");
 #endif
 
 	kp_screen_message(&lcd, "Default data", "was set");

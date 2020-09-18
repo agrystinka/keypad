@@ -21,14 +21,9 @@ void kp_btn_disable(void)
 void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad, bool count)
 {
 	kp_btn_disable();
-	sk_lcd_cmd_clear(lcd);
-	kp_screen_fail(lcd);
 
-	if(count){
+	if(count)
 		keypad->fails++;
-		//write_keypad_data_to_flash(keypad); //write new data to flash
-	}
-
 
 #if HIGHT_SECURITY
 	//TODO:
@@ -42,12 +37,13 @@ void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad, bool count)
 #endif
 
     if(keypad->fails >= keypad->fails_low ){
-		// sk_lcd_cmd_clear(lcd);
-		// kp_screen_fail(lcd);
+		sk_lcd_cmd_clear(lcd);
+		kp_screen_fail(lcd);
 		kp_screen_timer(lcd, keypad->delay_wait_cur_s, 1);
 		if(count)
     		keypad->delay_wait_cur_s *= keypad->wait_coef;
 	}
+	kp_logs_in_flash_failed_p();
 	kp_btn_enable();
 }
 
@@ -87,6 +83,12 @@ void kp_toggle_keypad_state(struct kp_lock *keypad)
 	}
 }
 
+void kp_discard_fails(struct kp_lock *keypad)
+{
+	keypad->fails = 0;
+	keypad->delay_wait_cur_s = keypad->delay_wait_s;
+}
+
 void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
 #if HIGHT_SECURITY
@@ -98,9 +100,7 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
 	// }
 #endif
 
-    //discard FAIL_DELAY
-    keypad->fails = 0;
-    keypad->delay_wait_cur_s = keypad->delay_wait_s;
+    kp_discard_fails(keypad);//discard FAIL_DELAY
 
     if(keypad->mode)
         kp_single_opening(lcd, keypad);   //single action

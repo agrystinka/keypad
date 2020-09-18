@@ -1,13 +1,14 @@
 #include "embedded_flash.h"
+#include "intrinsics.h"
 #include <stdio.h>
 
-sk_err sk_flash_erase_sector(struct sk_sector *sector)
+sk_err sk_erase(struct sk_sector *sector)
 {
 	if(sector == NULL)
 		return SK_EWRONGARG;
-
-    flash_erase_sector(sector->num, 0);//sector - 11, program size - 8bit (0)
-
+	flash_unlock();
+    flash_erase_sector(sector->num, 0);//sector, program size - 8bit (0)
+	flash_lock();
     //TODO: check if was erased
 
 	return SK_EOK;
@@ -76,4 +77,26 @@ uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write)
 		shift += size;
 	}
 	return NULL;
+}
+
+//TODO: test properly and make this funcion atomic
+sk_err sk_refresh(struct sk_sector *sector, struct sk_sector *sectornew, uint32_t size)
+{
+	if(sector == NULL || sectornew == NULL || size > sector->size || size > sectornew->size)
+		return SK_EWRONGARG;
+	uint32_t address = sk_search(sector, size, false);
+	uint8_t data[size];
+
+	if(sk_flash_read(&data[0], size, address) != SK_EOK)
+		return SK_EUNKNOWN;
+	__DMB(); //Memory barrier
+	if(sk_flash_write(&data[0], size, sectornew->start) != SK_EOK)
+		return SK_EUNKNOWN;
+	if(flash_erase_sector(sector->num, 0) != SK_EOK)
+		return SK_EUNKNOWN;
+
+	struct sk_sector tmp = *sector;
+	*sector = *sectornew;
+	*sectornew = tmp;
+	return SK_EOK;
 }

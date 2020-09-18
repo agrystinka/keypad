@@ -1,41 +1,27 @@
 #include "keypad.h"
 
-/**
- * kp_fail() - handle incorrect User Password input.
- * @struct sk_lcd *lcd: LCD for comunication with user.
- * @struct kp_lock *keypad: keypad lock data.
- *
- * Handle correct User Password input.
- * Block keypad for 'delay_wait_cur_s' seconds if there were more or equal to 'fails_low'
- * failed attempts of input User Password.
- * If keypad works in HIGHT_SECURITY mode, handle situations if there were more or equal
- * to 'fails_hight' failed attempts of input User Password.
- *
- * Return: void.
- */
+kp_err kp_flash_init();
+kp_err kp_write_settings_to_flash(struct kp_lock *keypad);
+kp_err kp_read_settings_from_flash(struct kp_lock *keypad);
+kp_err kp_write_logs_to_flash(struct kp_lock *keypad);
+kp_err kp_read_logs_from_flash(struct kp_lock *keypad);
 
-//void write_keypad_data_to_flash(struct kp_lock *keypad);
 
 /**
- * kp_fail() - handle incorrect User Password input.
- * @struct sk_lcd *lcd: LCD for comunication with user.
- * @struct kp_lock *keypad: keypad lock data.
- *
- * Handle correct User Password input.
- * Block keypad for 'delay_wait_cur_s' seconds if there were more or equal to 'fails_low'
- * failed attempts of input User Password.
- * If keypad works in HIGHT_SECURITY mode, handle situations if there were more or equal
- * to 'fails_hight' failed attempts of input User Password.
- *
- * Return: void.
+ * kp_if_failed_logs() - check recent fail log.
+ * Return: bool.
+ * Return true if log about recent failed attempt to unlock keypad metters,
+ * else - return false.
  */
+bool kp_if_failed_logs(void);
 
-//void read_keypad_data_from_flash(struct kp_lock *keypad);
-
-sk_err kp_flash_init();
-
-void kp_write_settings_to_flash(struct kp_lock *keypad);
-void kp_read_settings_from_flash(struct kp_lock *keypad);
-void kp_write_logs_to_flash(struct kp_lock *keypad);
-void kp_read_logs_from_flash(struct kp_lock *keypad, bool *successed);
-void kp_discard_logs_in_flash(void);
+/**
+ * kp_if_failed_logs_np() - check recent fail log.
+ * Return: bool.
+ * Return true if keypad has not react on failed attempt to unlock keypad yet,
+ * else - return false.
+ */
+bool kp_if_failed_logs_np(void);
+void kp_logs_in_flash_successed(void);
+void kp_logs_in_flash_failed(void);
+void kp_logs_in_flash_failed_p(void);
