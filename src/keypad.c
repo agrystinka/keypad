@@ -98,7 +98,7 @@ int main(void)
     if(kp_if_failed_logs()){
         kp_read_logs_from_flash(&keypad);
         keypad.fails++;
-        if(kp_if_failed_logs_np()){        
+        if(kp_if_failed_logs_np()){
             kp_fail(&lcd, &keypad, false);
         }
     }else{

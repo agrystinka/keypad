@@ -12,7 +12,7 @@
 #include <stdbool.h>
 
 #define SEMIHOSTING_USE 0
-#define HIGHT_SECURITY 0
+#define HIGHT_SECURITY 1
 
 // Recomended variants of password length
 #define MAX_PASS_LENGTH   8

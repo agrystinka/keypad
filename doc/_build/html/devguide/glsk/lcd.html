@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCD &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Flash memory" href="flash.html" />
+    <link rel="prev" title="Abstract over GPIO" href="gpio.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="lcd">
+<h1>LCD<a class="headerlink" href="#lcd" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="api-for-work-with-lcd-hd44780">
+<h2>API for work with lcd_hd44780<a class="headerlink" href="#api-for-work-with-lcd-hd44780" title="Permalink to this headline">¶</a></h2>
+<dl class="c macro">
+<dt id="c.LCD_HD44780_H">
+<code class="sig-name descname">LCD_HD44780_H</code><a class="headerlink" href="#c.LCD_HD44780_H" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>libsk GL-SK on-board LCD abstraction layer</p>
+<p>The display is WH1602B (based on HD44780 controller)</p>
+</dd></dl>
+
+<dl class="c type">
+<dt id="c.sk_delay_func_t">
+<em class="property">type </em><code class="sig-name descname">sk_delay_func_t</code><a class="headerlink" href="#c.sk_delay_func_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Pointer to delay(uint32_t var) function defined as type</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c._sk_lcd_cmd">
+sk_err <code class="sig-name descname">_sk_lcd_cmd</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, int <em>rs</em>, int <em>rw</em>, uint8_t *<em>cmddata</em><span class="sig-paren">)</span><a class="headerlink" href="#c._sk_lcd_cmd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Issue low-level LCD command
+&#64;rs: value on RS pin
+&#64;rw: write (<cite>true</cite>) or read (<cite>false</cite>). Corresponds to value on RW pin
+&#64;cmddata: value to set on data pins</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_cmd_clear">
+sk_err <code class="sig-name descname">sk_lcd_cmd_clear</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_cmd_clear" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clear Display command
+&#64;lcd: LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)</p>
+<p>Clears entire display and sets DDRAM address 0 in address counter.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_cmd_rethome">
+sk_err <code class="sig-name descname">sk_lcd_cmd_rethome</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_cmd_rethome" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Return Home command
+&#64;lcd: LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)</p>
+<p>Sets DDRAM address 0 in address counter. Also returns display from being shifted to original
+position. DDRAM contents remain unchanged.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_cmd_emodeset">
+sk_err <code class="sig-name descname">sk_lcd_cmd_emodeset</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, int <em>isdirright</em>, int <em>isshift</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_cmd_emodeset" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Entry Mode Set command
+&#64;lcd: LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)
+&#64;isdirright: <cite>true</cite> for left-to-right direction (cursor increment),</p>
+<blockquote>
+<div><p><cite>false</cite> for right-to-left direction (cursor decrement)</p>
+</div></blockquote>
+<p>&#64;isshift: whether to shift display contents according to direction set</p>
+<p>Sets cursor move direction and specifies display shift.
+These operations are performed during data write and read</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_cmd_onoffctl">
+sk_err <code class="sig-name descname">sk_lcd_cmd_onoffctl</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, int <em>display</em>, int <em>cursor</em>, int <em>blink</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_cmd_onoffctl" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Display ON/OFF Control command
+&#64;lcd:         LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)
+&#64;display: turn display on (<cite>true</cite>) or off (<cite>false</cite>)
+&#64;cursor:  turn cursor dispaly on (<cite>true</cite>) or off (<cite>false</cite>)
+&#64;blink:       turn cursor blinking on (<cite>true</cite>) or off (<cite>false</cite>)</p>
+<p>Sets entire display (D) on/off, cursor on/off (C), and blinking of cursor position character (B)</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_cmd_shift">
+sk_err <code class="sig-name descname">sk_lcd_cmd_shift</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, int <em>isshift</em>, int <em>isdirright</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_cmd_shift" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Cursor or Display Shift command
+&#64;lcd:            LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)
+&#64;isshift:    Display shift (<cite>true</cite>) or Cursor move (<cite>false</cite>)
+&#64;isdirright: Shift/Move to the right (<cite>true</cite>) or to the left (<cite>false</cite>)</p>
+<p>Moves cursor and shifts display without changing DDRAM contents</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_cmd_setaddr">
+sk_err <code class="sig-name descname">sk_lcd_cmd_setaddr</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t <em>addr</em>, int <em>iscgram</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_cmd_setaddr" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set DDRAM Address and Set CGRAM Address commands
+&#64;lcd:LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)
+&#64;addr: address to set
+&#64;iscgram: <cite>false</cite> to set provided address in DDRAM, <cite>true</cite> – in CGRAM</p>
+<p>Sets DDRAM/CGRAM address. DDRAM/CGRAM data is sent and received after this setting
+DDRAM address has 7 bits, CGRAM address is 6 bit wide</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_write_byte">
+void <code class="sig-name descname">sk_lcd_write_byte</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t <em>byte</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_write_byte" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Write data to CG or DDRAM
+&#64;lcd: LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)
+&#64;byte: data byte to send</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_putchar">
+void <code class="sig-name descname">sk_lcd_putchar</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">const</em> char <em>ch</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_putchar" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Put character at current position on LCD
+&#64;lcd: LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)
+&#64;ch: char to be mapped using charmap_func and sent to LCD</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_set_backlight">
+sk_err <code class="sig-name descname">sk_lcd_set_backlight</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t <em>level</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_set_backlight" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set backlight level (0..255)
+&#64;lcd:   LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)
+&#64;level: Backlight level</p>
+<p>Note:
+Only two levels (ON/OFF state) are used when no backlight control callback function
+was provided by the user. In this case, 0 means OFF and != 0 means ON.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_init">
+sk_err <code class="sig-name descname">sk_lcd_init</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_init" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Performs initalization of LCD using pre-set configuration from LCD object structure
+&#64;lcd:   LCD object (<code class="xref c c-type docutils literal notranslate"><span class="pre">sk_lcd</span></code>)</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_charmap_none">
+uint8_t <code class="sig-name descname">sk_lcd_charmap_none</code><span class="sig-paren">(</span><em class="property">const</em> char <em>c</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_charmap_none" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Don’t map. Use direct symbol values (1:1)</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_lcd_charmap_rus_cp1251">
+uint8_t <code class="sig-name descname">sk_lcd_charmap_rus_cp1251</code><span class="sig-paren">(</span><em class="property">const</em> char <em>c</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_lcd_charmap_rus_cp1251" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>CP1251 (aka Windows-1251) char map</p>
+<dl class="simple">
+<dt>This requires to compile with</dt><dd><p>-finput-charset=UTF-8    as our sources are encoded in UTF-8
+-fexec-charset=cp1251    as we expect each char to be encoded in CP1251 when executing</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.lcd_delay_us">
+void <code class="sig-name descname">lcd_delay_us</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, int <em>us</em><span class="sig-paren">)</span><a class="headerlink" href="#c.lcd_delay_us" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Private: Provides abstaction over two delay functions passed when constructing sk_lcd object</p>
+<p>Detect if optimal delay function is applicable and use it when possible with fallback
+to unoptimal variants</p>
+</dd></dl>
+
+</div>
+<div class="section" id="print-functions">
+<h2>Print functions<a class="headerlink" href="#print-functions" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">Manual for Users</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Manual for Developers</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">Abstract over GPIO</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flash.html">Flash memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timers.html">Timers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../servise.html">Service modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project.html">Keypad Lock project modules</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Manual for Developers</a><ul>
+  <li><a href="../glsk.html">Global Logic Starter Kit</a><ul>
+      <li>Previous: <a href="gpio.html" title="previous chapter">Abstract over GPIO</a></li>
+      <li>Next: <a href="flash.html" title="next chapter">Flash memory</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/glsk/lcd.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

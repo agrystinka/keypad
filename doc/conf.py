@@ -20,7 +20,7 @@ projdir = curdir.parent
 
 # -- Project information -----------------------------------------------------
 
-project = 'packet-sniffer'
+project = 'keypad lock'
 copyright = '2020, Inna Humeniuk'
 author = 'Inna Humeniuk'
 
@@ -34,13 +34,7 @@ extensions = [
 	'hawkmoth'
 ]
 
-# Path to the root of the C source files for Hawkmoth
 cautodoc_root = str(projdir)
-
-#Hawkmoth autodoc documentation style
-cautodoc_compat = 'kernel-doc'
-
-cautodoc_clang = '-DHAWKMOTH'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

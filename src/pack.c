@@ -3,15 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-/**
- * pack_fail_log() - pack data about failed attempts to unlock keypad.
- * @uint8_t *buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
- * @struct kp_lock *keypad: keypad lock data.
- *
- * Pack data about keypad to uint8_t buffer of FAIL_LOG_SIZE size.
- *
- * Return: void.
- */
+
 void pack_fail_log(uint8_t *buffer, struct kp_lock *keypad)
 {
 	buffer[0] = keypad->fails;
@@ -19,15 +11,7 @@ void pack_fail_log(uint8_t *buffer, struct kp_lock *keypad)
 	*pointer = keypad->delay_wait_cur_s; //buffer[1] - buffer[4]
 }
 
-/**
- * unpack_fail_log() - unpack data about failed attempts to unlock keypad.
- * @uint8_t *buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
- * @struct kp_lock *keypad: keypad lock data.
- *
- * Unpack data about keypad from uint8_t buffer of FAIL_LOG_SIZE size.
- *
- * Return: void.
- */
+
 void unpack_fail_log(uint8_t *buffer, struct kp_lock *keypad)
 {
 	keypad->fails = buffer[0];
@@ -35,15 +19,7 @@ void unpack_fail_log(uint8_t *buffer, struct kp_lock *keypad)
 	keypad->delay_wait_cur_s = *pointer;
 }
 
-/**
- * pack_settings() - pack keypad settings.
- * @uint8_t *buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
- * @struct kp_lock *keypad: keypad lock data.
- *
- * Pack data about keypad to uint8_t buffer of SETTINGS_SIZE size.
- *
- * Return: void.
- */
+
 void pack_settings(uint8_t *buffer, struct kp_lock *keypad)
 {
 	int32_t shift = 0;
@@ -104,15 +80,7 @@ void pack_settings(uint8_t *buffer, struct kp_lock *keypad)
 #endif
 }
 
-/**
- * unpack_settings() - unpack keypad settings.
- * @uint8_t *buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
- * @struct kp_lock *keypad: keypad lock data.
- *
- * Unpack data about keypad from uint8_t buffer of SETTINGS_SIZE size.
- *
- * Return: void.
- */
+
 void unpack_settings(uint8_t *buffer, struct kp_lock *keypad)
  {
  	int32_t shift = 0;

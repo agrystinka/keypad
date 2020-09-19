@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timers &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Service modules" href="../servise.html" />
+    <link rel="prev" title="Flash memory" href="flash.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="timers">
+<h1>Timers<a class="headerlink" href="#timers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="timers-based-on-systick-and-tim7">
+<h2>Timers based on SysTick and TIM7<a class="headerlink" href="#timers-based-on-systick-and-tim7" title="Permalink to this headline">¶</a></h2>
+<dl class="c function">
+<dt id="c.systick_setup">
+void <code class="sig-name descname">systick_setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.systick_setup" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>systich_setup() - setup SysTick.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.delay_ms_systick">
+void <code class="sig-name descname">delay_ms_systick</code><span class="sig-paren">(</span>uint32_t <em>ms</em><span class="sig-paren">)</span><a class="headerlink" href="#c.delay_ms_systick" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>delay_us_systick() - dalay based on systick.
+&#64;uint32_t time_ms: time in miliseconds.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.one_shot_timer_tim7_setup">
+void <code class="sig-name descname">one_shot_timer_tim7_setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.one_shot_timer_tim7_setup" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>one_shot_timer_tim7_setup() - setup TIM7 as one shot timer.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.delay_us_tim7">
+void <code class="sig-name descname">delay_us_tim7</code><span class="sig-paren">(</span>uint32_t <em>time_us</em><span class="sig-paren">)</span><a class="headerlink" href="#c.delay_us_tim7" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>delay_us_tim7() - dalay based on one shot timer TIM7.
+&#64;uint32_t time_us: time in microseconds.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">Manual for Users</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Manual for Developers</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">Abstract over GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flash.html">Flash memory</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Timers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../servise.html">Service modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project.html">Keypad Lock project modules</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Manual for Developers</a><ul>
+  <li><a href="../glsk.html">Global Logic Starter Kit</a><ul>
+      <li>Previous: <a href="flash.html" title="previous chapter">Flash memory</a></li>
+      <li>Next: <a href="../servise.html" title="next chapter">Service modules</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/glsk/timers.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

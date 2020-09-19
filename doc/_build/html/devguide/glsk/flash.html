@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash memory &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Timers" href="timers.html" />
+    <link rel="prev" title="LCD" href="lcd.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="flash-memory">
+<h1>Flash memory<a class="headerlink" href="#flash-memory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="api-for-work-with-stm-embedded-flash-memory">
+<h2>API for work with STM embedded flash memory<a class="headerlink" href="#api-for-work-with-stm-embedded-flash-memory" title="Permalink to this headline">¶</a></h2>
+<dl class="c function">
+<dt id="c.sk_erase">
+sk_err <code class="sig-name descname">sk_erase</code><span class="sig-paren">(</span><em class="property">struct</em> sk_sector *<em>sector</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_erase" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>sk_format() - erase sector.
+&#64;struct sk_sector <a href="#id1"><span class="problematic" id="id2">*</span></a>sector: sector of flash memory to search.</p>
+<p>Return: sk_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_flash_write">
+sk_err <code class="sig-name descname">sk_flash_write</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, uint32_t <em>size</em>, uint32_t <em>address</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_flash_write" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>sk_flash_write() - write data from buffer to flash memory.
+&#64;uint8_t <a href="#id3"><span class="problematic" id="id4">*</span></a>buffer: buffer with data.
+&#64;uint32_t size: size of buffer.
+&#64;uint32_t address: adress in flash memory from which start writing data.</p>
+<p>Return: sk_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_flash_read">
+sk_err <code class="sig-name descname">sk_flash_read</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, uint32_t <em>size</em>, uint32_t <em>address</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_flash_read" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>sk_flash_read() - read data from flash memory to buffer.
+&#64;uint8_t <a href="#id5"><span class="problematic" id="id6">*</span></a>buffer: buffer to store read data.
+&#64;uint32_t size: size of buffer.
+&#64;uint32_t address: adress in flash memory from which start to read data.</p>
+<p>Return: sk_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_flash_empty">
+int <code class="sig-name descname">sk_flash_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_flash_empty" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>sk_flash_empty() - check if flash memory is empty.
+&#64;uint8_t  <a href="#id7"><span class="problematic" id="id8">*</span></a>buffer: buffer to check.
+&#64;uint32_t size: size of buffer.</p>
+<p>Check if all bits of buffer are equal to 1.</p>
+<p>Return: bool.
+Return true if memory is empty, false if not.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_search">
+uint32_t <code class="sig-name descname">sk_search</code><span class="sig-paren">(</span><em class="property">struct</em> sk_sector *<em>sector</em>, uint32_t <em>size</em>, int <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_search" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>sk_search() - find empty space with chosen size in flash memory.
+&#64;struct sk_sector <a href="#id9"><span class="problematic" id="id10">*</span></a>sector: sector of flash memory to search.
+&#64;uint32_t size: size of required empty space in data_t elements (sizeof(data_t) bytes).
+&#64;bool write: if true - return adress on start of empty space of given size,</p>
+<blockquote>
+<div><p>if false - return adress on start of last note with given size.</p>
+</div></blockquote>
+<p>Return: uint32_t.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.sk_refresh">
+sk_err <code class="sig-name descname">sk_refresh</code><span class="sig-paren">(</span><em class="property">struct</em> sk_sector *<em>sector</em>, <em class="property">struct</em> sk_sector *<em>sectornew</em>, uint32_t <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_refresh" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>sk_refresh() - refresh flash memory sector.
+&#64;struct sk_sector <a href="#id11"><span class="problematic" id="id12">*</span></a>sector: old sector.
+&#64;struct sk_sector <a href="#id13"><span class="problematic" id="id14">*</span></a>sectornew: new sector (must be empty).
+&#64;uint32_t size: size of note.</p>
+<p>Copy recent note from sector to sectornew, erase sector, tag them.
+In the resuls sector has only recent note, sector new is empty.
+Return: sk_err.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">Manual for Users</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Manual for Developers</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">Abstract over GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd.html">LCD</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Flash memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timers.html">Timers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../servise.html">Service modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project.html">Keypad Lock project modules</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Manual for Developers</a><ul>
+  <li><a href="../glsk.html">Global Logic Starter Kit</a><ul>
+      <li>Previous: <a href="lcd.html" title="previous chapter">LCD</a></li>
+      <li>Next: <a href="timers.html" title="next chapter">Timers</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/glsk/flash.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
