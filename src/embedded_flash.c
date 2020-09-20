@@ -1,6 +1,28 @@
 #include "embedded_flash.h"
 #include "intrinsics.h"
+#include <libopencm3/stm32/crc.h>
 #include <stdio.h>
+
+//TODO: rewrite for void*
+uint32_t sk_crc(uint8_t *data, uint32_t size)
+{
+	//reset crc
+	 crc_reset();
+	 uint32_t res;
+	 if(size / (sizeof(uint32_t)) > 0) //just in case
+	 	//send first size / 4 bytes to crc
+	 	res = crc_calculate_block((uint32_t *)data, size / (sizeof(uint32_t)));
+	 //send rest few bytes if they exist, with pading bytes equal to 0xff
+	 if(size % (sizeof(uint32_t)) != 0){
+		 uint32_t tmp = 0xffffffff;
+		 uint8_t *pointer;
+		 pointer = (uint8_t *) &tmp;
+		 for(uint8_t i = 0; i < size % (sizeof(uint32_t)); i++)
+		 	*pointer &= data[size / (sizeof(uint32_t)) + i];
+		 res = crc_calculate(tmp);
+	 }
+	 return res;
+}
 
 sk_err sk_erase(struct sk_sector *sector)
 {
@@ -58,7 +80,7 @@ uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write)
 {
 	//check if correct input
 	if(sector == NULL || size > sector->size)
-		return NULL;
+		return 0;
 
 	uint32_t shift = 0;
 
@@ -76,7 +98,7 @@ uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write)
 
 		shift += size;
 	}
-	return NULL;
+	return 0;
 }
 
 //TODO: test properly and make this funcion atomic

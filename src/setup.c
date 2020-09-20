@@ -79,7 +79,7 @@ sk_err kp_interrupts_btn_setup(void)
     kp_interrupts_btn_swt345_setup();
 }
 
-// sk_err kp_flash_setup(void)
-// {
-//     rcc_periph_clock_enable(RCC_GPIOE);
-// }
+sk_err sk_crc_init(void)
+{
+    rcc_periph_clock_enable(RCC_CRC);		// lcd is connected to port E
+}

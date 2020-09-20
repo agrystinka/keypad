@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash memory &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="User settings" href="menu.html" />
+    <link rel="prev" title="Lock &amp; Unlock" href="lock.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="flash-memory">
+<h1>Flash memory<a class="headerlink" href="#flash-memory" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="organization-of-flash-memory-for-keypad-lock-use">
+<h2>Organization of flash memory for keypad lock use<a class="headerlink" href="#organization-of-flash-memory-for-keypad-lock-use" title="Permalink to this headline">¶</a></h2>
+<dl class="c function">
+<dt id="c.kp_flash_init">
+kp_err <code class="sig-name descname">kp_flash_init</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_flash_init" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>sk_refresh() - erase all sectors used by keypad.</p>
+<p>Return: sk_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_write_settings_to_flash">
+kp_err <code class="sig-name descname">kp_write_settings_to_flash</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_write_settings_to_flash" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_write_settings_to_flash() -  write settings to flash memory.
+&#64;struct kp_lock <a href="#id1"><span class="problematic" id="id2">*</span></a>keypad: keypad lock data.</p>
+<p>Pack keypad settings and add note about them in the firsh empty space
+in settings_sector in flash memory.</p>
+<p>Return: kp_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_read_settings_from_flash">
+kp_err <code class="sig-name descname">kp_read_settings_from_flash</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_read_settings_from_flash" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_read_settings_from_flash() -  read settings from flash memory.
+&#64;struct kp_lock <a href="#id3"><span class="problematic" id="id4">*</span></a>keypad: keypad lock data.</p>
+<p>Read recent note about settings from settings_sector in flash memory
+and unpack it to keypad.</p>
+<p>Return: kp_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_write_logs_to_flash">
+kp_err <code class="sig-name descname">kp_write_logs_to_flash</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_write_logs_to_flash" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_write_logs_to_flash() -  write log about attemp to unlock keypad to flash memory.
+&#64;struct kp_lock <a href="#id5"><span class="problematic" id="id6">*</span></a>keypad: keypad lock data.</p>
+<p>Pack keypad log and add note about them in the firsh empty space
+in fail_log_sector in flash memory.</p>
+<p>Return: kp_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_read_logs_from_flash">
+kp_err <code class="sig-name descname">kp_read_logs_from_flash</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_read_logs_from_flash" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_read_logs_from_flash() -  read settings from flash memory.
+&#64;struct kp_lock <a href="#id7"><span class="problematic" id="id8">*</span></a>keypad: keypad lock data.</p>
+<p>Read recent note about log from fail_log_sector in flash memory
+and unpack it to keypad.</p>
+<p>Return: kp_err.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_if_failed_logs">
+int <code class="sig-name descname">kp_if_failed_logs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_if_failed_logs" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_if_failed_logs() - check recent fail log.</p>
+<p>Return: bool.
+Return true if log about recent failed attempt to unlock keypad metters,
+else - return false.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_if_failed_logs_np">
+int <code class="sig-name descname">kp_if_failed_logs_np</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_if_failed_logs_np" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_if_failed_logs_np() - check recent fail log.</p>
+<p>Return: bool.
+Return true if keypad has not react on failed attempt to unlock keypad yet,
+else - return false.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_logs_in_flash_successed">
+void <code class="sig-name descname">kp_logs_in_flash_successed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_logs_in_flash_successed" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_logs_in_flash_successed() - mark recent log as successful attempt.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_logs_in_flash_failed">
+void <code class="sig-name descname">kp_logs_in_flash_failed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_logs_in_flash_failed" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_logs_in_flash_failed() - mark recent log as failed attempt.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_logs_in_flash_failed_p">
+void <code class="sig-name descname">kp_logs_in_flash_failed_p</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_logs_in_flash_failed_p" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_logs_in_flash_failed() - mark recent log as failed attempt that was ‘punished’.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pack-keypad-lock-data">
+<h2>Pack keypad lock data<a class="headerlink" href="#pack-keypad-lock-data" title="Permalink to this headline">¶</a></h2>
+<dl class="c function">
+<dt id="c.pack_fail_log">
+void <code class="sig-name descname">pack_fail_log</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.pack_fail_log" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>pack_fail_log() - pack data about failed attempts to unlock keypad.
+&#64;uint8_t <a href="#id9"><span class="problematic" id="id10">*</span></a>buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
+&#64;struct kp_lock <a href="#id11"><span class="problematic" id="id12">*</span></a>keypad: keypad lock data.</p>
+<p>Pack data about keypad to uint8_t buffer of FAIL_LOG_SIZE size.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.unpack_fail_log">
+void <code class="sig-name descname">unpack_fail_log</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.unpack_fail_log" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>unpack_fail_log() - unpack data about failed attempts to unlock keypad.
+&#64;uint8_t <a href="#id13"><span class="problematic" id="id14">*</span></a>buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
+&#64;struct kp_lock <a href="#id15"><span class="problematic" id="id16">*</span></a>keypad: keypad lock data.</p>
+<p>Unpack data about keypad from uint8_t buffer of FAIL_LOG_SIZE size.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.pack_settings">
+void <code class="sig-name descname">pack_settings</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.pack_settings" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>pack_settings() - pack keypad settings.
+&#64;uint8_t <a href="#id17"><span class="problematic" id="id18">*</span></a>buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
+&#64;struct kp_lock <a href="#id19"><span class="problematic" id="id20">*</span></a>keypad: keypad lock data.</p>
+<p>Pack data about keypad to uint8_t buffer of SETTINGS_SIZE size.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.unpack_settings">
+void <code class="sig-name descname">unpack_settings</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.unpack_settings" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>unpack_settings() - unpack keypad settings.
+&#64;uint8_t <a href="#id21"><span class="problematic" id="id22">*</span></a>buffer: pointer on buffer with size GLOBAL_DATA_SIZE.
+&#64;struct kp_lock <a href="#id23"><span class="problematic" id="id24">*</span></a>keypad: keypad lock data.</p>
+<p>Unpack data about keypad from uint8_t buffer of SETTINGS_SIZE size.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">Manual for Users</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Manual for Developers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../servise.html">Service modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../project.html">Keypad Lock project modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="keypad.html">Keypad lock (main)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lock.html">Lock &amp; Unlock</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Flash memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="menu.html">User settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmdbtn.html">Keypad lock commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="setup.html">Setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Manual for Developers</a><ul>
+  <li><a href="../project.html">Keypad Lock project modules</a><ul>
+      <li>Previous: <a href="lock.html" title="previous chapter">Lock &amp; Unlock</a></li>
+      <li>Next: <a href="menu.html" title="next chapter">User settings</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/project/flash.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

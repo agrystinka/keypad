@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lock &amp; Unlock &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Flash memory" href="flash.html" />
+    <link rel="prev" title="Keypad lock (main)" href="keypad.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="lock-unlock">
+<h1>Lock &amp; Unlock<a class="headerlink" href="#lock-unlock" title="Permalink to this headline">¶</a></h1>
+<p>Handlers of correct and incorrect User Password inputs.</p>
+<dl class="c function">
+<dt id="c.kp_btn_enable">
+void <code class="sig-name descname">kp_btn_enable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_btn_enable" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_btn_enable() - enable interrupts on GLSK SWT buttons.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_btn_disable">
+void <code class="sig-name descname">kp_btn_disable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_btn_disable" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_btn_disable() - disable interrupts on GLSK SWT buttons.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_lock_keypad">
+void <code class="sig-name descname">kp_lock_keypad</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_lock_keypad" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_lock_keypad() - lock keypad.
+&#64;struct kp_lock <a href="#id1"><span class="problematic" id="id2">*</span></a>keypad: keypad lock data.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_unlock_keypad">
+void <code class="sig-name descname">kp_unlock_keypad</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_unlock_keypad" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_unlock_keypad() - unlock keypad.
+&#64;struct kp_lock <a href="#id3"><span class="problematic" id="id4">*</span></a>keypad: keypad lock data.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_single_opening">
+void <code class="sig-name descname">kp_single_opening</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_single_opening" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_main_settings() - single openning.
+&#64;struct sk_lcd <a href="#id5"><span class="problematic" id="id6">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id7"><span class="problematic" id="id8">*</span></a>keypad: keypad lock data.</p>
+<p>Unlock keypad for ‘delay_open_s’ seconds and lock it back. Suited or Mode 1.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_toggle_keypad_state">
+void <code class="sig-name descname">kp_toggle_keypad_state</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_toggle_keypad_state" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_main_settings() - change keypad state.
+&#64;struct sk_lcd <a href="#id9"><span class="problematic" id="id10">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id11"><span class="problematic" id="id12">*</span></a>keypad: keypad lock data.</p>
+<p>Unlock keypad if in was locked adn vise versa. Suited or Mode 2.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_discard_fails">
+void <code class="sig-name descname">kp_discard_fails</code><span class="sig-paren">(</span><em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_discard_fails" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_welcome() - discard info about fails.
+&#64;struct kp_lock <a href="#id13"><span class="problematic" id="id14">*</span></a>keypad: keypad lock data.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_welcome">
+void <code class="sig-name descname">kp_welcome</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_welcome" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_welcome() - handle correct User Password input.
+&#64;struct sk_lcd <a href="#id15"><span class="problematic" id="id16">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id17"><span class="problematic" id="id18">*</span></a>keypad: keypad lock data.</p>
+<p>Handle correct User Password input according to keypad mode:
+unlock keypad for delay_open_s’ seconds or switch keypad state.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_fail">
+void <code class="sig-name descname">kp_fail</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em>, int <em>count</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_fail" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_fail() - handle incorrect User Password input.
+&#64;struct sk_lcd <a href="#id19"><span class="problematic" id="id20">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id21"><span class="problematic" id="id22">*</span></a>keypad: keypad lock data.
+&#64;bool count: if true - this fail have to be counted,</p>
+<blockquote>
+<div><p>if false - jaste show waiting timer</p>
+</div></blockquote>
+<p>Handle correct User Password input.
+Block keypad for ‘delay_wait_cur_s’ seconds if there were more or equal to ‘fails_low’
+failed attempts of input User Password.
+If keypad works in HIGHT_SECURITY mode, handle situations if there were more or equal
+to ‘fails_hight’ failed attempts of input User Password.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">Manual for Users</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Manual for Developers</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../servise.html">Service modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../project.html">Keypad Lock project modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="keypad.html">Keypad lock (main)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Lock &amp; Unlock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flash.html">Flash memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="menu.html">User settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmdbtn.html">Keypad lock commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="setup.html">Setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Manual for Developers</a><ul>
+  <li><a href="../project.html">Keypad Lock project modules</a><ul>
+      <li>Previous: <a href="keypad.html" title="previous chapter">Keypad lock (main)</a></li>
+      <li>Next: <a href="flash.html" title="next chapter">Flash memory</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/project/lock.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

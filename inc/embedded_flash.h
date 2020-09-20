@@ -34,11 +34,15 @@
 
 #define EMPTY_BYTE 0xff
 
+#define CRC_SIZE 4
+
 struct sk_sector {
     uint32_t start; //addres of begining of sector
     uint32_t size; //in bytes
     uint8_t num; //number of sector
 };
+
+uint32_t sk_crc(uint8_t *data, uint32_t size);
 
 /**
  * sk_format() - erase sector.

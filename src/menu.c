@@ -384,10 +384,10 @@ void kp_menu(struct sk_lcd *lcd, struct kp_lock *keypad)
         //show wait screen, switch orange diod
         //rewrite non-volitile embeded flash memory if it is necessary
         if(CHANGES){
-            kp_btn_disable();
-            kp_write_settings_to_flash(&keypad);
-            kp_discard_fails(&keypad);
-            kp_btn_enable();
+            kp_write_settings_to_flash(keypad);
+            //discard fail logs
+            keypad->fails = 0;
+        	keypad->delay_wait_cur_s = keypad->delay_wait_s;
         }
         //refresh security data after settings
         keypad->fails = keypad->fails_low;

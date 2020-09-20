@@ -78,17 +78,19 @@ int main(void)
 	//setup as LOCKED
 	mgl_clear(mgl_led_green);
 
+    sk_crc_init(); //crc setup
+
 #if SEMIHOSTING_USE
     printf("System initialized\n");
 #endif
 
-    //kp_flash_init();
-    //kp_write_settings_to_flash(&keypad); //Write default setting to flash
+    kp_flash_init();
+    kp_write_settings_to_flash(&keypad); //Write default setting to flash
 
 #if SEMIHOSTING_USE
 	// printf("Written data to flash\n");
 	// print_data(&keypad);
-	// kp_read_settings_from_flash(&keypad);
+	 kp_read_settings_from_flash(&keypad);
 	// printf("Read data from flash\n");
 	// print_data(&keypad);
     // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");

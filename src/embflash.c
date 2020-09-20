@@ -33,42 +33,42 @@ struct sk_sector reserved_sector = {
 
 kp_err kp_flash_init()
 {
-//	sk_erase(&settings_sector);
+	sk_erase(&settings_sector);
 	sk_erase(&fail_log_sector);
-//	sk_erase(&reserved_sector);
+	sk_erase(&reserved_sector);
 	return KP_OK;
 }
 
 
 kp_err kp_write_settings_to_flash(struct kp_lock *keypad)
 {
-#if !FIRST_FLASH
-	kp_btn_disable(); //block buttons just in case
-#endif
-	volatile uint8_t data[SETTINGS_SIZE];
+	volatile uint8_t data[SETTINGS_SIZE + CRC_SIZE];
 	pack_settings(&data[0], keypad);//Pack keypad settings to array
-	uint32_t address = sk_search(&settings_sector, SETTINGS_SIZE, true);
+	//calculate and pack crc
+	uint32_t crc = sk_crc(&data[0], SETTINGS_SIZE);
+	for(uint8_t i = 0; i < sizeof(uint32_t); i++)
+		data[SETTINGS_SIZE + i] = *(((uint8_t *)&crc) + i);
+
+	uint32_t address = sk_search(&settings_sector, SETTINGS_SIZE + CRC_SIZE, true);
 	//TODO: test properly
-	if(address == NULL){ //if there is no free space in sector
+	if(address == 0){ //if there is no free space in sector
 		if(sk_refresh(&fail_log_sector, &reserved_sector, SETTINGS_SIZE) != SK_EOK)
 			return KP_ERR;
 		address = sk_search(&fail_log_sector, SETTINGS_SIZE, true);
-		if(address == NULL)
+		if(address == 0)
 			return KP_ERR;
 	}
 	__DMB(); //Memory barrier
-	if(sk_flash_write(&data[0], SETTINGS_SIZE, address) != SK_EOK)
+	if(sk_flash_write(&data[0], SETTINGS_SIZE + CRC_SIZE, address) != SK_EOK)
 		return KP_ERR;
 
 #if SEMIHOSTING_USE
 	printf("Write DATA\n");
-	for(uint32_t i = 0; i < SETTINGS_SIZE; i++)
+	for(uint32_t i = 0; i < SETTINGS_SIZE + CRC_SIZE; i++)
 		printf("%x ", data[i]);
 	printf("\n");
+	printf("CRC: %x\n", crc);
 	printf("Write DATA ADDRESS %x\n", address);
-#endif
-#if !FIRST_FLASH
-	kp_btn_enable(); //unblock buttons
 #endif
 	return KP_OK;
 }
@@ -76,50 +76,46 @@ kp_err kp_write_settings_to_flash(struct kp_lock *keypad)
 
 kp_err kp_read_settings_from_flash(struct kp_lock *keypad)
 {
-#if !FIRST_FLASH
-	kp_btn_disable(); //block buttons just in case
-#endif
-
-	uint32_t address = sk_search(&settings_sector, SETTINGS_SIZE, false);
-	if(address == NULL)
+	uint32_t address = sk_search(&settings_sector, SETTINGS_SIZE + CRC_SIZE, false);
+	if(address == 0)
 		return KP_ERR;
 
-	volatile uint8_t data[SETTINGS_SIZE];
-	if(sk_flash_read(&data[0], SETTINGS_SIZE, address) != SK_EOK)
+	volatile uint8_t data[SETTINGS_SIZE + CRC_SIZE];
+	if(sk_flash_read(&data[0], SETTINGS_SIZE + CRC_SIZE, address) != SK_EOK)
 		return KP_ERR;
 
 	__DMB(); //Memory barrier
 	unpack_settings(&data[0], keypad);
+	uint32_t crc1 = *((uint32_t*)&data[SETTINGS_SIZE]); //unpack crc
+	uint32_t crc2 = sk_crc(&data[0], SETTINGS_SIZE); //calculate crc
+
+	if(crc1 != crc2)
+		return KP_ERR;
 
 #if SEMIHOSTING_USE
 	printf("Read DATA\n");
-	for(uint32_t i = 0; i < SETTINGS_SIZE; i++)
+	for(uint32_t i = 0; i < SETTINGS_SIZE + CRC_SIZE; i++)
 		printf("%x ", data[i]);
 	printf("\n");
+	printf("CRC1: %x\n", crc1);
+	printf("CRC2: %x\n", crc2);
 	printf("Read DATA ADDRESS %x\n", address);
-#endif
-#if !FIRST_FLASH
-	kp_btn_enable(); //unblock buttons
 #endif
 	return KP_OK;
 }
 
 kp_err kp_write_logs_to_flash(struct kp_lock *keypad)
 {
-#if !FIRST_FLASH
-	kp_btn_disable(); //block buttons just in case
-#endif
-
 	volatile uint8_t data[FAIL_LOG_SIZE + 1];
 	pack_fail_log(&data[0], keypad);
 	data[FAIL_LOG_SIZE + 0] = ATTEMPT;
 	uint32_t address = sk_search(&fail_log_sector, FAIL_LOG_SIZE + 1, true);
-	//TODO: test properly
-	if(address == NULL){ //if there is no free space in sector, refresh it
+
+	if(address == 0){ //if there is no free space in sector, refresh it
 		if(sk_refresh(&fail_log_sector, &reserved_sector, FAIL_LOG_SIZE + 1) != SK_EOK)
 			return KP_ERR;
 		address = sk_search(&fail_log_sector, FAIL_LOG_SIZE + 1, true);
-		if(address == NULL)
+		if(address == 0)
 			return KP_ERR;
 	}
 
@@ -134,20 +130,13 @@ kp_err kp_write_logs_to_flash(struct kp_lock *keypad)
 	printf("\n");
 	printf("ADDRESS %x\n", address);
 #endif
-#if !FIRST_FLASH
-	kp_btn_enable(); //unblock buttons
-#endif
 	return KP_OK;
 }
 
 kp_err kp_read_logs_from_flash(struct kp_lock *keypad)
 {
-#if !FIRST_FLASH
-	kp_btn_disable(); //block buttons just in case
-#endif
-
 	uint32_t address = sk_search(&fail_log_sector, FAIL_LOG_SIZE + 1, false);
-	if(address == NULL)
+	if(address == 0)
 		return KP_ERR;
 
 	volatile uint8_t data[FAIL_LOG_SIZE + 1];
@@ -164,9 +153,6 @@ kp_err kp_read_logs_from_flash(struct kp_lock *keypad)
 		printf("%x ", data[i]);
 	printf("\n");
 	printf("ADDRESS %x\n", address);
-#endif
-#if !FIRST_FLASH
-	kp_btn_enable(); //unblock buttons
 #endif
 	return KP_OK;
 }
@@ -189,7 +175,7 @@ bool kp_if_failed_logs(void)
 		return false;
 }
 
-//if return true - need to be punished
+
 bool kp_if_failed_logs_np(void)
 {
 	uint32_t address = sk_search(&fail_log_sector, FAIL_LOG_SIZE + 1, false);
@@ -201,7 +187,7 @@ bool kp_if_failed_logs_np(void)
 	printf("Tag: %x ", tag);
 #endif
 
-	if(tag == FAILD_ATTEMPT_NP) //if need to be punished
+	if(tag == FAILD_ATTEMPT_NP) //if user must be punished
 		return true;
 	else
 		return false;
@@ -210,26 +196,18 @@ bool kp_if_failed_logs_np(void)
 
 static kp_err kp_logs_tag_recent(uint8_t tag)
 {
-#if !FIRST_FLASH
-	kp_btn_disable(); //block buttons just in case
-#endif
-
 	uint32_t address = sk_search(&fail_log_sector, FAIL_LOG_SIZE + 1, false);
-	//TODO: test properly
-	if(address == NULL){ //if there is no free space in sector, refresh it
+
+	if(address == 0){ //if there is no free space in sector, refresh it
 		if(sk_refresh(&fail_log_sector, &reserved_sector, FAIL_LOG_SIZE + 1) != SK_EOK)
 			return KP_ERR;
 		address = sk_search(&fail_log_sector, FAIL_LOG_SIZE + 1, true);
-		if(address == NULL)
+		if(address == 0)
 			return KP_ERR;
 	}
 	uint8_t data = tag;
 	if(sk_flash_write(&data, 1, address + FAIL_LOG_SIZE) != SK_EOK)
 		return KP_ERR;
-
-#if !FIRST_FLASH
-	kp_btn_enable(); //unblock buttons
-#endif
 	return KP_OK;
 }
 
