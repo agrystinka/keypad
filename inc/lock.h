@@ -91,3 +91,11 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad);
  * Return: void.
  */
 void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad, bool count);
+
+/**
+ * kp_fail() - handle Keypad errors.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ *
+ * Return: void.
+ */
+void kp_keypad_error(struct sk_lcd *lcd);

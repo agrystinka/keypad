@@ -3,8 +3,8 @@
 #include <libopencm3/stm32/crc.h>
 #include <stdio.h>
 
-//TODO: rewrite for void*
-uint32_t sk_crc(uint8_t *data, uint32_t size)
+
+uint32_t sk_crc(uint8_t *data, uint32_t size) //TODO: rewrite for void*
 {
 	//reset crc
 	 crc_reset();
@@ -24,6 +24,7 @@ uint32_t sk_crc(uint8_t *data, uint32_t size)
 	 return res;
 }
 
+
 sk_err sk_erase(struct sk_sector *sector)
 {
 	if(sector == NULL)
@@ -39,25 +40,17 @@ sk_err sk_erase(struct sk_sector *sector)
 
 sk_err sk_flash_write(uint8_t *buffer, uint32_t size, uint32_t address)
 {
-	//TODO: check if adres is in flash memory
-
 	if(buffer == NULL)
 		return SK_EWRONGARG;
-    //unlock flash memory to be able write to it
-    flash_unlock();
-    //Check that no main Flash memory operation is ongoing
-    //set PG to FLASH_CR, perform the data write operation
+    flash_unlock(); //unlock flash memory to be able write to it
     flash_program(address, buffer, size);
-    //lock flash memoty to prevent spurious writes
-    flash_lock();
+    flash_lock();//lock flash memoty to prevent spurious writes
     return SK_EOK;
 }
 
 
 sk_err sk_flash_read(uint8_t *buffer, uint32_t size, uint32_t address)
 {
-	//TODO: check if adres is in flash memory
-
 	if(buffer == NULL)
 		return SK_EWRONGARG;
 
@@ -78,7 +71,6 @@ bool sk_flash_empty(uint8_t *buffer, uint32_t size)
 
 uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write)
 {
-	//check if correct input
 	if(sector == NULL || size > sector->size)
 		return 0;
 
@@ -101,7 +93,7 @@ uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write)
 	return 0;
 }
 
-//TODO: test properly and make this funcion atomic
+//TODO: make this funcion atomic
 sk_err sk_refresh(struct sk_sector *sector, struct sk_sector *sectornew, uint32_t size)
 {
 	if(sector == NULL || sectornew == NULL || size > sector->size || size > sectornew->size)
@@ -121,4 +113,13 @@ sk_err sk_refresh(struct sk_sector *sector, struct sk_sector *sectornew, uint32_
 	*sector = *sectornew;
 	*sectornew = tmp;
 	return SK_EOK;
+}
+
+
+bool sk_if_sector_empty(struct sk_sector *sector)
+{
+	for(uint32_t i = 0; i < sector->size; i++)
+		if(*((uint8_t *)(sector->start + i)) != EMPTY_BYTE)
+			return false;
+	return true;
 }

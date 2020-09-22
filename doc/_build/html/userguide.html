@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual for Users &#8212; keypad lock  documentation</title>
+    <title>User Manual &#8212; keypad lock  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Manual for Developers" href="devguide.html" />
+    <link rel="next" title="Developer Manual" href="devguide.html" />
     <link rel="prev" title="Keypad lock based on Global Logic Starter Kit" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -33,10 +33,64 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="manual-for-users">
-<h1>Manual for Users<a class="headerlink" href="#manual-for-users" title="Permalink to this headline">¶</a></h1>
-<p>TODO: where might be used</p>
-<p>Keypad lock provide access by User password. The open mode in simulated by switching on green led.</p>
+  <div class="section" id="user-manual">
+<h1>User Manual<a class="headerlink" href="#user-manual" title="Permalink to this headline">¶</a></h1>
+<p>Keypad lock provide access by user password.</p>
+<p>The open mode in simulated by switching on green led.</p>
+<p><strong>To unlock keypad lock (Mode 1) or to switch the state (Mode 2):</strong></p>
+<p>Input User Password: use UP and DOWN buttons to set the value, RIGHT and LEFT to move and MENU (central button) to confirm.</p>
+<p><strong>To open settings:</strong></p>
+<ol class="arabic simple">
+<li><p>Fill User Password with ‘0’ or left empty.</p></li>
+<li><p>Input Master Password.</p></li>
+<li><p>Chose option using buttons (UP, DOWN, MENU).</p></li>
+</ol>
+<p><strong>Menu (settings) map</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Function</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Go back</p></td>
+<td><p>Save changes and go back</p></td>
+</tr>
+<tr class="row-odd"><td><p>Password</p></td>
+<td><p>Change User Password and its length</p></td>
+</tr>
+<tr class="row-even"><td><p>Master code</p></td>
+<td><p>Change Master Password and its length</p></td>
+</tr>
+<tr class="row-odd"><td><p>Work mode</p></td>
+<td><p>Change Mode and set ‘Welcome delay’</p></td>
+</tr>
+<tr class="row-even"><td><p>Security</p></td>
+<td><p>Change waiting delay, coefficient, number of failed attempts without waiting etc.</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Default settings</strong></p>
+<ul class="simple">
+<li><p>User password: 2222</p></li>
+<li><p>Master password: 123456</p></li>
+<li><p>Menu code: 0000</p></li>
+<li><p>Mode: 1 (one-time openning)</p></li>
+<li><p>Welcome delay: 10s</p></li>
+<li><p>Minimal wait delay: 30s</p></li>
+<li><p>Coefficient: 2</p></li>
+<li><p>Number of attempts after which keypad lock start to be blocked: 3</p></li>
+</ul>
+<p><strong>Tips</strong></p>
+<ol class="arabic simple">
+<li><p>Avoid changing both User and Master passwords in one ‘session’ if Keypad Lock works in High Secure mode. Change one password, go back to the User Password input page, then go to settings ones more and change another password.</p></li>
+<li><p>Avoid using a lot of ‘0’ in passwords. (Empty spaces are equal to ‘0’).</p></li>
+<li><p>Set Master password with max length (8 symbols).</p></li>
+</ol>
 </div>
 
 
@@ -58,8 +112,8 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Manual for Users</a></li>
-<li class="toctree-l1"><a class="reference internal" href="devguide.html">Manual for Developers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide.html">Developer Manual</a></li>
 </ul>
 
 <div class="relations">
@@ -67,7 +121,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="index.html" title="previous chapter">Keypad lock based on Global Logic Starter Kit</a></li>
-      <li>Next: <a href="devguide.html" title="next chapter">Manual for Developers</a></li>
+      <li>Next: <a href="devguide.html" title="next chapter">Developer Manual</a></li>
   </ul></li>
 </ul>
 </div>

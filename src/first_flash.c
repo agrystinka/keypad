@@ -8,15 +8,15 @@
 bool FIRST_FLASH = true;
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
-//default setup as LOCKED
-uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
+//LOCKED or UNLOCKED, default setup as LOCKED
+uint8_t STATE_SYMBOL = LOCKED;
 
 struct kp_lock keypad = {
     .usrpass = {2, 2, 2, 2}, //up to 8 bytes
-    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
+    .mstrpass = {1, 2, 3, 4, 5, 6}, //up to 8 bytes
     .menucode = {0, 0, 0, 0}, //up to 8 bytes
     .usrpass_length = 4,
-    .mstrpass_length = 4,
+    .mstrpass_length = 6,
     .delay_open_s = 10,
     .delay_wait_s = 30,
     .delay_wait_cur_s = 30,
@@ -84,38 +84,27 @@ int main(void)
     printf("System initialized\n");
 #endif
 
-    kp_flash_init();
-    kp_write_settings_to_flash(&keypad); //Write default setting to flash
+    //kp_flash_init();
+    //kp_write_settings_to_flash(&keypad); //Write default setting to flash
+
+    if(kp_if_flash_empty()) //check if flash is empty
+        kp_write_settings_to_flash(&keypad); //write default settings to flash
+    else {
+        //uint8_t result = kp_read_settings_from_flash(&keypad);
+        if(kp_read_settings_from_flash(&keypad) == KP_ERR){ //read settings from flash
+            kp_keypad_error(&lcd);
+            while(1);
+        }
+    }
 
 #if SEMIHOSTING_USE
-	// printf("Written data to flash\n");
-	// print_data(&keypad);
-	 kp_read_settings_from_flash(&keypad);
-	// printf("Read data from flash\n");
-	// print_data(&keypad);
-    // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-    // kp_write_logs_to_flash(&keypad);
-    // kp_read_logs_from_flash(&keypad);
-    // kp_logs_in_flash_successed();
-    // printf("Successed\n");
-    // kp_read_logs_from_flash(&keypad);
-    // if(kp_if_failed_logs())  printf("TRUE\n");
-    // else  printf("FALSE\n");
-    // if(kp_if_failed_logs_np())  printf("TRUE\n");
-    // else  printf("FALSE\n");
-    // printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
-    // kp_write_logs_to_flash(&keypad);
-    // kp_read_logs_from_flash(&keypad);
-    // kp_logs_in_flash_failed();
-    // printf("Failed\n");
-    // kp_read_logs_from_flash(&keypad);
-    // kp_logs_in_flash_failed_p();
-    // printf("Failed & Punished\n");
-    // kp_read_logs_from_flash(&keypad);
-    // if(kp_if_failed_logs())  printf("TRUE\n");
-    // else  printf("FALSE\n");
-    // if(kp_if_failed_logs_np())  printf("TRUE\n");
-    // else  printf("FALSE\n");
+	printf("Written data to flash\n");
+	//print_data(&keypad);
+	kp_read_settings_from_flash(&keypad);
+//	printf("Read data from flash\n");
+	//print_data(&keypad);
+    //kp_write_logs_to_flash(&keypad);
+    //kp_read_logs_from_flash(&keypad);
 #endif
 
 	kp_screen_message(&lcd, "Default data", "was set");

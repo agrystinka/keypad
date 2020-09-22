@@ -19,7 +19,6 @@ void kp_btn_disable(void)
 
 
 #if HIGHT_SECURITY
-//TODO: test properly
 static void kp_fail_crit_hight(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass
@@ -124,4 +123,10 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
         kp_toggle_keypad_state(keypad); //switch state
 
 	kp_btn_enable();
+}
+
+void kp_keypad_error(struct sk_lcd *lcd)
+{
+	kp_btn_disable(); //block buttons
+	kp_screen_message(lcd, "Error", "Try to reset");
 }

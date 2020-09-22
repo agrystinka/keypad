@@ -360,7 +360,7 @@ static void kp_main_settings(struct sk_lcd *lcd, struct kp_lock *keypad)
     char menu_line1[] = " Password";
     char menu_line2[] = " Master code";
     char menu_line3[] = " Work mode";
-    char menu_line4[] = " Fail";
+    char menu_line4[] = " Security";
     char *menu_lines[] = {&menu_line0[0], &menu_line1[0], &menu_line2[0], &menu_line3[0], &menu_line4[0]};
     void (*options[])(struct sk_lcd*, struct kp_lock*) = {NULL, kp_main_change_usr_pass, kp_main_change_master_code, kp_mode_settings, kp_fail_settings};
     uint8_t num_lines = 5;
