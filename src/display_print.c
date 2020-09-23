@@ -1,17 +1,18 @@
 #include "display.h"
 #include <stdint.h>
 
+
+//Need to be rafactored
+
 void lcd_print_int(struct sk_lcd *lcd, int32_t num, char format)
 {
 	//hex
 	if(format == 'h'){
-
 	}
 	//binary
 	else if(format == 'b'){
-
 	}
-	//any other - decimal
+	//any other = decimal
 	else{
 		if(num == 0){
 			sk_lcd_putchar(lcd, '0');
@@ -45,13 +46,8 @@ void lcd_print_n(struct sk_lcd *lcd)
 		sk_lcd_cmd_setaddr(&lcd, 0x40, false);
 	}
 	else{
-		//copy second line to first
-
-		//clear second line
-		//make delay for 1 s and clear display
 		delay_ms_systick(1000);
 		sk_lcd_cmd_clear(&lcd);
-		//TODO: make one line up shift
 	}
 	cnt = 1 - cnt;
 }
@@ -102,9 +98,6 @@ void lcd_print_symbol(struct sk_lcd *lcd, uint8_t c)
 
 void lcd_print_time(struct sk_lcd *lcd, uint32_t time_s)
 {
-	//sk_lcd_cmd_setaddr(lcd, 0x40, false);
-	//lcd_print(lcd, "\t\t\t");
-
 	if(time_s / 60 == 0){
 		sk_lcd_putchar(lcd, '0');
 		sk_lcd_putchar(lcd, '0');

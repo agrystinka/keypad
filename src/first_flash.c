@@ -8,29 +8,10 @@
 bool FIRST_FLASH = true;
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
-//default setup as LOCKED
-uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
+//LOCKED or UNLOCKED, default setup as LOCKED
+uint8_t STATE_SYMBOL = LOCKED;
 
-struct kp_lock keypad = {
-    .usrpass = {2, 2, 2, 2}, //up to 8 bytes
-    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
-    .menucode = {0, 0, 0, 0}, //up to 8 bytes
-    .usrpass_length = 4,
-    .mstrpass_length = 4,
-    .delay_open_s = 10,
-    .delay_wait_s = 30,
-    .delay_wait_cur_s = 30,
-    .fails = 0,
-    .fails_low = 3,
-    .wait_coef = 2,
-    .mode = true,
-    .state = false,
-#if  HIGHT_SECURITY
-    .semimstrpass_length = 4,
-    .semimstrpass = {3, 3, 3, 3}, //up to 8 bytes
-    .fails_high = 10,
-#endif
-};
+struct kp_lock keypad;
 
 //display
 struct sk_lcd lcd = {
@@ -72,47 +53,20 @@ int main(void)
 	sk_lcd_set_backlight(&lcd, 200);
 	lcd_custom_symb_load(&lcd); //load spesial custom symbols to show the keypad state
 
-	//Keypad simulation setup
-	//For real keypad it must be changed with setup of solenoid, etc.
-	mgl_mode_setup_default(mgl_led_green);
-	//setup as LOCKED
-	mgl_clear(mgl_led_green);
+    sk_crc_init(); //crc setup
 
 #if SEMIHOSTING_USE
     printf("System initialized\n");
-    printf("Load data from flash\n");
 #endif
 
-	//Write default setting from flash
-	write_keypad_data_to_flash(&keypad);
+    kp_flash_init();//erase flash memory sectors needed to keypad lock
 
 #if SEMIHOSTING_USE
-	printf("Written data to flash\n");
-	print_data(&keypad);
-	read_keypad_data_from_flash(&keypad);
-	printf("Read data from flash\n");
-	print_data(&keypad);
+	kp_read_settings_from_flash(&keypad);
 #endif
 
-	kp_screen_message(&lcd, "Default data", "was set");
+    kp_screen_message(&lcd, "Device is ready", NULL);
 	mgl_clear(mgl_led_orange); //switch off indicator of settings
 
     while(1);
 }
-
-#if SEMIHOSTING_USE
-void print_data(struct kp_lock *keypad)
-{
-    printf("Delay open: %lu\n", keypad->delay_open_s);
-    printf("Delay close: %lu\n", keypad->delay_wait_s);
-    printf("Delay close cur: %lu\n", keypad->delay_wait_cur_s);
-
-    printf("Fails: %d\n", keypad->fails);
-    printf("Fails low: %d\n", keypad->fails_low);
-    printf("Fails hight: %d\n", keypad->fails_high);
-
-    printf("User pass length: %d\n", keypad->mstrpass_length);
-    printf("Master pass length: %d\n", keypad->mstrpass_length);
-    printf("Fails hight: %d\n", keypad->fails_high);
-}
-#endif

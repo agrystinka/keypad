@@ -22,6 +22,7 @@ bool sk_btn_debounce(mgl_pin btn)
         return false;
 }
 
+
 void exti15_10_isr(void)
 {
 	//check EXTI line
@@ -35,6 +36,7 @@ void exti15_10_isr(void)
 		exti_reset_request(EXTI15);
 	}
 }
+
 
 void exti9_5_isr(void)
 {

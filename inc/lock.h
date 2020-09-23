@@ -55,6 +55,18 @@ void kp_single_opening(struct sk_lcd *lcd, struct kp_lock *keypad);
 void kp_toggle_keypad_state(struct kp_lock *keypad);
 
 /**
+<<<<<<< HEAD
+=======
+ * kp_welcome() - discard info about fails.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Return: void.
+ */
+void kp_discard_fails(struct kp_lock *keypad);
+
+
+/**
+>>>>>>> dev
  * kp_welcome() - handle correct User Password input.
  * @struct sk_lcd *lcd: LCD for comunication with user.
  * @struct kp_lock *keypad: keypad lock data.
@@ -71,7 +83,11 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad);
  * @struct sk_lcd *lcd: LCD for comunication with user.
  * @struct kp_lock *keypad: keypad lock data.
  * @bool count: if true - this fail have to be counted,
+<<<<<<< HEAD
  *              if false - jaste show waiting timer 
+=======
+ *              if false - jaste show waiting timer
+>>>>>>> dev
  *
  * Handle correct User Password input.
  * Block keypad for 'delay_wait_cur_s' seconds if there were more or equal to 'fails_low'
@@ -82,3 +98,14 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad);
  * Return: void.
  */
 void kp_fail(struct sk_lcd *lcd, struct kp_lock *keypad, bool count);
+<<<<<<< HEAD
+=======
+
+/**
+ * kp_fail() - handle Keypad errors.
+ * @struct sk_lcd *lcd: LCD for comunication with user.
+ *
+ * Return: void.
+ */
+void kp_keypad_error(struct sk_lcd *lcd);
+>>>>>>> dev

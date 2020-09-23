@@ -1,33 +1,101 @@
 #include "keypad.h"
+#include <stdbool.h>
 
 /**
- * kp_fail() - handle incorrect User Password input.
- * @struct sk_lcd *lcd: LCD for comunication with user.
+ * sk_refresh() - erase all sectors used by keypad.
+ *
+ * Return: sk_err.
+ */
+kp_err kp_flash_init();
+
+/**
+ * kp_write_settings_to_flash() -  write settings to flash memory.
  * @struct kp_lock *keypad: keypad lock data.
  *
- * Handle correct User Password input.
- * Block keypad for 'delay_wait_cur_s' seconds if there were more or equal to 'fails_low'
- * failed attempts of input User Password.
- * If keypad works in HIGHT_SECURITY mode, handle situations if there were more or equal
- * to 'fails_hight' failed attempts of input User Password.
+ * Pack keypad settings and add note about them in the firsh empty space
+ * in settings_sector in flash memory.
+ *
+ * Return: kp_err.
+ */
+kp_err kp_write_settings_to_flash(struct kp_lock *keypad);
+
+/**
+ * kp_read_settings_from_flash() -  read settings from flash memory.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Read recent note about settings from settings_sector in flash memory
+ * and unpack it to keypad.
+ *
+ * Return: kp_err.
+ */
+kp_err kp_read_settings_from_flash(struct kp_lock *keypad);
+
+/**
+ * kp_write_logs_to_flash() -  write log about attemp to unlock keypad to flash memory.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Pack keypad log and add note about them in the firsh empty space
+ * in fail_log_sector in flash memory.
+ *
+ * Return: kp_err.
+ */
+kp_err kp_write_logs_to_flash(struct kp_lock *keypad);
+
+/**
+ * kp_read_logs_from_flash() -  read settings from flash memory.
+ * @struct kp_lock *keypad: keypad lock data.
+ *
+ * Read recent note about log from fail_log_sector in flash memory
+ * and unpack it to keypad.
+ *
+ * Return: kp_err.
+ */
+kp_err kp_read_logs_from_flash(struct kp_lock *keypad);
+
+/**
+ * kp_if_failed_logs() - check recent fail log.
+ *
+ * Return: bool.
+ * Return true if log about recent failed attempt to unlock keypad metters,
+ * else - return false.
+ */
+bool kp_if_failed_logs(void);
+
+/**
+ * kp_if_failed_logs_np() - check recent fail log.
+ *
+ * Return: bool.
+ * Return true if keypad has not react on failed attempt to unlock keypad yet,
+ * else - return false.
+ */
+bool kp_if_failed_logs_np(void);
+
+/**
+ * kp_logs_in_flash_successed() - mark recent log as successful attempt.
  *
  * Return: void.
  */
-
-void write_keypad_data_to_flash(struct kp_lock *keypad);
+void kp_logs_in_flash_successed(void);
 
 /**
- * kp_fail() - handle incorrect User Password input.
- * @struct sk_lcd *lcd: LCD for comunication with user.
- * @struct kp_lock *keypad: keypad lock data.
- *
- * Handle correct User Password input.
- * Block keypad for 'delay_wait_cur_s' seconds if there were more or equal to 'fails_low'
- * failed attempts of input User Password.
- * If keypad works in HIGHT_SECURITY mode, handle situations if there were more or equal
- * to 'fails_hight' failed attempts of input User Password.
+ * kp_logs_in_flash_failed() - mark recent log as failed attempt.
  *
  * Return: void.
  */
+void kp_logs_in_flash_failed(void);
 
-void read_keypad_data_from_flash(struct kp_lock *keypad);
+/**
+ * kp_logs_in_flash_failed() - mark recent log as failed attempt that was 'punished'.
+ *
+ * Return: void.
+ */
+void kp_logs_in_flash_failed_p(void);
+
+
+/**
+ * kp_if_flash_empty() - check if flashed memory used for project data is empty.
+ *
+ * Return: bool.
+ * Return true if flashed memory used for project data is empty, false - if not.
+ */
+bool kp_if_flash_empty(void);

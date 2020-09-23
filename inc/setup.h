@@ -11,6 +11,10 @@
 #include <libopencm3/cm3/scb.h>
 #include <libopencm3/stm32/exti.h>
 #include <libopencm3/stm32/gpio.h>
+<<<<<<< HEAD
+=======
+#include <libopencm3/stm32/crc.h>
+>>>>>>> dev
 #include <libopencm3/stm32/rcc.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -20,5 +24,9 @@
 sk_err kp_lcd_init_setup(struct sk_lcd *lcd);
 sk_err kp_btn_setup(void);
 sk_err kp_interrupts_btn_setup(void);
+<<<<<<< HEAD
 // sk_err kp_flash_setup(void);
+=======
+sk_err sk_crc_init(void);
+>>>>>>> dev
 #endif
