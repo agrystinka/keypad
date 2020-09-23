@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# GL-BaseCamp-Practice
-GL C Embedded BaseCamp - Practice part
 =======
 # GL BaseCamp Final Project
 # Keypad lock
@@ -44,4 +41,3 @@ Input User Password: use UP and DOWN buttons to set the value, RIGHT and LEFT to
 *More in documentation*
 
 ### [Toolchain](README.rst)
->>>>>>> dev

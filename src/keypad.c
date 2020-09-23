@@ -17,17 +17,10 @@ const uint8_t arr[1] = {1};
 
 struct kp_lock keypad = {
     .usrpass = {2, 2, 2, 2}, //up to 8 bytes
-<<<<<<< HEAD
-    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
-    .menucode = {0, 0, 0, 0}, //up to 8 bytes
-    .usrpass_length = 4,
-    .mstrpass_length = 4,
-=======
     .mstrpass = {1, 2, 3, 4, 5, 6}, //up to 8 bytes
     .menucode = {0, 0, 0, 0}, //up to 8 bytes
     .usrpass_length = 4,
     .mstrpass_length = 6,
->>>>>>> dev
     .delay_open_s = 10,
     .delay_wait_s = 30,
     .delay_wait_cur_s = 30,
@@ -97,13 +90,14 @@ int main(void)
     printf("System initialized\n");
     printf("Load data from flash\n");
 #endif
-
-    if(kp_if_flash_empty()){ //check if flash is empty
-        kp_write_settings_to_flash(&keypad); //write default settings to flash
-    }else if(KP_ERR == kp_read_settings_from_flash(&keypad)){ //read settings from flash
-            kp_keypad_error(&lcd);
-            while(1);
+if(kp_if_flash_empty()) //check if flash is empty
+    kp_write_settings_to_flash(&keypad); //write default settings to flash
+else {
+    if(KP_ERR == kp_read_settings_from_flash(&keypad)){ //read settings from flash
+        kp_keypad_error(&lcd);
+        while(1);
     }
+}
 
     mgl_clear(mgl_led_orange); //switch off indicator of settings
 

@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Output on display &amp; menu templates &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Password handler" href="password.html" />
+    <link rel="prev" title="Service modules" href="../servise.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="output-on-display-menu-templates">
+<h1>Output on display &amp; menu templates<a class="headerlink" href="#output-on-display-menu-templates" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="patterns-to-make-quick-input-on-lcd">
+<h2>Patterns to make quick input on lcd<a class="headerlink" href="#patterns-to-make-quick-input-on-lcd" title="Permalink to this headline">¶</a></h2>
+<dl class="c type">
+<dt>
+<code class="sig-name descname">struct menu</code></dt>
+<dd><p>Present custom menu data as following structure to use menu_template()</p>
+<dl class="c member">
+<dt id="c.PhonyNameDueToError.num">
+uint8_t <code class="sig-name descname">num</code><a class="headerlink" href="#c.PhonyNameDueToError.num" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Amount of options</p>
+</dd></dl>
+
+<dl class="c member">
+<dt id="c.PhonyNameDueToError.lines">
+char **<code class="sig-name descname">lines</code><a class="headerlink" href="#c.PhonyNameDueToError.lines" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Names of options (up to 16 chars)</p>
+</dd></dl>
+
+<dl class="c member">
+<dt>
+<code class="sig-name descname">void (**)(struct sk_lcd *, struct kp_lock *) options</code></dt>
+<dd><p>Pointers on fuinctions that realize every options. First option should be GO_BACK</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_menu_template">
+void <code class="sig-name descname">kp_menu_template</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em>, <em class="property">struct</em> menu *<em>menu</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_menu_template" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_menu_template() - template of menu for keypad.
+&#64;struct sk_lcd <a href="#id1"><span class="problematic" id="id2">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id3"><span class="problematic" id="id4">*</span></a>keypad: keypad lock data.
+&#64;struct menu <a href="#id5"><span class="problematic" id="id6">*</span></a>menu: the information about menu, you want to create.</p>
+<p>Function hadle keypad menu using GLSK UP, DOWN, MENU buttons.
+To create own menu, firstly initialize struct menu <a href="#id7"><span class="problematic" id="id8">*</span></a>menu with:
+lines(options) you need and functions which are realizing this options.
+To get more info read about struct menu.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.set_1_60">
+void <code class="sig-name descname">set_1_60</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t *<em>num</em><span class="sig-paren">)</span><a class="headerlink" href="#c.set_1_60" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_menu_template() - template of menu for keypad.
+&#64;struct sk_lcd <a href="#id9"><span class="problematic" id="id10">*</span></a>lcd: LCD for comunication with user.
+&#64;uint8_t <a href="#id11"><span class="problematic" id="id12">*</span></a>num: pointer on variable that need to be set.</p>
+<p>Function hadle GLSK buttons UP, DOWN, RIGHT, LEFT, MENU
+to make user chose the value from 1 to 60.
+Then this function set chosen value to variable pointed by num.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_scroll_num">
+void <code class="sig-name descname">kp_scroll_num</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t *<em>num</em>, uint8_t *<em>options</em>, uint8_t <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_scroll_num" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_menu_template() - template of menu for keypad.
+&#64;struct sk_lcd <a href="#id13"><span class="problematic" id="id14">*</span></a>lcd: LCD for comunication with user.
+&#64;uint8_t <a href="#id15"><span class="problematic" id="id16">*</span></a>num: pointer on variable that need to be set.
+&#64;uint8_t <a href="#id17"><span class="problematic" id="id18">*</span></a>options: options of <a href="#id19"><span class="problematic" id="id20">*</span></a>num value.
+&#64;uint8_t size: amount of options (size of array).</p>
+<p>Function hadle GLSK buttons UP, DOWN, MENU
+to make user chose the value from given options.
+Then this function set chosen value to variable pointed by num.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_wait_untill_ok">
+void <code class="sig-name descname">kp_wait_untill_ok</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_wait_untill_ok" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_wait_untill_ok() - wait untill user press MENU (OK) button.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_show_active_line">
+void <code class="sig-name descname">kp_show_active_line</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, int <em>line1</em>, int <em>line2</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_show_active_line" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_show_active_line() - show point befor active line.
+&#64;struct sk_lcd <a href="#id21"><span class="problematic" id="id22">*</span></a>lcd: LCD for comunication with user.
+&#64;bool line1: true if first line is active, false if not.
+&#64;bool line2: true if second line is active, false if not.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_menu_lines">
+void <code class="sig-name descname">kp_menu_lines</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, char *<em>line0</em>, char *<em>line1</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_menu_lines" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_menu_lines() - print message on screen.
+&#64;struct sk_lcd <a href="#id23"><span class="problematic" id="id24">*</span></a>lcd: LCD for comunication with user.
+&#64;char <a href="#id25"><span class="problematic" id="id26">*</span></a>line0: first part of mesage(first line) - up to 16 chars.
+&#64;char <a href="#id27"><span class="problematic" id="id28">*</span></a>line1: second part of mesage(second line) - up to 16 chars.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="templates-to-create-custom-menu">
+<h2>Templates to create custom menu<a class="headerlink" href="#templates-to-create-custom-menu" title="Permalink to this headline">¶</a></h2>
+<dl class="c type">
+<dt>
+<code class="sig-name descname">struct menu</code></dt>
+<dd><p>Present custom menu data as following structure to use menu_template()</p>
+<dl class="c member">
+<dt>
+uint8_t <code class="sig-name descname">num</code><br /></dt>
+<dd><p>Amount of options</p>
+</dd></dl>
+
+<dl class="c member">
+<dt>
+char **<code class="sig-name descname">lines</code><br /></dt>
+<dd><p>Names of options (up to 16 chars)</p>
+</dd></dl>
+
+<dl class="c member">
+<dt>
+<code class="sig-name descname">void (**)(struct sk_lcd *, struct kp_lock *) options</code></dt>
+<dd><p>Pointers on fuinctions that realize every options. First option should be GO_BACK</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="c function">
+<dt>
+void <code class="sig-name descname">kp_menu_template</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em>, <em class="property">struct</em> menu *<em>menu</em><span class="sig-paren">)</span><br /></dt>
+<dd><p>kp_menu_template() - template of menu for keypad.
+&#64;struct sk_lcd <a href="#id29"><span class="problematic" id="id30">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id31"><span class="problematic" id="id32">*</span></a>keypad: keypad lock data.
+&#64;struct menu <a href="#id33"><span class="problematic" id="id34">*</span></a>menu: the information about menu, you want to create.</p>
+<p>Function hadle keypad menu using GLSK UP, DOWN, MENU buttons.
+To create own menu, firstly initialize struct menu <a href="#id35"><span class="problematic" id="id36">*</span></a>menu with:
+lines(options) you need and functions which are realizing this options.
+To get more info read about struct menu.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt>
+void <code class="sig-name descname">set_1_60</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t *<em>num</em><span class="sig-paren">)</span><br /></dt>
+<dd><p>kp_menu_template() - template of menu for keypad.
+&#64;struct sk_lcd <a href="#id37"><span class="problematic" id="id38">*</span></a>lcd: LCD for comunication with user.
+&#64;uint8_t <a href="#id39"><span class="problematic" id="id40">*</span></a>num: pointer on variable that need to be set.</p>
+<p>Function hadle GLSK buttons UP, DOWN, RIGHT, LEFT, MENU
+to make user chose the value from 1 to 60.
+Then this function set chosen value to variable pointed by num.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt>
+void <code class="sig-name descname">kp_scroll_num</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t *<em>num</em>, uint8_t *<em>options</em>, uint8_t <em>size</em><span class="sig-paren">)</span><br /></dt>
+<dd><p>kp_menu_template() - template of menu for keypad.
+&#64;struct sk_lcd <a href="#id41"><span class="problematic" id="id42">*</span></a>lcd: LCD for comunication with user.
+&#64;uint8_t <a href="#id43"><span class="problematic" id="id44">*</span></a>num: pointer on variable that need to be set.
+&#64;uint8_t <a href="#id45"><span class="problematic" id="id46">*</span></a>options: options of <a href="#id47"><span class="problematic" id="id48">*</span></a>num value.
+&#64;uint8_t size: amount of options (size of array).</p>
+<p>Function hadle GLSK buttons UP, DOWN, MENU
+to make user chose the value from given options.
+Then this function set chosen value to variable pointed by num.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt>
+void <code class="sig-name descname">kp_wait_untill_ok</code><span class="sig-paren">(</span><span class="sig-paren">)</span><br /></dt>
+<dd><p>kp_wait_untill_ok() - wait untill user press MENU (OK) button.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt>
+void <code class="sig-name descname">kp_show_active_line</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, int <em>line1</em>, int <em>line2</em><span class="sig-paren">)</span><br /></dt>
+<dd><p>kp_show_active_line() - show point befor active line.
+&#64;struct sk_lcd <a href="#id49"><span class="problematic" id="id50">*</span></a>lcd: LCD for comunication with user.
+&#64;bool line1: true if first line is active, false if not.
+&#64;bool line2: true if second line is active, false if not.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt>
+void <code class="sig-name descname">kp_menu_lines</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, char *<em>line0</em>, char *<em>line1</em><span class="sig-paren">)</span><br /></dt>
+<dd><p>kp_menu_lines() - print message on screen.
+&#64;struct sk_lcd <a href="#id51"><span class="problematic" id="id52">*</span></a>lcd: LCD for comunication with user.
+&#64;char <a href="#id53"><span class="problematic" id="id54">*</span></a>line0: first part of mesage(first line) - up to 16 chars.
+&#64;char <a href="#id55"><span class="problematic" id="id56">*</span></a>line1: second part of mesage(second line) - up to 16 chars.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">User Manual</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Developer Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../servise.html">Service modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Output on display &amp; menu templates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="password.html">Password handler</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../project.html">Keypad Lock project modules</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Developer Manual</a><ul>
+  <li><a href="../servise.html">Service modules</a><ul>
+      <li>Previous: <a href="../servise.html" title="previous chapter">Service modules</a></li>
+      <li>Next: <a href="password.html" title="next chapter">Password handler</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/service/screenmenu.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

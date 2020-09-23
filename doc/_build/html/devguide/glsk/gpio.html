@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abstract over GPIO &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="LCD" href="lcd.html" />
+    <link rel="prev" title="Global Logic Starter Kit" href="../glsk.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="abstract-over-gpio">
+<h1>Abstract over GPIO<a class="headerlink" href="#abstract-over-gpio" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="api-for-work-with-global-logic-starter-kit-peripheral">
+<h2>API for work with Global Logic Starter Kit peripheral.<a class="headerlink" href="#api-for-work-with-global-logic-starter-kit-peripheral" title="Permalink to this headline">¶</a></h2>
+<dl class="c macro">
+<dt id="c.MYGPIOLIB_H">
+<code class="sig-name descname">MYGPIOLIB_H</code><a class="headerlink" href="#c.MYGPIOLIB_H" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>my-gpio-lib - an abstraction over libopencm3/stm32/gpio
+suted for Global Logic Started Kit</p>
+</dd></dl>
+
+<dl class="c type">
+<dt>
+<code class="sig-name descname">struct mgl_pin</code></dt>
+<dd><p>struct mgl_pin.
+&#64;gpio: Port from A to K.</p>
+<blockquote>
+<div><p>Size: 4 bits
+A = 0000, B = 0001, C = 0010, D = 0011, E = 0100,
+F = 0101, G = 0111, H = 1000, I = 1001, J = 1010,
+K = 1011, 1100 - 1111 are invalid codes</p>
+</div></blockquote>
+<dl class="simple">
+<dt>&#64;pin: pin of port from 0 to 15</dt><dd><p>Size: 4 bits</p>
+</dd>
+<dt>&#64;reserved: reserved for future use</dt><dd><p>Size: 7 bits</p>
+</dd>
+</dl>
+<p>mgl_pin is a packed structure.</p>
+</dd></dl>
+
+<dl class="c type">
+<dt>
+<code class="sig-name descname">struct mgl_pin_group</code></dt>
+<dd><p>struct mgl_pin_group.
+&#64;port: Port from A to K.</p>
+<blockquote>
+<div><p>Size: 4 bits
+A = 0000, B = 0001, C = 0010, D = 0011, E = 0100,
+F = 0101, G = 0111, H = 1000, I = 1001, J = 1010,
+K = 1011, 1100 - 1111 are invalid codes</p>
+</div></blockquote>
+<dl class="simple">
+<dt>&#64;reserved: reserved for future use</dt><dd><p>Size: 12 bits</p>
+</dd>
+<dt>&#64;pins: each bit represents corresponding pin in a port</dt><dd><p>Size: 16 bits</p>
+</dd>
+<dt>&#64;inversions: each bit==1 represents inversion</dt><dd><p>Size: 16 bits</p>
+</dd>
+</dl>
+<p>Represents group of pins residing in the same GPIO port.
+Used as an optimization to allow reading/writing them all at once.
+mgl_pin_group is a packed structure.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_clear">
+void <code class="sig-name descname">mgl_clear</code><span class="sig-paren">(</span>mgl_pin <em>peripheral_device</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_clear" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>An abstraction over basic GPIO functions.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_is_btn_pressed">
+int <code class="sig-name descname">mgl_is_btn_pressed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_is_btn_pressed" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Functions for work with buttons.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_pin_group_set">
+void <code class="sig-name descname">mgl_pin_group_set</code><span class="sig-paren">(</span>mgl_pin_group <em>group</em>, uint16_t <em>values</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_pin_group_set" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Functions for work with groups.</p>
+</dd></dl>
+
+<p>An abstraction over basic GPIO functions.</p>
+<dl class="c function">
+<dt>
+void <code class="sig-name descname">mgl_clear</code><span class="sig-paren">(</span>int <em>periph</em><span class="sig-paren">)</span><br /></dt>
+<dd><p>mgl_clear() - set pin to 0.
+&#64;mgl_pin periph: peripheral device.</p>
+<p>Clear pin on port which are used by peripheral device.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_set">
+void <code class="sig-name descname">mgl_set</code><span class="sig-paren">(</span>int <em>periph</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_set" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>mgl_set() - set pin to 1.
+&#64;mgl_pin periph: peripheral device.</p>
+<p>Set pin on port which are used by peripheral device.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_toggle">
+void <code class="sig-name descname">mgl_toggle</code><span class="sig-paren">(</span>int <em>periph</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_toggle" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>mgl_toggle - invert pin.
+&#64;mgl_pin periph: peripheral device.</p>
+<p>Invert pin on port which are used by peripheral device.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_set_value">
+void <code class="sig-name descname">mgl_set_value</code><span class="sig-paren">(</span>int <em>periph</em>, int <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_set_value" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>mgl_set_value() - set pin to 1.
+&#64;mgl_pin periph: peripheral device.
+&#64;bool value: 0 or 1.</p>
+<p>Set specific value into pin on port which are used by peripheral device.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_port_read">
+uint16_t <code class="sig-name descname">mgl_port_read</code><span class="sig-paren">(</span>int <em>periph</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_port_read" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>mgl_port_read() - read from peripheral device.
+&#64;mgl_pin periph: peripheral device.</p>
+<p>Be careful, because this function reads from port on which device work,
+not on specific pin of this port.</p>
+<p>Return: uint16_t data.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_port_write">
+void <code class="sig-name descname">mgl_port_write</code><span class="sig-paren">(</span>int <em>periph</em>, uint16_t <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_port_write" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>mgl_port_write() - write to peripheral device.
+&#64;mgl_pin periph: peripheral device.</p>
+<p>Be careful, because this function write to port on which device work,
+not to specific pin of this port.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_mode_setup_default">
+void <code class="sig-name descname">mgl_mode_setup_default</code><span class="sig-paren">(</span>int <em>periph</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_mode_setup_default" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>mgl_mode_setup_default() - setup device in default mode.
+&#64;mgl_pin periph: peripheral device.</p>
+<p>If device is LED, pin direction will be OUTPUT and output pin pullup will be NONE
+If device is button, pin direction will be INPUT and output pin pullup will be PULLUP</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.mgl_mode_setup">
+void <code class="sig-name descname">mgl_mode_setup</code><span class="sig-paren">(</span>int <em>periph</em>, uint8_t <em>mode</em>, uint8_t <em>pull_up_down</em><span class="sig-paren">)</span><a class="headerlink" href="#c.mgl_mode_setup" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>mgl_mode_setup() - setup device in default mode.
+&#64;mgl_pin periph: peripheral device.
+&#64;uint8_t mode: from 0 to 3 or GPIO constants:</p>
+<blockquote>
+<div><p><a class="reference external" href="http://libopencm3.org/docs/latest/stm32f4/html/group__gpio__mode.html">http://libopencm3.org/docs/latest/stm32f4/html/group__gpio__mode.html</a>.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>&#64;uint8_t pull_up_down: from 0 to 2 or GPIO constants:</dt><dd><p><a class="reference external" href="http://libopencm3.org/docs/latest/stm32f4/html/group__gpio__pup.html">http://libopencm3.org/docs/latest/stm32f4/html/group__gpio__pup.html</a></p>
+</dd>
+</dl>
+<p>If you call this function with invalid arguments it will work as mgl_mode_setup_default()</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<p>Functions for work with buttons.</p>
+<dl class="c function">
+<dt>
+int <code class="sig-name descname">mgl_is_btn_pressed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><br /></dt>
+<dd><p>bool mgl_is_btn_pressed() - check if button is pressed.
+&#64;mgl_pin btn: button.</p>
+<p>Check if button is pressed.
+Function contains simple button debouncing.
+It is based on few times polling the port is there the ACTIVE signal.</p>
+<dl class="simple">
+<dt>Return: bool.</dt><dd><p>true - if button is pressed, fause- if button is not pressed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.group_densify">
+uint16_t <code class="sig-name descname">group_densify</code><span class="sig-paren">(</span>uint16_t <em>mask</em>, uint16_t <em>sparse</em><span class="sig-paren">)</span><a class="headerlink" href="#c.group_densify" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Densification helper (private)
+Example:</p>
+<blockquote>
+<div><blockquote>
+<div><p>mask = 0b1010000011110010</p>
+</div></blockquote>
+<p>sparse = 0b1010101010101010
+result = 0b1 1     1010  1</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.group_sparsify">
+uint16_t <code class="sig-name descname">group_sparsify</code><span class="sig-paren">(</span>uint16_t <em>mask</em>, uint16_t <em>dense</em><span class="sig-paren">)</span><a class="headerlink" href="#c.group_sparsify" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Sparsification helper (private)
+Example:</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>mask = 0b1010000011110010</p>
+</div></blockquote>
+<p>dense = 0b1 1     1010  1</p>
+</div></blockquote>
+<p>result = 0b1010000010100010</p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">User Manual</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Developer Manual</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Abstract over GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flash.html">Flash memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timers.html">Timers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../servise.html">Service modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../project.html">Keypad Lock project modules</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Developer Manual</a><ul>
+  <li><a href="../glsk.html">Global Logic Starter Kit</a><ul>
+      <li>Previous: <a href="../glsk.html" title="previous chapter">Global Logic Starter Kit</a></li>
+      <li>Next: <a href="lcd.html" title="next chapter">LCD</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/glsk/gpio.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

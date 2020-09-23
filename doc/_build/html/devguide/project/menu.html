@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User settings &#8212; keypad lock  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Keypad lock commands" href="cmdbtn.html" />
+    <link rel="prev" title="Flash memory" href="flash.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="user-settings">
+<h1>User settings<a class="headerlink" href="#user-settings" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="user-settings-menu">
+<h2>User settings menu<a class="headerlink" href="#user-settings-menu" title="Permalink to this headline">¶</a></h2>
+<dl class="c function">
+<dt id="c.kp_menu">
+void <code class="sig-name descname">kp_menu</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_menu" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_menu() - keypad settings.
+&#64;struct sk_lcd <a href="#id1"><span class="problematic" id="id2">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id3"><span class="problematic" id="id4">*</span></a>keypad: keypad lock data.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c var">
+<dt id="c.CHANGES">
+int <code class="sig-name descname">CHANGES</code><a class="headerlink" href="#c.CHANGES" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Used as flag to make system known if it is necessary
+to rewrite non-volitile memory with new SETTING DATA</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_set_min_fail_delay">
+void <code class="sig-name descname">kp_set_min_fail_delay</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_set_min_fail_delay" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_set_min_fail_delay() - set min wait delay.
+&#64;struct sk_lcd <a href="#id5"><span class="problematic" id="id6">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id7"><span class="problematic" id="id8">*</span></a>keypad: keypad lock data.</p>
+<p>Set minimal (start) time while which keypad is blocked after input incorrect User Password.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_set_fail_coef">
+void <code class="sig-name descname">kp_set_fail_coef</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_set_fail_coef" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_set_fail_coef() - set grows multiplier.
+&#64;struct sk_lcd <a href="#id9"><span class="problematic" id="id10">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id11"><span class="problematic" id="id12">*</span></a>keypad: keypad lock data.</p>
+<p>Set grows multiplier of time if input of incorrect User Password
+occurs more then ‘Critical low’ times.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="simple">
+<dt>kp_set_fail_crit_high() - set critical amount of input incorrect User Password</dt><dd><p>untill sucuruty pritection starts work.</p>
+</dd>
+</dl>
+<p>&#64;struct sk_lcd <a href="#id13"><span class="problematic" id="id14">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id15"><span class="problematic" id="id16">*</span></a>keypad: keypad lock data.</p>
+<p>Set limit of incorrect inputs of User Password after which
+you need to input both User Password and Master Password.</p>
+<p>Return: void.</p>
+<dl class="c function">
+<dt id="c.kp_set_fail_crit_low">
+void <code class="sig-name descname">kp_set_fail_crit_low</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_set_fail_crit_low" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="simple">
+<dt>kp_set_fail_crit_low() - set critical amount of input incorrect User Password</dt><dd><p>untill sucuruty pritection starts work.</p>
+</dd>
+</dl>
+<p>&#64;struct sk_lcd <a href="#id17"><span class="problematic" id="id18">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id19"><span class="problematic" id="id20">*</span></a>keypad: keypad lock data.</p>
+<p>Set limit of incorrect inputs of User Password after which you need to wait
+some time befor next input. This time depends on Minimal delay and every
+next time is increased in Coefficient times.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_fail_settings">
+void <code class="sig-name descname">kp_fail_settings</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_fail_settings" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_fail_settings() - keypad security settings.
+&#64;struct sk_lcd <a href="#id21"><span class="problematic" id="id22">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id23"><span class="problematic" id="id24">*</span></a>keypad: keypad lock data.</p>
+<p>Refers to kp_menu_template()
+Mode setting contains such options:
+Go back - exit
+Minimal delay - set minimal time while which keypad is blocked</p>
+<blockquote>
+<div><p>after input incirrect User Password</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Coefficient - set grows multiplier of time if input of incorrect User Password</dt><dd><p>occurs more then ‘Critical low’ times</p>
+</dd>
+<dt>Critical high - set limit of incorrect inputs of User Password after which</dt><dd><p>you need to input both User Password and Master Password</p>
+</dd>
+<dt>Critical low - set limit of incorrect inputs of User Password after which</dt><dd><p>you need to wait some time befor next input
+This time depends on Minimal delay and every next time is
+increased in Coefficient times</p>
+</dd>
+</dl>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_mode1_settings">
+void <code class="sig-name descname">kp_mode1_settings</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_mode1_settings" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_mode1_settings() - swich on mode 1.
+&#64;struct sk_lcd <a href="#id25"><span class="problematic" id="id26">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id27"><span class="problematic" id="id28">*</span></a>keypad: keypad lock data.</p>
+<p>Switck keypad lock to Mode 1.
+After input of User Password keypad is unloked for ‘Welcome delay’ time.
+User have to set this ‘Welcome delay’ by ordering value from 1 to 60 seconds.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_mode2_settings">
+void <code class="sig-name descname">kp_mode2_settings</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_mode2_settings" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_mode2_settings() - swich on mode 2.
+&#64;struct sk_lcd <a href="#id29"><span class="problematic" id="id30">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id31"><span class="problematic" id="id32">*</span></a>keypad: keypad lock data.</p>
+<p>Switck keypad lock to Mode 2.
+After input of User Password keypad switch the state from LOCKED to UNLOCKED
+and vise versa.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_mode_settings">
+void <code class="sig-name descname">kp_mode_settings</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_mode_settings" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_mode_settings() - keypad mode settings.
+&#64;struct sk_lcd <a href="#id33"><span class="problematic" id="id34">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id35"><span class="problematic" id="id36">*</span></a>keypad: keypad lock data.</p>
+<p>Refers to kp_menu_template()
+Mode setting contains such options:
+Go back - exit
+Mode 1 - swich on mode 1 (single action of oenning keypd)
+Mode 2 - swich on mode 1 (switch the keypad state)</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_set_length">
+void <code class="sig-name descname">kp_set_length</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, uint8_t *<em>length</em>, char *<em>instruction</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_set_length" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_set_length() - swich on mode 2.
+&#64;struct sk_lcd <a href="#id37"><span class="problematic" id="id38">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id39"><span class="problematic" id="id40">*</span></a>keypad: keypad lock data.</p>
+<p>Switck keypad lock to Mode 2.
+After input of User Password keypad switch the state from LOCKED to UNLOCKED
+and vise versa.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_main_change_pass">
+void <code class="sig-name descname">kp_main_change_pass</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em>, uint8_t *<em>pass</em>, uint8_t *<em>passlength</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_main_change_pass" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_main_change_pass() - change password.
+&#64;struct sk_lcd <a href="#id41"><span class="problematic" id="id42">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id43"><span class="problematic" id="id44">*</span></a>keypad: keypad lock data.
+uint8_t <a href="#id45"><span class="problematic" id="id46">*</span></a>pass: password which need to be changed.
+uint8_t <a href="#id47"><span class="problematic" id="id48">*</span></a>passlength: length of password which need to be changed.</p>
+<p>If keypad works in Hight Secure Mode, it ask to input both User
+Pass and Master code one more time.
+After setting password it shows the Success or Error messages.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_main_change_usr_pass">
+void <code class="sig-name descname">kp_main_change_usr_pass</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_main_change_usr_pass" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_main_change_usr_pass() - change User password.
+&#64;struct sk_lcd <a href="#id49"><span class="problematic" id="id50">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id51"><span class="problematic" id="id52">*</span></a>keypad: keypad lock data.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_main_change_master_code">
+void <code class="sig-name descname">kp_main_change_master_code</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_main_change_master_code" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_main_change_master_pass() - change Master password.
+&#64;struct sk_lcd <a href="#id53"><span class="problematic" id="id54">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id55"><span class="problematic" id="id56">*</span></a>keypad: keypad lock data.</p>
+<p>Return: void.</p>
+</dd></dl>
+
+<dl class="c function">
+<dt id="c.kp_main_settings">
+void <code class="sig-name descname">kp_main_settings</code><span class="sig-paren">(</span><em class="property">struct</em> sk_lcd *<em>lcd</em>, <em class="property">struct</em> kp_lock *<em>keypad</em><span class="sig-paren">)</span><a class="headerlink" href="#c.kp_main_settings" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>kp_main_settings() - keypad main settings.
+&#64;struct sk_lcd <a href="#id57"><span class="problematic" id="id58">*</span></a>lcd: LCD for comunication with user.
+&#64;struct kp_lock <a href="#id59"><span class="problematic" id="id60">*</span></a>keypad: keypad lock data.</p>
+<p>Refers to kp_menu_template()
+Main setting contains such options:
+Go back - exit and save new settings
+Password - change user password
+Master code - change umaster code
+Work mode - change keypad work mode
+Fail - change security settings</p>
+<p>Return: void.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">keypad lock</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">User Manual</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Developer Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../servise.html">Service modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../project.html">Keypad Lock project modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="keypad.html">Keypad lock (main)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lock.html">Lock &amp; Unlock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="flash.html">Flash memory</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">User settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmdbtn.html">Keypad lock commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="setup.html">Setup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../../devguide.html">Developer Manual</a><ul>
+  <li><a href="../project.html">Keypad Lock project modules</a><ul>
+      <li>Previous: <a href="flash.html" title="previous chapter">Flash memory</a></li>
+      <li>Next: <a href="cmdbtn.html" title="next chapter">Keypad lock commands</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Inna Humeniuk.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/devguide/project/menu.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
