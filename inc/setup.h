@@ -22,4 +22,5 @@ sk_err kp_lcd_init_setup(struct sk_lcd *lcd);
 sk_err kp_btn_setup(void);
 sk_err kp_interrupts_btn_setup(void);
 sk_err sk_crc_init(void);
+// sk_err kp_flash_setup(void);
 #endif

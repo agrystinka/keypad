@@ -1,6 +1,5 @@
 #include "embflash.h"
 #include "pack.h"
-#include "keypad.h"
 #include "embedded_flash.h"
 #include <stdio.h>
 
@@ -51,7 +50,7 @@ kp_err kp_write_settings_to_flash(struct kp_lock *keypad)
 		data[SETTINGS_SIZE + i] = *(((uint8_t *)&crc) + i);
 
 	uint32_t address = sk_search(&settings_sector, SETTINGS_SIZE + CRC_SIZE, true);
-
+	//TODO: test properly
 	if(address == 0){ //if there is no free space in sector
 		if(sk_refresh(&fail_log_sector, &reserved_sector, SETTINGS_SIZE) != SK_EOK)
 			return KP_ERR;
@@ -87,14 +86,12 @@ kp_err kp_read_settings_from_flash(struct kp_lock *keypad)
 
 	__DMB(); //Memory barrier
 	unpack_settings(&data[0], keypad);
-	uint32_t crc1 = 0 + *((uint32_t*)&data[SETTINGS_SIZE]); //unpack crc
+	uint32_t crc1 = *((uint32_t*)&data[SETTINGS_SIZE]); //unpack crc
 	uint32_t crc2 = sk_crc(&data[0], SETTINGS_SIZE); //calculate crc
-	__DMB(); //Memory barrier
-	__DSB(); //Instruction barrier
+
 	if(crc1 != crc2)
 		return KP_ERR;
 
-	unpack_settings(&data[0], keypad);
 #if SEMIHOSTING_USE
 	printf("Read DATA\n");
 	for(uint32_t i = 0; i < SETTINGS_SIZE + CRC_SIZE; i++)
@@ -102,10 +99,6 @@ kp_err kp_read_settings_from_flash(struct kp_lock *keypad)
 	printf("\n");
 	printf("CRC1: %x\n", crc1);
 	printf("CRC2: %x\n", crc2);
-	if(crc1 != crc2)
-		printf("FALSE\n");
-	else
-		printf("TRUE\n");
 	printf("Read DATA ADDRESS %x\n", address);
 #endif
 	return KP_OK;
@@ -139,7 +132,6 @@ kp_err kp_write_logs_to_flash(struct kp_lock *keypad)
 #endif
 	return KP_OK;
 }
-
 
 kp_err kp_read_logs_from_flash(struct kp_lock *keypad)
 {
@@ -235,12 +227,4 @@ void kp_logs_in_flash_failed(void)
 void kp_logs_in_flash_failed_p(void)
 {
 	kp_logs_tag_recent(FAILD_ATTEMPT_P);
-}
-
-bool kp_if_flash_empty(void)
-{
-	if(sk_if_sector_empty(&settings_sector) && sk_if_sector_empty(&fail_log_sector) &&
-		sk_if_sector_empty(&reserved_sector))
-		return true;
-	return false;
 }

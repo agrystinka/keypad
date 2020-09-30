@@ -37,30 +37,11 @@
 <h1>Flash memory<a class="headerlink" href="#flash-memory" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="api-for-work-with-stm-embedded-flash-memory">
 <h2>API for work with STM embedded flash memory<a class="headerlink" href="#api-for-work-with-stm-embedded-flash-memory" title="Permalink to this headline">¶</a></h2>
-<dl class="c type">
-<dt>
-<code class="sig-name descname">struct sk_sector</code></dt>
-<dd><p>struct sk_sector - flash memory sector.</p>
-<p>&#64;uint32_t start: Address of sector beginning.</p>
-<p>&#64;uint32_t size: Size of sector in bytes.</p>
-<p>&#64;uint8_t num: Number of sector.</p>
-</dd></dl>
-
-<dl class="c function">
-<dt id="c.sk_crc">
-uint32_t <code class="sig-name descname">sk_crc</code><span class="sig-paren">(</span>uint8_t *<em>data</em>, uint32_t <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_crc" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>sk_crc() - calculate CRC of data.
-&#64;uint8_t <a href="#id1"><span class="problematic" id="id2">*</span></a>data: buffer with data.
-&#64;uint32_t size: size of buffer.</p>
-<p>Return: uint32_t.
-Return CRC digest of data.</p>
-</dd></dl>
-
 <dl class="c function">
 <dt id="c.sk_erase">
 sk_err <code class="sig-name descname">sk_erase</code><span class="sig-paren">(</span><em class="property">struct</em> sk_sector *<em>sector</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_erase" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>sk_format() - erase sector.
-&#64;struct sk_sector <a href="#id3"><span class="problematic" id="id4">*</span></a>sector: sector of flash memory to search.</p>
+&#64;struct sk_sector <a href="#id1"><span class="problematic" id="id2">*</span></a>sector: sector of flash memory to search.</p>
 <p>Return: sk_err.</p>
 </dd></dl>
 
@@ -68,7 +49,7 @@ sk_err <code class="sig-name descname">sk_erase</code><span class="sig-paren">(<
 <dt id="c.sk_flash_write">
 sk_err <code class="sig-name descname">sk_flash_write</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, uint32_t <em>size</em>, uint32_t <em>address</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_flash_write" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>sk_flash_write() - write data from buffer to flash memory.
-&#64;uint8_t <a href="#id5"><span class="problematic" id="id6">*</span></a>buffer: buffer with data.
+&#64;uint8_t <a href="#id3"><span class="problematic" id="id4">*</span></a>buffer: buffer with data.
 &#64;uint32_t size: size of buffer.
 &#64;uint32_t address: adress in flash memory from which start writing data.</p>
 <p>Return: sk_err.</p>
@@ -78,7 +59,7 @@ sk_err <code class="sig-name descname">sk_flash_write</code><span class="sig-par
 <dt id="c.sk_flash_read">
 sk_err <code class="sig-name descname">sk_flash_read</code><span class="sig-paren">(</span>uint8_t *<em>buffer</em>, uint32_t <em>size</em>, uint32_t <em>address</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_flash_read" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>sk_flash_read() - read data from flash memory to buffer.
-&#64;uint8_t <a href="#id7"><span class="problematic" id="id8">*</span></a>buffer: buffer to store read data.
+&#64;uint8_t <a href="#id5"><span class="problematic" id="id6">*</span></a>buffer: buffer to store read data.
 &#64;uint32_t size: size of buffer.
 &#64;uint32_t address: adress in flash memory from which start to read data.</p>
 <p>Return: sk_err.</p>
@@ -88,7 +69,7 @@ sk_err <code class="sig-name descname">sk_flash_read</code><span class="sig-pare
 <dt id="c.sk_flash_empty">
 int <code class="sig-name descname">sk_flash_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_flash_empty" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>sk_flash_empty() - check if flash memory is empty.
-&#64;uint8_t  <a href="#id9"><span class="problematic" id="id10">*</span></a>buffer: buffer to check.
+&#64;uint8_t  <a href="#id7"><span class="problematic" id="id8">*</span></a>buffer: buffer to check.
 &#64;uint32_t size: size of buffer.</p>
 <p>Check if all bits of buffer are equal to 1.</p>
 <p>Return: bool.
@@ -99,7 +80,7 @@ Return true if memory is empty, false if not.</p>
 <dt id="c.sk_search">
 uint32_t <code class="sig-name descname">sk_search</code><span class="sig-paren">(</span><em class="property">struct</em> sk_sector *<em>sector</em>, uint32_t <em>size</em>, int <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_search" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>sk_search() - find empty space with chosen size in flash memory.
-&#64;struct sk_sector <a href="#id11"><span class="problematic" id="id12">*</span></a>sector: sector of flash memory to search.
+&#64;struct sk_sector <a href="#id9"><span class="problematic" id="id10">*</span></a>sector: sector of flash memory to search.
 &#64;uint32_t size: size of required empty space in data_t elements (sizeof(data_t) bytes).
 &#64;bool write: if true - return adress on start of empty space of given size,</p>
 <blockquote>
@@ -112,12 +93,12 @@ uint32_t <code class="sig-name descname">sk_search</code><span class="sig-paren"
 <dt id="c.sk_refresh">
 sk_err <code class="sig-name descname">sk_refresh</code><span class="sig-paren">(</span><em class="property">struct</em> sk_sector *<em>sector</em>, <em class="property">struct</em> sk_sector *<em>sectornew</em>, uint32_t <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#c.sk_refresh" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>sk_refresh() - refresh flash memory sector.
-&#64;struct sk_sector <a href="#id13"><span class="problematic" id="id14">*</span></a>sector: old sector.
-&#64;struct sk_sector <a href="#id15"><span class="problematic" id="id16">*</span></a>sectornew: new sector (must be empty).
+&#64;struct sk_sector <a href="#id11"><span class="problematic" id="id12">*</span></a>sector: old sector.
+&#64;struct sk_sector <a href="#id13"><span class="problematic" id="id14">*</span></a>sectornew: new sector (must be empty).
 &#64;uint32_t size: size of note.</p>
 <p>Copy recent note from sector to sectornew, erase sector, tag them.
-In the resuls sector has only recent note, sector new is empty.</p>
-<p>Return: sk_err.</p>
+In the resuls sector has only recent note, sector new is empty.
+Return: sk_err.</p>
 </dd></dl>
 
 </div>
@@ -142,8 +123,8 @@ In the resuls sector has only recent note, sector new is empty.</p>
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">User Manual</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Developer Manual</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">Manual for Users</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../devguide.html">Manual for Developers</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../glsk.html">Global Logic Starter Kit</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="gpio.html">Abstract over GPIO</a></li>
 <li class="toctree-l3"><a class="reference internal" href="lcd.html">LCD</a></li>
@@ -161,7 +142,7 @@ In the resuls sector has only recent note, sector new is empty.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
-  <li><a href="../../devguide.html">Developer Manual</a><ul>
+  <li><a href="../../devguide.html">Manual for Developers</a><ul>
   <li><a href="../glsk.html">Global Logic Starter Kit</a><ul>
       <li>Previous: <a href="lcd.html" title="previous chapter">LCD</a></li>
       <li>Next: <a href="timers.html" title="next chapter">Timers</a></li>

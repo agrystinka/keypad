@@ -81,5 +81,5 @@ sk_err kp_interrupts_btn_setup(void)
 
 sk_err sk_crc_init(void)
 {
-    rcc_periph_clock_enable(RCC_CRC);
+    rcc_periph_clock_enable(RCC_CRC);		// lcd is connected to port E
 }
