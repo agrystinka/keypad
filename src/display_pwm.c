@@ -7,7 +7,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
 
-void init_bkl_pwm(void)		// dirty code, needs refactoring
+void init_bkl_pwm(void)		
 {
 	nvic_set_priority(NVIC_EXTI0_IRQ, 2 << 2 | 3);
 	rcc_periph_clock_enable(RCC_GPIOA);

@@ -122,3 +122,11 @@ sk_err sk_refresh(struct sk_sector *sector, struct sk_sector *sectornew, uint32_
 	*sectornew = tmp;
 	return SK_EOK;
 }
+
+bool sk_if_sector_empty(struct sk_sector *sector)
+{
+	for(uint32_t i = 0; i < sector->size; i++)
+		if(*((uint8_t *)(sector->start + i)) != EMPTY_BYTE)
+			return false;
+	return true;
+}

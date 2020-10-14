@@ -105,3 +105,15 @@ uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write);
  * Return: sk_err.
  */
 sk_err sk_refresh(struct sk_sector *sector, struct sk_sector *sectornew, uint32_t size);
+
+/**
+ * sk_if_sector_empty() - check if sector is empty.
+ * @struct sk_sector *sector: sector of flash memory.
+ *
+ * Check if sector i empty. All bits are equal to 1.
+ *
+ * Return: bool.
+ * Return true if sector is empty, false - if not.
+ *
+ */
+bool sk_if_sector_empty(struct sk_sector *sector);

@@ -11,26 +11,7 @@ uint8_t KP_CMD = KP_NONE;
 //default setup as LOCKED
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
 
-struct kp_lock keypad = {
-    .usrpass = {2, 2, 2, 2}, //up to 8 bytes
-    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
-    .menucode = {0, 0, 0, 0}, //up to 8 bytes
-    .usrpass_length = 4,
-    .mstrpass_length = 4,
-    .delay_open_s = 10,
-    .delay_wait_s = 30,
-    .delay_wait_cur_s = 30,
-    .fails = 0,
-    .fails_low = 3,
-    .wait_coef = 2,
-    .mode = true,
-    .state = false,
-#if  HIGHT_SECURITY
-    .semimstrpass_length = 4,
-    .semimstrpass = {3, 3, 3, 3}, //up to 8 bytes
-    .fails_high = 10,
-#endif
-};
+struct kp_lock keypad;
 
 //display
 struct sk_lcd lcd = {
@@ -38,7 +19,6 @@ struct sk_lcd lcd = {
 	.pin_rs = &sk_io_lcd_rs,
 	.pin_en = &sk_io_lcd_en,
 	.pin_rw = &sk_io_lcd_rw,
-//	.pin_bkl = &sk_io_lcd_bkl,
 	.set_backlight_func = timer1_set_pwm_backlight,
 	.delay_func_us = NULL,
 	.delay_func_ms = &delay_ms_systick,
@@ -84,73 +64,14 @@ int main(void)
     printf("System initialized\n");
 #endif
 
-    kp_flash_init();
-    kp_write_settings_to_flash(&keypad); //Write default setting to flash
+    kp_flash_init();//erase flash memory sectors needed to keypad lock
 
 #if SEMIHOSTING_USE
-	// printf("Written data to flash\n");
-	// print_data(&keypad);
-	 kp_read_settings_from_flash(&keypad);
-	// printf("Read data from flash\n");
-	// print_data(&keypad);
-    // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-    // kp_write_logs_to_flash(&keypad);
-    // kp_read_logs_from_flash(&keypad);
-    // kp_logs_in_flash_successed();
-    // printf("Successed\n");
-    // kp_read_logs_from_flash(&keypad);
-    // if(kp_if_failed_logs())  printf("TRUE\n");
-    // else  printf("FALSE\n");
-    // if(kp_if_failed_logs_np())  printf("TRUE\n");
-    // else  printf("FALSE\n");
-    // printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
-    // kp_write_logs_to_flash(&keypad);
-    // kp_read_logs_from_flash(&keypad);
-    // kp_logs_in_flash_failed();
-    // printf("Failed\n");
-    // kp_read_logs_from_flash(&keypad);
-    // kp_logs_in_flash_failed_p();
-    // printf("Failed & Punished\n");
-    // kp_read_logs_from_flash(&keypad);
-    // if(kp_if_failed_logs())  printf("TRUE\n");
-    // else  printf("FALSE\n");
-    // if(kp_if_failed_logs_np())  printf("TRUE\n");
-    // else  printf("FALSE\n");
+    kp_read_settings_from_flash(&keypad);
 #endif
 
-	kp_screen_message(&lcd, "Default data", "was set");
-	mgl_clear(mgl_led_orange); //switch off indicator of settings
+    kp_screen_message(&lcd, "Device is ready", NULL);
+    mgl_clear(mgl_led_orange); //switch off indicator of settings
 
     while(1);
 }
-
-#if SEMIHOSTING_USE
-void print_data(struct kp_lock *keypad)
-{
-    printf("User pass length: %d\n", keypad->usrpass_length);
-    printf("Master pass length: %d\n", keypad->mstrpass_length);
-
-    printf("Delay open: %lu\n", keypad->delay_open_s);
-    printf("Delay close: %lu\n", keypad->delay_wait_s);
-    printf("Delay close cur: %lu\n", keypad->delay_wait_cur_s);
-
-    printf("Fails: %d\n", keypad->fails);
-    printf("Fails low: %d\n", keypad->fails_low);
-    printf("Fails coefficient: %d\n", keypad->wait_coef);
-
-    if(keypad->mode)
-        printf("Mode TRUE\n");
-    else
-        printf("Mode FALSE\n");
-
-    if(keypad->mode)
-        printf("State TRUE\n");
-    else
-        printf("State FALSE\n");
-
-#if  HIGHT_SECURITY
-    printf("Semimaster pass length: %d\n", keypad->semimstrpass_length);
-    printf("Fails high: %d\n", keypad->fails_high);
-#endif
-}
-#endif

@@ -125,3 +125,9 @@ void kp_welcome(struct sk_lcd *lcd, struct kp_lock *keypad)
 
 	kp_btn_enable();
 }
+
+void kp_keypad_error(struct sk_lcd *lcd)
+{
+	kp_btn_disable(); //block buttons
+	kp_screen_message(lcd, "Error", "Try to reset");
+}

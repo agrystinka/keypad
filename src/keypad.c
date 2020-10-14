@@ -91,7 +91,14 @@ int main(void)
     printf("Load data from flash\n");
 #endif
 
-	kp_read_settings_from_flash(&keypad);
+    if(kp_if_flash_empty()) //check if flash is empty
+        kp_write_settings_to_flash(&keypad); //write default settings to flash
+    else {
+        if(KP_ERR == kp_read_settings_from_flash(&keypad)){ //read settings from flash
+            kp_keypad_error(&lcd);
+            while(1);
+        }
+    }
     mgl_clear(mgl_led_orange); //switch off indicator of settings
 
     //if there were failed attempts to unlock keypad before reset

@@ -228,3 +228,11 @@ void kp_logs_in_flash_failed_p(void)
 {
 	kp_logs_tag_recent(FAILD_ATTEMPT_P);
 }
+
+bool kp_if_flash_empty(void)
+{
+	if(sk_if_sector_empty(&settings_sector) && sk_if_sector_empty(&fail_log_sector) &&
+		sk_if_sector_empty(&reserved_sector))
+		return true;
+	return false;
+}

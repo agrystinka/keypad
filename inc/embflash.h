@@ -89,3 +89,11 @@ void kp_logs_in_flash_failed(void);
  * Return: void.
  */
 void kp_logs_in_flash_failed_p(void);
+
+/**
+ * kp_if_flash_empty() - check if flashed memory used for project data is empty.
+ *
+ * Return: bool.
+ * Return true if flashed memory used for project data is empty, false - if not.
+ */
+bool kp_if_flash_empty(void);
