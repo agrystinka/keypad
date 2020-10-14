@@ -8,13 +8,9 @@
 bool FIRST_FLASH = true;
 //For comunication in interrupts
 uint8_t KP_CMD = KP_NONE;
-<<<<<<< HEAD
+
 //default setup as LOCKED
 uint8_t STATE_SYMBOL = LOCKED; //LOCKED or UNLOCKED
-=======
-//LOCKED or UNLOCKED, default setup as LOCKED
-uint8_t STATE_SYMBOL = LOCKED;
->>>>>>> 195fa743594ae097d3d866289edffb93c9a9563a
 
 struct kp_lock keypad;
 
@@ -24,10 +20,7 @@ struct sk_lcd lcd = {
 	.pin_rs = &sk_io_lcd_rs,
 	.pin_en = &sk_io_lcd_en,
 	.pin_rw = &sk_io_lcd_rw,
-<<<<<<< HEAD
-=======
 //	.pin_bkl = &sk_io_lcd_bkl,
->>>>>>> 195fa743594ae097d3d866289edffb93c9a9563a
 	.set_backlight_func = timer1_set_pwm_backlight,
 	.delay_func_us = NULL,
 	.delay_func_ms = &delay_ms_systick,
