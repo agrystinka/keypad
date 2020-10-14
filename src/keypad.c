@@ -17,10 +17,10 @@ const uint8_t arr[1] = {1};
 
 struct kp_lock keypad = {
     .usrpass = {2, 2, 2, 2}, //up to 8 bytes
-    .mstrpass = {0, 0, 0, 0}, //up to 8 bytes
+    .mstrpass = {1, 2, 3, 4, 5, 6}, //up to 8 bytes
     .menucode = {0, 0, 0, 0}, //up to 8 bytes
     .usrpass_length = 4,
-    .mstrpass_length = 4,
+    .mstrpass_length = 6,
     .delay_open_s = 10,
     .delay_wait_s = 30,
     .delay_wait_cur_s = 30,

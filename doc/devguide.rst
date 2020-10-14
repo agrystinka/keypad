@@ -1,4 +1,4 @@
-Manual for Developers
+Developer Manual 
 =====================
 
 .. toctree::

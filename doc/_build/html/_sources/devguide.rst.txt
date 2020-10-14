@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 Manual for Developers
+=======
+Developer Manual 
+>>>>>>> 195fa743594ae097d3d866289edffb93c9a9563a
 =====================
 
 .. toctree::

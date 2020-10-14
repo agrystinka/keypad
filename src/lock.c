@@ -19,7 +19,10 @@ void kp_btn_disable(void)
 
 
 #if HIGHT_SECURITY
+<<<<<<< HEAD
 //TODO: test properly
+=======
+>>>>>>> 195fa743594ae097d3d866289edffb93c9a9563a
 static void kp_fail_crit_hight(struct sk_lcd *lcd, struct kp_lock *keypad)
 {
 	uint8_t pass[MAX_PASS_LENGTH]; //buffer for input pass

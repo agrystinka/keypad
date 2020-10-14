@@ -3,6 +3,7 @@ TARGET = keypad
 # All source files go here:
 SRCS = $(TARGET).c
 # other sources added like that
+
 # GLSK libs
 SRCS += mygpiolib.c timers.c lcd_hd44780.c embedded_flash.c
 # abstract modules

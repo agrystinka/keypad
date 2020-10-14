@@ -3,8 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Keypad lock based on Global Logic Starter Kit
 =============================================
+=======
+Keypad lock
+============
+
+based on Global Logic Starter Kit with STM32F4DISCOVERY
+********************************************************
+
+Provides access by password. Has 2 modes of work, user settings menu.
+Has protection from brute force attack and protection from settings reset.
+
+
 
 .. toctree::
    :maxdepth: 3

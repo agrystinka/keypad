@@ -73,7 +73,8 @@ struct __attribute__((packed, aligned(1))) kp_lock {
 
 enum kp_err {
     KP_OK = 0,
-    KP_ERR = -1
+    KP_ERR = 1
 };
 typedef enum kp_err kp_err;
+
 #endif

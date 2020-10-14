@@ -7,7 +7,8 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
 
-void init_bkl_pwm(void)		
+
+void init_bkl_pwm(void)
 {
 	nvic_set_priority(NVIC_EXTI0_IRQ, 2 << 2 | 3);
 	rcc_periph_clock_enable(RCC_GPIOA);
@@ -37,12 +38,14 @@ void init_bkl_pwm(void)
 	timer_enable_counter(TIM1);
 }
 
+
 void timer1_set_pwm_backlight(uint8_t val)
 {
 	timer_set_oc_value(TIM1, TIM_OC1, val);	// we have TIM1_CH1 connected to backlight
 }
 
-void exti0_isr(void)		// dirty code, needs refactoring
+
+void exti0_isr(void) // to change backlight brightness with USER button
 {
 	static uint8_t bkl = 0;
 	sk_lcd_set_backlight(&lcd, bkl-1u);

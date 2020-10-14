@@ -36,21 +36,45 @@
 
 #define CRC_SIZE 4
 
+/**
+ * struct sk_sector - flash memory sector.
+ *
+ * @uint32_t start: Address of sector beginning.
+ *
+ * @uint32_t size: Size of sector in bytes.
+ *
+ * @uint8_t num: Number of sector.
+ *
+ */
 struct sk_sector {
-    uint32_t start; //addres of begining of sector
-    uint32_t size; //in bytes
-    uint8_t num; //number of sector
+    uint32_t start;
+    uint32_t size;
+    uint8_t num;
 };
 
+
+/**
+ * sk_crc() - calculate CRC of data.
+ * @uint8_t *data: buffer with data.
+ * @uint32_t size: size of buffer.
+ *
+ * Return: uint32_t.
+ * Return CRC digest of data.
+ *
+ */
 uint32_t sk_crc(uint8_t *data, uint32_t size);
+
 
 /**
  * sk_format() - erase sector.
  * @struct sk_sector *sector: sector of flash memory to search.
  *
  * Return: sk_err.
+ *
  */
 sk_err sk_erase(struct sk_sector *sector);
+
+
 /**
  * sk_flash_write() - write data from buffer to flash memory.
  * @uint8_t *buffer: buffer with data.
@@ -58,8 +82,10 @@ sk_err sk_erase(struct sk_sector *sector);
  * @uint32_t address: adress in flash memory from which start writing data.
  *
  * Return: sk_err.
+ *
  */
 sk_err sk_flash_write(uint8_t *buffer, uint32_t size, uint32_t address);
+
 
 /**
  * sk_flash_read() - read data from flash memory to buffer.
@@ -68,8 +94,10 @@ sk_err sk_flash_write(uint8_t *buffer, uint32_t size, uint32_t address);
  * @uint32_t address: adress in flash memory from which start to read data.
  *
  * Return: sk_err.
+ *
  */
 sk_err sk_flash_read(uint8_t *buffer, uint32_t size, uint32_t address);
+
 
 /**
  * sk_flash_empty() - check if flash memory is empty.
@@ -80,8 +108,10 @@ sk_err sk_flash_read(uint8_t *buffer, uint32_t size, uint32_t address);
  *
  * Return: bool.
  * Return true if memory is empty, false if not.
+ *
  */
 bool sk_flash_empty(uint8_t *buffer, uint32_t size);
+
 
 /**
  * sk_search() - find empty space with chosen size in flash memory.
@@ -91,8 +121,10 @@ bool sk_flash_empty(uint8_t *buffer, uint32_t size);
  *              if false - return adress on start of last note with given size.
  *
  * Return: uint32_t.
+ *
  */
 uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write);
+
 
 /**
  * sk_refresh() - refresh flash memory sector.
@@ -102,7 +134,9 @@ uint32_t sk_search(struct sk_sector *sector, uint32_t size, bool write);
  *
  * Copy recent note from sector to sectornew, erase sector, tag them.
  * In the resuls sector has only recent note, sector new is empty.
+ *
  * Return: sk_err.
+ *
  */
 sk_err sk_refresh(struct sk_sector *sector, struct sk_sector *sectornew, uint32_t size);
 
